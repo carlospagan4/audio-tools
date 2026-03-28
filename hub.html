@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WAVEFORM — Suite</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Crect%20width%3D%2232%22%20height%3D%2232%22%20rx%3D%224%22%20fill%3D%22%230a0a0c%22/%3E%3Crect%20x%3D%223%22%20y%3D%223%22%20width%3D%2226%22%20height%3D%2226%22%20rx%3D%223%22%20fill%3D%22none%22%20stroke%3D%22%2300e5ff%22%20stroke-width%3D%221.5%22/%3E%3Cpolygon%20points%3D%2216%2C6%2026%2C16%2016%2C26%206%2C16%22%20fill%3D%22none%22%20stroke%3D%22%2300e5ff%22%20stroke-width%3D%221.8%22%20stroke-linejoin%3D%22round%22/%3E%3Ccircle%20cx%3D%2216%22%20cy%3D%2216%22%20r%3D%222.5%22%20fill%3D%22%2300e5ff%22/%3E%3C/svg%3E">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700;900&family=Barlow:wght@300;400;500&display=swap');
+
+:root {
+  --bg:         #0a0a0c;
+  --surface:    #111114;
+  --surface2:   #18181d;
+  --border:     #2a2a35;
+  --border2:    #38384a;
+  --accent:     #00e5ff;
+  --text:       #e8e8f0;
+  --text-muted: #6b6b80;
+  --text-dim:   #3a3a4a;
+  --wf-nav-h:   48px;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Barlow', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  padding-top: var(--wf-nav-h);
+}
+
+body::before {
+  content:''; position:fixed; inset:0;
+  background-image:
+    linear-gradient(rgba(0,229,255,0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,229,255,0.022) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events:none; z-index:0;
+}
+body::after {
+  content:''; position:fixed; inset:0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.025) 2px, rgba(0,0,0,0.025) 4px);
+  pointer-events:none; z-index:999;
+}
+
+/* ── NAV ── */
+.wf-nav {
+  position: fixed; top:0; left:0; right:0; z-index:9999;
+  height: var(--wf-nav-h);
+  background: rgba(8,8,11,0.97);
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  display: flex; align-items: center;
+  padding: 0 20px;
+  backdrop-filter: blur(14px);
+}
+.wf-nav-logo {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 14px;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: #00e5ff; margin-right: 28px;
+  display: flex; align-items: center; gap: 7px;
+  text-decoration: none; white-space: nowrap; flex-shrink: 0;
+}
+.wf-nav-logo-icon {
+  width: 20px; height: 20px;
+  border: 2px solid #00e5ff; border-radius: 3px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; line-height: 1;
+}
+.wf-nav-tools { display: flex; align-items: center; gap: 1px; overflow-x: auto; }
+.wf-nav-item {
+  display: flex; align-items: center; gap: 5px;
+  padding: 0 12px; height: var(--wf-nav-h);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600; font-size: 11px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: rgba(255,255,255,0.35); text-decoration: none;
+  border-bottom: 2px solid transparent;
+  transition: color 0.18s, border-color 0.18s, background 0.18s;
+  white-space: nowrap;
+}
+.wf-nav-item:hover { color: rgba(255,255,255,0.75); border-bottom-color: rgba(255,255,255,0.2); }
+.wf-nav-item.wf-active-cyan  { color: #00e5ff; border-bottom-color: #00e5ff; background: rgba(0,229,255,0.05); }
+.wf-nav-item.wf-active-green { color: #39d98a; border-bottom-color: #39d98a; background: rgba(57,217,138,0.05); }
+.wf-nav-item.wf-active-amber { color: #ff8c00; border-bottom-color: #ff8c00; background: rgba(255,140,0,0.05); }
+.wf-nav-item.wf-active-red   { color: #ff3c6e; border-bottom-color: #ff3c6e; background: rgba(255,60,110,0.05); }
+.wf-nav-item.wf-active-violet { color: #c084fc; border-bottom-color: #c084fc; background: rgba(200,109,215,0.05); }
+.wf-nav-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; opacity: 0.6; flex-shrink: 0; }
+.wf-nav-item:not([class*="wf-active"]) .wf-nav-dot { opacity: 0.3; }
+
+/* ── HERO ── */
+.hero {
+  position: relative; z-index: 1;
+  padding: 72px 48px 52px;
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center;
+}
+.hero-eyebrow {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px; letter-spacing: 0.3em;
+  color: var(--accent); text-transform: uppercase;
+  margin-bottom: 18px; opacity: 0.6;
+}
+.hero-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: clamp(56px, 9vw, 108px);
+  letter-spacing: 0.08em; text-transform: uppercase;
+  line-height: 0.9; color: var(--text);
+}
+.hero-title span { color: var(--accent); text-shadow: 0 0 40px rgba(0,229,255,0.35); }
+.hero-sub {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 300; font-size: 16px;
+  letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--text-muted); margin-top: 10px;
+}
+.hero-divider {
+  width: 1px; height: 40px;
+  background: linear-gradient(to bottom, transparent, var(--accent), transparent);
+  margin: 36px 0; opacity: 0.4;
+}
+
+/* ── TOOLS GRID — strict 2 columns ── */
+.tools-grid {
+  position: relative; z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 32px 80px;
+}
+@media (max-width: 640px) {
+  .tools-grid { grid-template-columns: 1fr; padding: 0 16px 60px; }
+}
+
+/* ── TOOL CARD ── */
+.tool-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  display: flex; flex-direction: column;
+  transition: border-color 0.25s, transform 0.25s;
+  position: relative; overflow: hidden;
+  text-decoration: none; color: inherit;
+}
+.tool-card::before {
+  content:''; position:absolute; inset:0;
+  background: radial-gradient(ellipse at top left, var(--card-glow, rgba(0,229,255,0.05)), transparent 65%);
+  pointer-events:none; opacity: 0; transition: opacity 0.3s;
+}
+.tool-card:hover { border-color: var(--card-accent); transform: translateY(-2px); }
+.tool-card:hover::before { opacity: 1; }
+
+.tool-card[data-color="cyan"]  { --card-accent:#00e5ff; --card-glow:rgba(0,229,255,0.06);  --card-rgb:0,229,255; }
+.tool-card[data-color="red"]   { --card-accent:#ff3c6e; --card-glow:rgba(255,60,110,0.06); --card-rgb:255,60,110; }
+.tool-card[data-color="amber"] { --card-accent:#ff8c00; --card-glow:rgba(255,140,0,0.06);  --card-rgb:255,140,0; }
+.tool-card[data-color="green"] { --card-accent:#39d98a; --card-glow:rgba(57,217,138,0.06); --card-rgb:57,217,138; }
+.tool-card[data-color="violet"] { --card-accent:#c084fc; --card-glow:rgba(200,109,252,0.06);  --card-rgb:200,109,252; }
+
+/* top accent strip */
+.card-strip {
+  height: 3px;
+  background: var(--card-accent);
+  opacity: 0.45;
+  transition: opacity 0.25s;
+}
+.tool-card:hover .card-strip { opacity: 1; }
+
+/* card body */
+.card-body { padding: 22px 22px 18px; display: flex; flex-direction: column; gap: 14px; flex: 1; }
+
+/* header row */
+.card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
+.card-head-text { display: flex; flex-direction: column; gap: 3px; }
+.card-num { font-family:'Share Tech Mono',monospace; font-size:9px; letter-spacing:0.18em; text-transform:uppercase; color:var(--text-dim); }
+.card-name { font-family:'Barlow Condensed',sans-serif; font-weight:900; font-size:26px; letter-spacing:0.04em; text-transform:uppercase; color:var(--text); line-height:1; }
+.card-subtitle { font-family:'Share Tech Mono',monospace; font-size:9px; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-muted); margin-top:2px; }
+
+/* icon placeholder */
+.card-icon {
+  width: 48px; height: 48px; flex-shrink: 0;
+  border: 1px solid var(--border2); border-radius: 6px;
+  background: var(--surface2);
+  display: flex; align-items: center; justify-content: center;
+  transition: border-color 0.25s;
+  position: relative; overflow: hidden;
+}
+.card-icon svg { width: 26px; height: 26px; display: block; }
+.tool-card:hover .card-icon { border-color: var(--card-accent); }
+.card-icon::after {
+  content:''; position:absolute; bottom:0; right:0;
+  width:8px; height:8px;
+  background: var(--card-accent);
+  clip-path: polygon(100% 0, 100% 100%, 0 100%);
+  opacity: 0.45;
+  transition: opacity 0.25s;
+}
+.tool-card:hover .card-icon::after { opacity: 0.9; }
+
+/* tags */
+.card-tags { display:flex; flex-wrap:wrap; gap:5px; }
+.card-tag {
+  font-family:'Share Tech Mono',monospace; font-size:9px; letter-spacing:0.09em;
+  text-transform:uppercase; padding:3px 7px;
+  border:1px solid var(--border2); border-radius:2px; color:var(--text-muted);
+}
+.card-tag.hi {
+  border-color: rgba(var(--card-rgb), 0.4);
+  color: var(--card-accent);
+  background: rgba(var(--card-rgb), 0.06);
+}
+
+/* desc */
+.card-desc { font-size:12px; line-height:1.65; color:var(--text-muted); flex:1; }
+
+/* card footer */
+.card-foot {
+  padding: 12px 22px;
+  border-top: 1px solid var(--border);
+  background: var(--surface2);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.card-open {
+  font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:11px;
+  letter-spacing:0.15em; text-transform:uppercase;
+  color: var(--card-accent);
+  display: flex; align-items: center; gap: 6px;
+}
+.card-open-arrow {
+  width: 18px; height: 18px;
+  border: 1px solid var(--card-accent); border-radius: 2px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; line-height: 1;
+  transition: background 0.2s, color 0.2s;
+}
+.tool-card:hover .card-open-arrow { background: var(--card-accent); color: #000; }
+.card-meta { font-family:'Share Tech Mono',monospace; font-size:9px; color:var(--text-dim); letter-spacing:0.08em; }
+
+/* ── FOOTER ── */
+.page-footer {
+  position:relative; z-index:1;
+  border-top:1px solid var(--border);
+  padding:20px 48px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.footer-label { font-family:'Share Tech Mono',monospace; font-size:9px; color:var(--text-dim); letter-spacing:0.1em; }
+</style>
+</head>
+<body>
+
+<nav class="wf-nav">
+  <a href="hub.html" class="wf-nav-logo"><div class="wf-nav-logo-icon">◈</div>WAVEFORM</a>
+  <div class="wf-nav-tools">
+    <a href="hub.html"               class="wf-nav-item wf-active-cyan"><span class="wf-nav-dot"></span>Hub</a>
+    <a href="converter.html"   class="wf-nav-item"><span class="wf-nav-dot"></span>Converter</a>
+    <a href="looper.html"      class="wf-nav-item"><span class="wf-nav-dot"></span>Looper</a>
+    <a href="drum-machine.html"      class="wf-nav-item"><span class="wf-nav-dot"></span>Drum Machine</a>
+    <a href="workstation.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Workstation</a>
+        <a href="chord-randomizer.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Chord Dice</a>
+
+  </div>
+</nav>
+
+<section class="hero">
+  <p class="hero-eyebrow">▸ Browser-native audio suite · v2.0</p>
+  <h1 class="hero-title"><span>W</span>AVEFORM</h1>
+  <p class="hero-sub">Audio Production Suite &nbsp;—&nbsp; No installs. No uploads.</p>
+  <div class="hero-divider"></div>
+</section>
+
+<div class="tools-grid">
+
+  <!-- 01 CONVERTER -->
+  <a href="converter.html" class="tool-card" data-color="green">
+    <div class="card-strip"></div>
+    <div class="card-body">
+      <div class="card-head">
+        <div class="card-head-text">
+          <div class="card-num">01 · UTILITY</div>
+          <div class="card-name">Converter</div>
+          <div class="card-subtitle">Format Transcoder</div>
+        </div>
+        <div class="card-icon">
+          <svg viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 9h14" stroke="#39d98a" stroke-width="1.6" stroke-linecap="round"/>
+            <path d="M14 5.5L18 9l-4 3.5" stroke="#39d98a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M22 17H8" stroke="#39d98a" stroke-width="1.6" stroke-linecap="round"/>
+            <path d="M12 13.5L8 17l4 3.5" stroke="#39d98a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+      <div class="card-tags">
+        <span class="card-tag hi">MP3</span>
+        <span class="card-tag hi">WAV</span>
+        <span class="card-tag">Batch</span>
+        <span class="card-tag">128–320 kbps</span>
+        <span class="card-tag">Drag & Drop</span>
+      </div>
+      <p class="card-desc">Convert audio files between MP3 and WAV entirely in the browser. Drag in multiple files, select bitrate, and download converted versions instantly.</p>
+    </div>
+    <div class="card-foot">
+      <div class="card-open">Open Tool <div class="card-open-arrow">→</div></div>
+      <span class="card-meta">WEB AUDIO API</span>
+    </div>
+  </a>
+
+  <!-- 02 LOOPER -->
+  <a href="looper.html" class="tool-card" data-color="cyan">
+    <div class="card-strip"></div>
+    <div class="card-body">
+      <div class="card-head">
+        <div class="card-head-text">
+          <div class="card-num">02 · PLAYBACK</div>
+          <div class="card-name">Looper</div>
+          <div class="card-subtitle">Seamless Loop Engine</div>
+        </div>
+        <div class="card-icon">
+          <svg viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <polyline points="2,14 5,8 7,16 10,10 12,14 14,11 16,15 19,7 21,13 24,13" stroke="#00e5ff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="7" y1="20" x2="19" y2="20" stroke="#00e5ff" stroke-width="1.2" stroke-linecap="round" opacity="0.4"/>
+            <path d="M7 20 Q5 20 5 18" stroke="#00e5ff" stroke-width="1.2" stroke-linecap="round" opacity="0.4"/>
+            <path d="M19 20 Q21 20 21 18" stroke="#00e5ff" stroke-width="1.2" stroke-linecap="round" opacity="0.4"/>
+          </svg>
+        </div>
+      </div>
+      <div class="card-tags">
+        <span class="card-tag hi">Loop Region</span>
+        <span class="card-tag hi">Waveform</span>
+        <span class="card-tag">Speed</span>
+        <span class="card-tag">Volume</span>
+        <span class="card-tag">Export WAV</span>
+      </div>
+      <p class="card-desc">Load any audio file, drag on the waveform to set a loop region, and play it back seamlessly. Control speed and volume, export the loop as WAV.</p>
+    </div>
+    <div class="card-foot">
+      <div class="card-open">Open Tool <div class="card-open-arrow">→</div></div>
+      <span class="card-meta">WEB AUDIO API</span>
+    </div>
+  </a>
+
+  <!-- 03 DRUM MACHINE -->
+  <a href="drum-machine.html" class="tool-card" data-color="amber">
+    <div class="card-strip"></div>
+    <div class="card-body">
+      <div class="card-head">
+        <div class="card-head-text">
+          <div class="card-num">03 · SEQUENCER</div>
+          <div class="card-name">Drum Machine</div>
+          <div class="card-subtitle">Step Sequencer · Beat Engine</div>
+        </div>
+        <div class="card-icon">
+          <svg viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2"  y="4"  width="5" height="5" rx="1" fill="#ff8c00" opacity="0.9"/>
+            <rect x="9"  y="4"  width="5" height="5" rx="1" fill="#ff8c00" opacity="0.25"/>
+            <rect x="16" y="4"  width="5" height="5" rx="1" fill="#ff8c00" opacity="0.9"/>
+            <rect x="2"  y="11" width="5" height="5" rx="1" fill="#ff8c00" opacity="0.25"/>
+            <rect x="9"  y="11" width="5" height="5" rx="1" fill="#ff8c00" opacity="0.9"/>
+            <rect x="16" y="11" width="5" height="5" rx="1" fill="#ff8c00" opacity="0.25"/>
+            <rect x="2"  y="18" width="5" height="5" rx="1" fill="#ff8c00" opacity="0.9"/>
+            <rect x="9"  y="18" width="5" height="5" rx="1" fill="#ff8c00" opacity="0.25"/>
+            <rect x="16" y="18" width="5" height="5" rx="1" fill="#ff8c00" opacity="0.9"/>
+          </svg>
+        </div>
+      </div>
+      <div class="card-tags">
+        <span class="card-tag hi">8–64 Steps</span>
+        <span class="card-tag hi">Synth Kits</span>
+        <span class="card-tag">Acoustic Kit</span>
+        <span class="card-tag">Swing</span>
+        <span class="card-tag">Tap Tempo</span>
+        <span class="card-tag">WAV Import</span>
+      </div>
+      <p class="card-desc">Step sequencer with synthesized electronic and acoustic drum kits. Up to 10 tracks, 8–64 steps, BPM tap tempo, swing, per-track mute/solo, WAV import.</p>
+    </div>
+    <div class="card-foot">
+      <div class="card-open">Open Tool <div class="card-open-arrow">→</div></div>
+      <span class="card-meta">WEB AUDIO API</span>
+    </div>
+  </a>
+
+  <!-- 04 WORKSTATION -->
+  <a href="workstation.html" class="tool-card" data-color="red">
+    <div class="card-strip"></div>
+    <div class="card-body">
+      <div class="card-head">
+        <div class="card-head-text">
+          <div class="card-num">04 · DAW</div>
+          <div class="card-name">Workstation</div>
+          <div class="card-subtitle">Multi-Channel · Looper/Chooper</div>
+        </div>
+        <div class="card-icon">
+          <svg viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- fader tracks -->
+            <line x1="5"  y1="3" x2="5"  y2="23" stroke="#ff3c6e" stroke-width="1.2" stroke-linecap="round" opacity="0.25"/>
+            <line x1="13" y1="3" x2="13" y2="23" stroke="#ff3c6e" stroke-width="1.2" stroke-linecap="round" opacity="0.25"/>
+            <line x1="21" y1="3" x2="21" y2="23" stroke="#ff3c6e" stroke-width="1.2" stroke-linecap="round" opacity="0.25"/>
+            <!-- fader thumbs -->
+            <rect x="2.5" y="16" width="5" height="3.5" rx="1.5" fill="#ff3c6e"/>
+            <rect x="10.5" y="9" width="5" height="3.5" rx="1.5" fill="#ff3c6e"/>
+            <rect x="18.5" y="13" width="5" height="3.5" rx="1.5" fill="#ff3c6e"/>
+          </svg>
+        </div>
+      </div>
+      <div class="card-tags">
+        <span class="card-tag hi">4 Channels</span>
+        <span class="card-tag hi">FX Rack</span>
+        <span class="card-tag">Drum Machine</span>
+        <span class="card-tag">5-Band EQ</span>
+        <span class="card-tag">LP/HP/BP</span>
+        <span class="card-tag">Export Mix</span>
+      </div>
+      <p class="card-desc">Looper/Chooper multi-channel looper with per-channel FX (Chorus, Delay, Distortion, Tremolo), integrated step sequencer, 5-band master EQ, and filter chain.</p>
+    </div>
+    <div class="card-foot">
+      <div class="card-open">Open Tool <div class="card-open-arrow">→</div></div>
+      <span class="card-meta">TONE.JS + WEB AUDIO</span>
+    </div>
+  </a>
+  <!-- 05 Chord Randomizer -->
+  <a href="chord-randomizer.html" class="tool-card" data-color="violet">
+    <div class="card-strip"></div>
+    <div class="card-body">
+      <div class="card-head">
+        <div class="card-head-text">
+          <div class="card-num">05 · UTILITY</div>
+          <div class="card-name">Chord Dice</div>
+          <div class="card-subtitle">Random Chord Generator</div>
+        </div>
+        <div class="card-icon">
+          <svg viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="4" y="4" width="18" height="18" rx="2" stroke="#c084fc" stroke-width="1.6"/>
+            <circle cx="8.5" cy="8.5" r="1.5" fill="#c084fc"/>
+            <circle cx="17.5" cy="8.5" r="1.5" fill="#c084fc"/>
+            <circle cx="8.5" cy="17.5" r="1.5" fill="#c084fc"/>
+            <circle cx="17.5" cy="17.5" r="1.5" fill="#c084fc"/>
+          </svg>
+        </div>
+      </div>
+      <div class="card-tags">
+        <span class="card-tag hi">Randomize</span>
+        <span class="card-tag hi">Save Presets</span>
+        <span class="card-tag">Major/Minor</span>
+        <span class="card-tag">7th/9th/11th</span>
+        <span class="card-tag">Inversions</span>
+      </div>
+      <p class="card-desc">Generate random chords with adjustable parameters (key, scale, chord type, inversions). Save favorite chords as presets for quick recall during composition.</p>
+    </div>
+    <div class="card-foot">
+      <div class="card-open">Open Tool <div class="card-open-arrow">→</div></div>
+      <span class="card-meta">TONE.JS + WEB AUDIO</span>
+    </div>
+</div>
+
+<footer class="page-footer">
+  <span class="footer-label">◈ WAVEFORM SUITE — BROWSER NATIVE AUDIO</span>
+  <span class="footer-label">ALL PROCESSING IS LOCAL · NO DATA LEAVES YOUR DEVICE</span>
+</footer>
+
+</body>
+</html>

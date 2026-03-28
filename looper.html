@@ -1,0 +1,1664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Crect%20width%3D%2232%22%20height%3D%2232%22%20rx%3D%224%22%20fill%3D%22%230a0a0c%22/%3E%3Crect%20x%3D%223%22%20y%3D%223%22%20width%3D%2226%22%20height%3D%2226%22%20rx%3D%223%22%20fill%3D%22none%22%20stroke%3D%22%2300e5ff%22%20stroke-width%3D%221.5%22/%3E%3Cpolygon%20points%3D%2216%2C6%2026%2C16%2016%2C26%206%2C16%22%20fill%3D%22none%22%20stroke%3D%22%2300e5ff%22%20stroke-width%3D%221.8%22%20stroke-linejoin%3D%22round%22/%3E%3Ccircle%20cx%3D%2216%22%20cy%3D%2216%22%20r%3D%222.5%22%20fill%3D%22%2300e5ff%22/%3E%3C/svg%3E">
+<title>WAVEFORM — Audio Looper</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700;900&family=Barlow:wght@300;400;500&display=swap');
+
+  :root {
+    --bg: #0a0a0c;
+    --surface: #111114;
+    --surface2: #18181d;
+    --surface3: #1f1f26;
+    --border: #2a2a35;
+    --border2: #38384a;
+    --accent: #00e5ff;
+    --accent2: #ff3c6e;
+    --accent3: #a78bfa;
+    --text: #e8e8f0;
+    --text-muted: #6b6b80;
+    --text-dim: #3a3a4a;
+    --loop-region: rgba(0,229,255,0.12);
+    --loop-border: rgba(0,229,255,0.7);
+    --playhead: #ff3c6e;
+    --waveform: #2a2a40;
+    --waveform-played: #00e5ff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    padding-top: var(--wf-nav-h);
+  }
+
+  /* ── GRID BACKGROUND ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.02) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── SCAN LINE ── */
+  body::after {
+    content: '';
+    position: fixed;
+    top: -100%;
+    left: 0; right: 0;
+    height: 200px;
+    background: linear-gradient(transparent, rgba(0,229,255,0.03), transparent);
+    animation: scan 8s linear infinite;
+    pointer-events: none;
+    z-index: 0;
+  }
+  @keyframes scan { to { top: 100%; } }
+
+  .app {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 24px 60px;
+  }
+
+  /* ── HEADER ── */
+  header {
+    padding: 36px 0 28px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 36px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .logo-group { display: flex; flex-direction: column; gap: 4px; }
+
+  .logo {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 13px;
+    letter-spacing: 0.3em;
+    color: var(--accent);
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .logo::before {
+    content: '';
+    display: inline-block;
+    width: 18px; height: 2px;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+  }
+
+  .title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    letter-spacing: -0.01em;
+    line-height: 1;
+    color: var(--text);
+  }
+  .title span { color: var(--accent); }
+
+  .subtitle {
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  .header-meta {
+    text-align: right;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    line-height: 1.8;
+  }
+  .header-meta strong { color: var(--accent); }
+
+  /* ── DROP ZONE ── */
+  .drop-zone {
+    border: 1.5px dashed var(--border2);
+    border-radius: 4px;
+    padding: 48px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+    background: var(--surface);
+    margin-bottom: 28px;
+  }
+  .drop-zone::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(0,229,255,0.04) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .drop-zone:hover, .drop-zone.drag-over {
+    border-color: var(--accent);
+    background: rgba(0,229,255,0.04);
+  }
+  .drop-zone:hover::before, .drop-zone.drag-over::before { opacity: 1; }
+
+  .drop-icon {
+    font-size: 36px;
+    margin-bottom: 12px;
+    display: block;
+    opacity: 0.6;
+  }
+  .drop-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .drop-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    font-family: 'Share Tech Mono', monospace;
+  }
+  #fileInput { display: none; }
+
+  /* ── MAIN PANEL ── */
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    display: none;
+  }
+  .panel.visible { display: block; }
+
+  /* ── FILE INFO BAR ── */
+  .file-bar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 20px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .file-name {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .file-meta {
+    display: flex; gap: 16px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+  .file-meta span strong { color: var(--text); }
+
+  .btn-clear {
+    background: none;
+    border: 1px solid var(--border2);
+    color: var(--text-muted);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    padding: 4px 10px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+    text-transform: uppercase;
+  }
+  .btn-clear:hover { border-color: var(--accent2); color: var(--accent2); }
+
+  /* ── WAVEFORM SECTION ── */
+  .waveform-section {
+    padding: 24px 20px 16px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+
+  .waveform-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .waveform-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .waveform-wrapper {
+    position: relative;
+    height: 120px;
+    cursor: crosshair;
+    border-radius: 2px;
+    overflow: hidden;
+    background: var(--surface3);
+    border: 1px solid var(--border);
+    user-select: none;
+  }
+
+  #waveformCanvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Loop region overlay */
+  .loop-region {
+    position: absolute;
+    top: 0; bottom: 0;
+    background: var(--loop-region);
+    border-left: 2px solid var(--loop-border);
+    border-right: 2px solid var(--loop-border);
+    pointer-events: none;
+    transition: none;
+  }
+
+  /* Handle labels */
+  .loop-handle-label {
+    position: absolute;
+    top: 4px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    white-space: nowrap;
+    text-shadow: 0 0 8px rgba(0,229,255,0.8);
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+  .loop-handle-label.start { left: 4px; }
+  .loop-handle-label.end { right: 4px; }
+
+  /* Playhead */
+  .playhead {
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 2px;
+    background: var(--playhead);
+    box-shadow: 0 0 8px var(--playhead);
+    pointer-events: none;
+    transform: translateX(-50%);
+    left: 0;
+  }
+  .playhead::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 8px; height: 8px;
+    background: var(--playhead);
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+    filter: drop-shadow(0 0 4px var(--playhead));
+  }
+
+  /* ── TIME RULER ── */
+  .time-ruler {
+    height: 20px;
+    position: relative;
+    margin-top: 4px;
+  }
+  #rulerCanvas {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* ── LOOP CONTROLS ── */
+  .loop-controls {
+    padding: 20px;
+    border-bottom: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .control-group {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 14px 16px;
+  }
+  .control-group-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .control-group-label .dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 6px var(--accent);
+  }
+  .control-group-label.end .dot { background: var(--accent2); box-shadow: 0 0 6px var(--accent2); }
+
+  .time-display {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 22px;
+    color: var(--text);
+    margin-bottom: 8px;
+    letter-spacing: 0.05em;
+  }
+
+  .time-display-input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--border2);
+    border-radius: 0;
+    outline: none;
+    width: 100%;
+    cursor: text;
+    padding: 2px 0 4px;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .time-display-input:hover { border-bottom-color: var(--accent); }
+  .time-display-input:focus {
+    border-bottom-color: var(--accent);
+    color: var(--accent);
+    text-shadow: 0 0 10px rgba(0,229,255,0.4);
+  }
+  .time-display-input.end:focus {
+    border-bottom-color: var(--accent2);
+    color: var(--accent2);
+    text-shadow: 0 0 10px rgba(255,60,110,0.4);
+  }
+  .time-display-input.error {
+    border-bottom-color: var(--accent2) !important;
+    color: var(--accent2) !important;
+  }
+
+  .time-slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 4px;
+    background: var(--surface3);
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+    border: 1px solid var(--border);
+  }
+  .time-slider.start::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px; height: 14px;
+    border-radius: 2px;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+    cursor: pointer;
+    border: none;
+  }
+  .time-slider.end::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px; height: 14px;
+    border-radius: 2px;
+    background: var(--accent2);
+    box-shadow: 0 0 8px var(--accent2);
+    cursor: pointer;
+    border: none;
+  }
+  .time-slider::-moz-range-thumb {
+    width: 14px; height: 14px;
+    border-radius: 2px;
+    background: var(--accent);
+    cursor: pointer;
+    border: none;
+  }
+
+  /* Loop duration badge */
+  .loop-duration-bar {
+    padding: 10px 20px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .loop-duration-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+  .loop-duration-value {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 14px;
+    color: var(--accent);
+    font-weight: bold;
+  }
+  .loop-bar-visual {
+    flex: 1;
+    height: 6px;
+    background: var(--surface3);
+    border-radius: 3px;
+    overflow: hidden;
+    min-width: 80px;
+    border: 1px solid var(--border);
+  }
+  .loop-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent3));
+    border-radius: 3px;
+    transition: width 0.1s;
+    box-shadow: 0 0 6px var(--accent);
+  }
+
+  /* ── TRANSPORT ── */
+  .transport {
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .transport-left { display: flex; align-items: center; gap: 10px; }
+  .transport-right { display: flex; align-items: center; gap: 10px; }
+
+  .btn-transport {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 10px 22px;
+    border-radius: 3px;
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-play {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
+    box-shadow: 0 0 16px rgba(0,229,255,0.25);
+  }
+  .btn-play:hover {
+    background: #33ecff;
+    box-shadow: 0 0 24px rgba(0,229,255,0.45);
+    transform: translateY(-1px);
+  }
+  .btn-play.playing {
+    background: transparent;
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .btn-stop {
+    background: transparent;
+    color: var(--text-muted);
+    border-color: var(--border2);
+  }
+  .btn-stop:hover {
+    border-color: var(--accent2);
+    color: var(--accent2);
+    box-shadow: 0 0 12px rgba(255,60,110,0.2);
+  }
+
+  .btn-export {
+    background: transparent;
+    color: var(--accent3);
+    border-color: var(--accent3);
+    font-size: 12px;
+    padding: 8px 16px;
+  }
+  .btn-export:hover {
+    background: rgba(167,139,250,0.1);
+    box-shadow: 0 0 12px rgba(167,139,250,0.2);
+    transform: translateY(-1px);
+  }
+  .btn-export:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  /* Volume & speed */
+  .knob-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .knob-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    width: 52px;
+    text-transform: uppercase;
+  }
+  .knob-val {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    width: 36px;
+    text-align: right;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid transparent;
+    outline: none;
+    cursor: text;
+    padding: 0;
+    border-radius: 0;
+    transition: border-color 0.15s;
+  }
+  .knob-val:hover { border-bottom-color: var(--border2); }
+  .knob-val:focus { border-bottom-color: var(--accent); }
+  .knob-val.error { color: var(--accent2); border-bottom-color: var(--accent2); }
+  .mini-slider {
+    -webkit-appearance: none;
+    width: 80px;
+    height: 3px;
+    background: var(--surface3);
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+    border: 1px solid var(--border);
+  }
+  .mini-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 10px; height: 10px;
+    border-radius: 2px;
+    background: var(--accent);
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 0 5px var(--accent);
+  }
+
+  /* ── STATUS BAR ── */
+  .status-bar {
+    padding: 8px 20px;
+    background: var(--surface2);
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+  }
+  .status-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--text-dim);
+    flex-shrink: 0;
+    transition: all 0.3s;
+  }
+  .status-dot.active {
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+    animation: pulse 1.2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(0.85); }
+  }
+  #statusMsg { color: var(--text-muted); }
+
+  /* ── LOOP COUNT ── */
+  .loop-count-section {
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    background: var(--surface2);
+  }
+  .loop-count-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+  .count-btns { display: flex; gap: 6px; align-items: center; }
+  .count-btn {
+    background: var(--surface3);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    padding: 4px 10px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.15s;
+  }
+  .count-btn.active {
+    background: rgba(0,229,255,0.12);
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: 0 0 8px rgba(0,229,255,0.15);
+  }
+  .count-btn:hover:not(.active) { border-color: var(--border2); background: var(--border); }
+
+  .loop-counter-display {
+    margin-left: auto;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .loop-counter-display strong { color: var(--accent); font-size: 16px; }
+
+  /* ── HINT ── */
+  .hint-bar {
+    padding: 10px 20px;
+    border-top: 1px solid var(--border);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+    text-align: center;
+    line-height: 1.7;
+  }
+  .hint-bar strong { color: var(--text-muted); }
+
+  /* ── WAVEFORM DECO (background header) ── */
+  .waveform-deco {
+    position: fixed;
+    bottom: 0;
+    left: 0; right: 0;
+    height: 60px;
+    opacity: 0.06;
+    pointer-events: none;
+    z-index: 0;
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    padding: 0 8px;
+    overflow: hidden;
+  }
+  .waveform-deco span {
+    flex: 1;
+    background: var(--accent);
+    border-radius: 1px 1px 0 0;
+    animation: wdeco 2s ease-in-out infinite;
+    animation-delay: calc(var(--i) * 0.06s);
+  }
+  @keyframes wdeco {
+    0%, 100% { transform: scaleY(0.4); }
+    50% { transform: scaleY(1); }
+  }
+
+  @media (max-width: 600px) {
+    .loop-controls { grid-template-columns: 1fr; }
+    .transport { flex-direction: column; align-items: stretch; }
+    .transport-left, .transport-right { justify-content: center; }
+  }
+
+/* ═══════ WAVEFORM SUITE NAV ═══════ */
+:root { --wf-nav-h: 48px; }
+.wf-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+  height: var(--wf-nav-h);
+  background: rgba(8,8,11,0.97);
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  display: flex; align-items: center;
+  padding: 0 20px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+.wf-nav-logo {
+  font-family: "Barlow Condensed", sans-serif;
+  font-weight: 900; font-size: 14px;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: #00e5ff; margin-right: 28px;
+  display: flex; align-items: center; gap: 7px;
+  text-decoration: none; white-space: nowrap; flex-shrink: 0;
+}
+.wf-nav-logo-icon {
+  width: 20px; height: 20px;
+  border: 2px solid #00e5ff; border-radius: 3px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; line-height: 1;
+}
+.wf-nav-tools { display: flex; align-items: center; gap: 1px; overflow-x: auto; }
+.wf-nav-item {
+  display: flex; align-items: center; gap: 5px;
+  padding: 0 12px; height: var(--wf-nav-h);
+  font-family: "Barlow Condensed", sans-serif;
+  font-weight: 600; font-size: 11px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: rgba(255,255,255,0.35); text-decoration: none;
+  border-bottom: 2px solid transparent;
+  transition: color 0.18s, border-color 0.18s, background 0.18s;
+  white-space: nowrap;
+}
+.wf-nav-item:hover { color: rgba(255,255,255,0.75); border-bottom-color: rgba(255,255,255,0.2); }
+.wf-nav-item.wf-active-cyan   { color: #00e5ff; border-bottom-color: #00e5ff; background: rgba(0,229,255,0.05); }
+.wf-nav-item.wf-active-red    { color: #ff3c6e; border-bottom-color: #ff3c6e; background: rgba(255,60,110,0.05); }
+.wf-nav-item.wf-active-amber  { color: #ff8c00; border-bottom-color: #ff8c00; background: rgba(255,140,0,0.05); }
+.wf-nav-item.wf-active-green  { color: #39d98a; border-bottom-color: #39d98a; background: rgba(57,217,138,0.05); }
+.wf-nav-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; opacity: 0.6; flex-shrink: 0; }
+.wf-nav-item:not([class*="wf-active"]) .wf-nav-dot { opacity: 0.3; }
+/* ═══════════════════════════════════ */
+</style>
+</head>
+<body>
+
+<nav class="wf-nav">
+  <a href="hub.html" class="wf-nav-logo"><div class="wf-nav-logo-icon">◈</div>WAVEFORM</a>
+  <div class="wf-nav-tools">
+    <a href="hub.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Hub</a>
+    <a href="converter.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Converter</a>
+    <a href="looper.html" class="wf-nav-item wf-active-cyan"><span class="wf-nav-dot"></span>Looper</a>
+    <a href="drum-machine.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Drum Machine</a>
+    <a href="workstation.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Workstation</a>
+        <a href="chord-randomizer.html" class="wf-nav-item wf-active-violet"><span class="wf-nav-dot"></span>Chord Dice</a>
+
+  </div>
+</nav>
+
+<!-- Background deco bars -->
+<div class="waveform-deco" id="decoBars"></div>
+
+<div class="app">
+  <header>
+    <div class="logo-group">
+      <div class="logo">WAVEFORM</div>
+      <h1 class="title">AUDIO <span>LOOPER</span></h1>
+      <div class="subtitle">Loop Region Selector &amp; Seamless Playback</div>
+    </div>
+    <div class="header-meta">
+      <div>ENGINE <strong>WEB AUDIO API</strong></div>
+      <div>VERSION <strong>1.0.0</strong></div>
+      <div>FORMATS <strong>MP3 · WAV · OGG · FLAC · M4A</strong></div>
+    </div>
+  </header>
+
+  <!-- DROP ZONE -->
+  <div class="drop-zone" id="dropZone">
+    <input type="file" id="fileInput" accept="audio/*">
+    <span class="drop-icon">🔁</span>
+    <div class="drop-title">DROP AUDIO FILE</div>
+    <div class="drop-sub">or click to browse &nbsp;·&nbsp; MP3 · WAV · OGG · FLAC · M4A · AAC · WEBM</div>
+  </div>
+
+  <!-- MAIN PANEL -->
+  <div class="panel" id="panel">
+
+    <!-- File Info Bar -->
+    <div class="file-bar">
+      <div class="file-name" id="fileName">—</div>
+      <div class="file-meta">
+        <span><strong id="fileDur">0:00</strong> DURATION</span>
+        <span><strong id="fileSr">—</strong> SAMPLE RATE</span>
+        <span><strong id="fileBpm">—</strong> BPM</span>
+      </div>
+      <button class="btn-clear" id="btnClear">✕ CLEAR</button>
+    </div>
+
+    <!-- Waveform Section -->
+    <div class="waveform-section">
+      <div class="waveform-label">WAVEFORM — DRAG TO SET LOOP REGION</div>
+      <div class="waveform-wrapper" id="waveformWrapper">
+        <canvas id="waveformCanvas"></canvas>
+        <div class="loop-region" id="loopRegion">
+          <div class="loop-handle-label start" id="loopLabelStart">▶ LOOP IN</div>
+          <div class="loop-handle-label end" id="loopLabelEnd">LOOP OUT ◀</div>
+        </div>
+        <div class="playhead" id="playhead" style="display:none;"></div>
+      </div>
+      <div class="time-ruler">
+        <canvas id="rulerCanvas"></canvas>
+      </div>
+    </div>
+
+    <!-- Loop Point Controls -->
+    <div class="loop-controls">
+      <div class="control-group">
+        <div class="control-group-label"><div class="dot"></div>LOOP IN POINT</div>
+        <input class="time-display time-display-input" id="displayStart" type="text" value="0:00.000" spellcheck="false">
+        <input type="range" class="time-slider start" id="sliderStart" min="0" max="1000" value="0" step="1">
+      </div>
+      <div class="control-group">
+        <div class="control-group-label end"><div class="dot" style="background:var(--accent2);box-shadow:0 0 6px var(--accent2)"></div>LOOP OUT POINT</div>
+        <input class="time-display time-display-input end" id="displayEnd" type="text" value="0:00.000" spellcheck="false">
+        <input type="range" class="time-slider end" id="sliderEnd" min="0" max="1000" value="1000" step="1">
+      </div>
+    </div>
+
+    <!-- Loop Duration Visual -->
+    <div class="loop-duration-bar">
+      <span class="loop-duration-label">LOOP DURATION</span>
+      <span class="loop-duration-value" id="loopDurVal">0:00.000</span>
+      <div class="loop-bar-visual"><div class="loop-bar-fill" id="loopBarFill" style="width:100%"></div></div>
+    </div>
+
+    <!-- Loop Count -->
+    <div class="loop-count-section">
+      <span class="loop-count-label">REPEAT</span>
+      <div class="count-btns" id="countBtns">
+        <button class="count-btn active" data-v="inf">∞</button>
+        <button class="count-btn" data-v="1">×1</button>
+        <button class="count-btn" data-v="2">×2</button>
+        <button class="count-btn" data-v="4">×4</button>
+        <button class="count-btn" data-v="8">×8</button>
+      </div>
+      <div class="loop-counter-display">LOOPS PLAYED: <strong id="loopCountDisplay">0</strong></div>
+    </div>
+
+    <!-- Transport -->
+    <div class="transport">
+      <div class="transport-left">
+        <button class="btn-transport btn-play" id="btnPlay">▶ PLAY LOOP</button>
+        <button class="btn-transport btn-stop" id="btnStop">■ STOP</button>
+      </div>
+      <div class="transport-right">
+        <div class="knob-row">
+          <span class="knob-label">VOL</span>
+          <input type="range" class="mini-slider" id="sliderVol" min="0" max="100" value="80">
+          <input type="text" class="knob-val" id="valVol" value="80%" spellcheck="false">
+        </div>
+        <div class="knob-row" style="margin-left:8px">
+          <span class="knob-label">SPEED</span>
+          <input type="range" class="mini-slider" id="sliderSpeed" min="25" max="200" value="100">
+          <input type="text" class="knob-val" id="valSpeed" value="1.00×" spellcheck="false">
+        </div>
+        <button class="btn-transport btn-export" id="btnExport" disabled>↓ EXPORT LOOP</button>
+      </div>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <div class="status-dot" id="statusDot"></div>
+      <span id="statusMsg">READY — LOAD AN AUDIO FILE TO BEGIN</span>
+    </div>
+
+    <div class="hint-bar">
+      <strong>DRAG</strong> on the waveform to define loop region &nbsp;·&nbsp; 
+      <strong>SLIDERS</strong> fine-tune IN / OUT points &nbsp;·&nbsp; 
+      <strong>EXPORT</strong> renders the loop section to a WAV file
+    </div>
+  </div>
+</div>
+
+<script>
+// ── DECO BARS
+const deco = document.getElementById('decoBars');
+for (let i = 0; i < 120; i++) {
+  const s = document.createElement('span');
+  s.style.cssText = `--i:${i}; height: ${20 + Math.random()*40}px;`;
+  deco.appendChild(s);
+}
+
+// ── APP STATE
+let audioCtx = null;
+let audioBuffer = null;
+let sourceNode = null;
+let gainNode = null;
+let isPlaying = false;
+let loopStart = 0;
+let loopEnd = 1;
+let duration = 0;
+let loopRepeat = 'inf';
+let loopCount = 0;
+let loopCountMax = Infinity;
+let playStartTime = 0;
+let playStartOffset = 0;
+let animFrame = null;
+let currentLoopIteration = 0;
+
+// ── DOM
+const dropZone = document.getElementById('dropZone');
+const fileInput = document.getElementById('fileInput');
+const panel = document.getElementById('panel');
+const waveformWrapper = document.getElementById('waveformWrapper');
+const waveCanvas = document.getElementById('waveformCanvas');
+const rulerCanvas = document.getElementById('rulerCanvas');
+const loopRegion = document.getElementById('loopRegion');
+const playhead = document.getElementById('playhead');
+const sliderStart = document.getElementById('sliderStart');
+const sliderEnd = document.getElementById('sliderEnd');
+const displayStart = document.getElementById('displayStart');
+const displayEnd = document.getElementById('displayEnd');
+const loopDurVal = document.getElementById('loopDurVal');
+const loopBarFill = document.getElementById('loopBarFill');
+const btnPlay = document.getElementById('btnPlay');
+const btnStop = document.getElementById('btnStop');
+const btnClear = document.getElementById('btnClear');
+const btnExport = document.getElementById('btnExport');
+const sliderVol = document.getElementById('sliderVol');
+const sliderSpeed = document.getElementById('sliderSpeed');
+const valVol = document.getElementById('valVol');
+const valSpeed = document.getElementById('valSpeed');
+const loopCountDisplay = document.getElementById('loopCountDisplay');
+const statusDot = document.getElementById('statusDot');
+const statusMsg = document.getElementById('statusMsg');
+const countBtns = document.getElementById('countBtns');
+
+// ── HELPERS
+function fmtTime(s) {
+  const m = Math.floor(s / 60);
+  const sec = s % 60;
+  return `${m}:${sec.toFixed(3).padStart(6,'0')}`;
+}
+function fmtTimeShort(s) {
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return `${m}:${String(sec).padStart(2,'0')}`;
+}
+function setStatus(msg, active=false) {
+  statusMsg.textContent = msg;
+  statusDot.classList.toggle('active', active);
+}
+
+// ── FILE LOADING
+dropZone.addEventListener('click', () => fileInput.click());
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('drag-over');
+  const f = e.dataTransfer.files[0];
+  if (f) loadFile(f);
+});
+fileInput.addEventListener('change', () => { if (fileInput.files[0]) loadFile(fileInput.files[0]); });
+
+async function loadFile(file) {
+  stopPlayback();
+  setStatus('DECODING AUDIO...', true);
+  panel.classList.remove('visible');
+  
+  try {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const ab = await file.arrayBuffer();
+    audioBuffer = await audioCtx.decodeAudioData(ab);
+    duration = audioBuffer.duration;
+
+    document.getElementById('fileName').textContent = file.name;
+    document.getElementById('fileDur').textContent = fmtTimeShort(duration);
+    document.getElementById('fileSr').textContent = audioBuffer.sampleRate.toLocaleString() + ' Hz';
+    document.getElementById('fileBpm').textContent = '…';
+
+    loopStart = 0;
+    loopEnd = duration;
+    sliderStart.max = 1000;
+    sliderEnd.max = 1000;
+    sliderStart.value = 0;
+    sliderEnd.value = 1000;
+    updateTimeDisplays();
+
+    panel.classList.add('visible');
+    setTimeout(() => {
+      drawWaveform();
+      drawRuler();
+      updateLoopRegionUI();
+    }, 50);
+
+    btnExport.disabled = false;
+    setStatus(`LOADED — ${fmtTimeShort(duration)} · ${audioBuffer.numberOfChannels === 2 ? 'STEREO' : 'MONO'} · ${audioBuffer.sampleRate} Hz`);
+    loopCountDisplay.textContent = '0';
+
+    // Detect BPM asynchronously so it doesn't block UI
+    detectBpm(audioBuffer).then(bpm => {
+      document.getElementById('fileBpm').textContent = bpm ? bpm : '—';
+    });
+  } catch(err) {
+    setStatus('ERROR: COULD NOT DECODE FILE — TRY ANOTHER FORMAT');
+    console.error(err);
+  }
+}
+
+// ── BPM DETECTION
+// Uses energy-based onset detection + inter-beat interval histogram
+async function detectBpm(buffer) {
+  return new Promise(resolve => {
+    // Yield to UI first
+    setTimeout(() => {
+      try {
+        const sr = buffer.sampleRate;
+        // Mix to mono
+        const ch0 = buffer.getChannelData(0);
+        const ch1 = buffer.numberOfChannels > 1 ? buffer.getChannelData(1) : null;
+        const len = ch0.length;
+        const mono = new Float32Array(len);
+        for (let i = 0; i < len; i++) mono[i] = ch1 ? (ch0[i] + ch1[i]) * 0.5 : ch0[i];
+
+        // Downsample to ~4000 Hz for speed
+        const targetSr = 4000;
+        const ratio = Math.floor(sr / targetSr);
+        const dsLen = Math.floor(len / ratio);
+        const ds = new Float32Array(dsLen);
+        for (let i = 0; i < dsLen; i++) {
+          let s = 0;
+          for (let j = 0; j < ratio; j++) s += mono[i * ratio + j] || 0;
+          ds[i] = s / ratio;
+        }
+
+        // Low-pass: simple moving average to isolate bass energy
+        const lpLen = Math.floor(targetSr * 0.01); // 10ms window
+        const lp = new Float32Array(dsLen);
+        let sum = 0;
+        for (let i = 0; i < dsLen; i++) {
+          sum += ds[i] * ds[i];
+          if (i >= lpLen) sum -= ds[i - lpLen] * ds[i - lpLen];
+          lp[i] = sum / Math.min(i + 1, lpLen);
+        }
+
+        // Onset strength: difference of energy
+        const onset = new Float32Array(dsLen);
+        for (let i = 1; i < dsLen; i++) {
+          const diff = lp[i] - lp[i - 1];
+          onset[i] = diff > 0 ? diff : 0;
+        }
+
+        // Find peaks with a dynamic threshold
+        const winSecs = 0.5;
+        const winSamples = Math.floor(targetSr * winSecs);
+        const peaks = [];
+        for (let i = winSamples; i < dsLen - winSamples; i++) {
+          // Local max check
+          let isMax = true;
+          const half = Math.floor(winSamples / 8);
+          for (let j = i - half; j <= i + half; j++) {
+            if (j !== i && onset[j] >= onset[i]) { isMax = false; break; }
+          }
+          if (!isMax) continue;
+          // Must exceed mean in local window
+          let localMean = 0;
+          for (let j = i - winSamples; j < i + winSamples; j++) localMean += onset[j];
+          localMean /= (winSamples * 2);
+          if (onset[i] > localMean * 1.5) peaks.push(i);
+        }
+
+        if (peaks.length < 4) { resolve(null); return; }
+
+        // Collect inter-beat intervals (IBI) in ms
+        const ibis = [];
+        for (let i = 1; i < peaks.length; i++) {
+          const ibiMs = ((peaks[i] - peaks[i - 1]) / targetSr) * 1000;
+          if (ibiMs >= 300 && ibiMs <= 2000) ibis.push(ibiMs); // 30–200 BPM range
+        }
+
+        if (ibis.length < 3) { resolve(null); return; }
+
+        // Histogram with 5ms bins, find mode
+        const binSize = 5;
+        const hist = {};
+        for (const ibi of ibis) {
+          const bin = Math.round(ibi / binSize) * binSize;
+          hist[bin] = (hist[bin] || 0) + 1;
+        }
+        let bestBin = 0, bestCount = 0;
+        for (const [bin, count] of Object.entries(hist)) {
+          if (count > bestCount) { bestCount = count; bestBin = Number(bin); }
+        }
+
+        // Convert IBI (ms) to BPM, try doubling/halving to land in 60–180 BPM
+        let bpm = Math.round(60000 / bestBin);
+        while (bpm < 60) bpm *= 2;
+        while (bpm > 180) bpm /= 2;
+        bpm = Math.round(bpm);
+
+        resolve(bpm >= 60 && bpm <= 180 ? bpm : null);
+      } catch(e) {
+        resolve(null);
+      }
+    }, 0);
+  });
+}
+
+// ── DRAW WAVEFORM
+function drawWaveform() {
+  const w = waveformWrapper.clientWidth;
+  const h = waveformWrapper.clientHeight;
+  waveCanvas.width = w;
+  waveCanvas.height = h;
+  const ctx = waveCanvas.getContext('2d');
+  ctx.clearRect(0, 0, w, h);
+
+  const data = audioBuffer.getChannelData(0);
+  const step = Math.ceil(data.length / w);
+  const amp = h / 2;
+
+  // Draw bars
+  for (let i = 0; i < w; i++) {
+    let min = 1, max = -1;
+    for (let j = 0; j < step; j++) {
+      const d = data[i * step + j] || 0;
+      if (d < min) min = d;
+      if (d > max) max = d;
+    }
+    const pct = i / w;
+    const t = pct * duration;
+    const inLoop = t >= loopStart && t <= loopEnd;
+    
+    ctx.strokeStyle = inLoop ? '#00e5ff' : '#2a2a40';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(i, amp + min * amp * 0.9);
+    ctx.lineTo(i, amp + max * amp * 0.9);
+    ctx.stroke();
+  }
+}
+
+function redrawWaveform() {
+  if (!audioBuffer) return;
+  const w = waveCanvas.width || waveformWrapper.clientWidth;
+  const h = waveCanvas.height || waveformWrapper.clientHeight;
+  const ctx = waveCanvas.getContext('2d');
+  ctx.clearRect(0, 0, w, h);
+  const data = audioBuffer.getChannelData(0);
+  const step = Math.ceil(data.length / w);
+  const amp = h / 2;
+  for (let i = 0; i < w; i++) {
+    let min = 1, max = -1;
+    for (let j = 0; j < step; j++) {
+      const d = data[i * step + j] || 0;
+      if (d < min) min = d;
+      if (d > max) max = d;
+    }
+    const pct = i / w;
+    const t = pct * duration;
+    const inLoop = t >= loopStart && t <= loopEnd;
+    ctx.strokeStyle = inLoop ? '#00e5ff' : '#2a2a40';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(i, amp + min * amp * 0.9);
+    ctx.lineTo(i, amp + max * amp * 0.9);
+    ctx.stroke();
+  }
+}
+
+// ── DRAW RULER
+function drawRuler() {
+  const w = waveformWrapper.clientWidth;
+  rulerCanvas.width = w;
+  rulerCanvas.height = 20;
+  const ctx = rulerCanvas.getContext('2d');
+  ctx.clearRect(0, 0, w, 20);
+  ctx.fillStyle = '#3a3a4a';
+  ctx.font = '9px "Share Tech Mono", monospace';
+  ctx.textBaseline = 'top';
+
+  const step = chooseRulerStep(duration);
+  for (let t = 0; t <= duration; t += step) {
+    const x = (t / duration) * w;
+    ctx.fillStyle = '#3a3a4a';
+    ctx.fillRect(x, 0, 1, 6);
+    ctx.fillStyle = '#6b6b80';
+    ctx.fillText(fmtTimeShort(t), x + 3, 4);
+  }
+}
+function chooseRulerStep(dur) {
+  if (dur < 10) return 1;
+  if (dur < 30) return 5;
+  if (dur < 120) return 10;
+  if (dur < 600) return 30;
+  return 60;
+}
+
+// ── LOOP REGION UI
+function updateLoopRegionUI() {
+  if (!duration) return;
+  const startPct = loopStart / duration;
+  const endPct = loopEnd / duration;
+  loopRegion.style.left = (startPct * 100) + '%';
+  loopRegion.style.width = ((endPct - startPct) * 100) + '%';
+  document.getElementById('loopLabelStart').textContent = `▶ ${fmtTimeShort(loopStart)}`;
+  document.getElementById('loopLabelEnd').textContent = `${fmtTimeShort(loopEnd)} ◀`;
+}
+
+// ── TIME DISPLAY INLINE EDITING
+function parseTimeInput(raw) {
+  const s = raw.trim();
+  const colonMatch = s.match(/^(\d+):(\d{1,2})(?:\.(\d{1,3}))?$/);
+  if (colonMatch) {
+    const m   = parseInt(colonMatch[1]);
+    const sec = parseInt(colonMatch[2]);
+    const ms  = colonMatch[3] ? parseInt(colonMatch[3].padEnd(3, '0')) : 0;
+    const t   = m * 60 + sec + ms / 1000;
+    return isNaN(t) ? null : t;
+  }
+  const num = parseFloat(s);
+  return isNaN(num) ? null : num;
+}
+
+function commitTimeInput(which) {
+  const el = which === 'start' ? displayStart : displayEnd;
+  const t  = parseTimeInput(el.value);
+  el.classList.remove('error');
+  if (t === null || t < 0 || t > duration) {
+    el.classList.add('error');
+    setTimeout(() => { el.classList.remove('error'); el.value = fmtTime(which === 'start' ? loopStart : loopEnd); }, 800);
+    return;
+  }
+  if (which === 'start') {
+    loopStart = Math.max(0, Math.min(t, loopEnd - 0.05));
+    sliderStart.value = Math.round((loopStart / duration) * 1000);
+  } else {
+    loopEnd = Math.min(duration, Math.max(t, loopStart + 0.05));
+    sliderEnd.value = Math.round((loopEnd / duration) * 1000);
+  }
+  updateTimeDisplays();
+  updateLoopRegionUI();
+  redrawWaveform();
+  if (isPlaying) restartLoop();
+}
+
+[['start', displayStart], ['end', displayEnd]].forEach(([which, el]) => {
+  el.addEventListener('focus', () => el.select());
+  el.addEventListener('keydown', e => {
+    if (e.key === 'Enter')  { e.preventDefault(); commitTimeInput(which); el.blur(); }
+    if (e.key === 'Escape') { el.value = fmtTime(which === 'start' ? loopStart : loopEnd); el.blur(); }
+  });
+  el.addEventListener('blur', () => commitTimeInput(which));
+});
+
+function updateTimeDisplays() {
+  if (document.activeElement !== displayStart) displayStart.value = fmtTime(loopStart);
+  if (document.activeElement !== displayEnd)   displayEnd.value   = fmtTime(loopEnd);
+  const loopDur = loopEnd - loopStart;
+  loopDurVal.textContent = fmtTime(Math.max(0, loopDur));
+  const pct = duration > 0 ? (loopDur / duration * 100) : 100;
+  loopBarFill.style.width = Math.max(0, Math.min(100, pct)) + '%';
+}
+
+// ── SLIDER CONTROLS
+sliderStart.addEventListener('input', () => {
+  const v = (parseInt(sliderStart.value) / 1000) * duration;
+  loopStart = Math.min(v, loopEnd - 0.05);
+  loopStart = Math.max(0, loopStart);
+  updateTimeDisplays();
+  updateLoopRegionUI();
+  redrawWaveform();
+  if (isPlaying) restartLoop();
+});
+
+sliderEnd.addEventListener('input', () => {
+  const v = (parseInt(sliderEnd.value) / 1000) * duration;
+  loopEnd = Math.max(v, loopStart + 0.05);
+  loopEnd = Math.min(duration, loopEnd);
+  updateTimeDisplays();
+  updateLoopRegionUI();
+  redrawWaveform();
+  if (isPlaying) restartLoop();
+});
+
+// ── WAVEFORM DRAG TO SELECT
+let isDragging = false;
+let dragStartX = 0;
+
+waveformWrapper.addEventListener('mousedown', e => {
+  if (!audioBuffer) return;
+  isDragging = true;
+  dragStartX = e.offsetX;
+  dragStartX = Math.max(0, Math.min(dragStartX, waveformWrapper.clientWidth));
+  e.preventDefault();
+});
+
+window.addEventListener('mousemove', e => {
+  if (!isDragging || !audioBuffer) return;
+  const rect = waveformWrapper.getBoundingClientRect();
+  const x = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
+  const t1 = (dragStartX / rect.width) * duration;
+  const t2 = (x / rect.width) * duration;
+  loopStart = Math.max(0, Math.min(t1, t2));
+  loopEnd = Math.min(duration, Math.max(t1, t2));
+  if (loopEnd - loopStart < 0.05) loopEnd = Math.min(duration, loopStart + 0.05);
+  sliderStart.value = Math.round((loopStart / duration) * 1000);
+  sliderEnd.value = Math.round((loopEnd / duration) * 1000);
+  updateTimeDisplays();
+  updateLoopRegionUI();
+  redrawWaveform();
+});
+
+window.addEventListener('mouseup', () => {
+  if (isDragging) {
+    isDragging = false;
+    if (isPlaying) restartLoop();
+  }
+});
+
+// Touch support
+waveformWrapper.addEventListener('touchstart', e => {
+  if (!audioBuffer) return;
+  isDragging = true;
+  const rect = waveformWrapper.getBoundingClientRect();
+  dragStartX = e.touches[0].clientX - rect.left;
+  e.preventDefault();
+}, { passive: false });
+
+window.addEventListener('touchmove', e => {
+  if (!isDragging || !audioBuffer) return;
+  const rect = waveformWrapper.getBoundingClientRect();
+  const x = Math.max(0, Math.min(e.touches[0].clientX - rect.left, rect.width));
+  const t1 = (dragStartX / rect.width) * duration;
+  const t2 = (x / rect.width) * duration;
+  loopStart = Math.max(0, Math.min(t1, t2));
+  loopEnd = Math.min(duration, Math.max(t1, t2));
+  if (loopEnd - loopStart < 0.05) loopEnd = Math.min(duration, loopStart + 0.05);
+  sliderStart.value = Math.round((loopStart / duration) * 1000);
+  sliderEnd.value = Math.round((loopEnd / duration) * 1000);
+  updateTimeDisplays();
+  updateLoopRegionUI();
+  redrawWaveform();
+}, { passive: false });
+
+window.addEventListener('touchend', () => {
+  if (isDragging) {
+    isDragging = false;
+    if (isPlaying) restartLoop();
+  }
+});
+
+// ── LOOP COUNT BUTTONS
+countBtns.querySelectorAll('.count-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    countBtns.querySelectorAll('.count-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const v = btn.dataset.v;
+    loopRepeat = v === 'inf' ? 'inf' : parseInt(v);
+    loopCountMax = loopRepeat === 'inf' ? Infinity : loopRepeat;
+    if (isPlaying) restartLoop();
+  });
+});
+
+// ── VOLUME & SPEED
+sliderVol.addEventListener('input', () => {
+  const v = parseInt(sliderVol.value);
+  valVol.value = v + '%';
+  if (gainNode) gainNode.gain.value = v / 100;
+});
+
+sliderSpeed.addEventListener('input', () => {
+  const v = parseInt(sliderSpeed.value) / 100;
+  valSpeed.value = v.toFixed(2) + '×';
+  if (sourceNode) sourceNode.playbackRate.value = v;
+});
+
+// Allow typing directly into vol/speed fields
+function commitKnob(which) {
+  const el = which === 'vol' ? valVol : valSpeed;
+  // Strip any non-numeric characters (%, x, ×, spaces)
+  const raw = parseFloat(el.value.replace(/[^0-9.]/g, ''));
+  el.classList.remove('error');
+
+  if (which === 'vol') {
+    if (isNaN(raw) || raw < 0 || raw > 100) {
+      el.classList.add('error');
+      setTimeout(() => { el.classList.remove('error'); el.value = parseInt(sliderVol.value) + '%'; }, 800);
+      return;
+    }
+    const clamped = Math.round(Math.max(0, Math.min(100, raw)));
+    sliderVol.value = clamped;
+    el.value = clamped + '%';
+    if (gainNode) gainNode.gain.value = clamped / 100;
+  } else {
+    // Speed: accept either 0.25–2.0 (multiplier) or 25–200 (percent)
+    let mult = raw;
+    if (raw > 2) mult = raw / 100; // treat as percent e.g. "75" → 0.75
+    if (isNaN(mult) || mult < 0.25 || mult > 2) {
+      el.classList.add('error');
+      setTimeout(() => { el.classList.remove('error'); el.value = (parseInt(sliderSpeed.value) / 100).toFixed(2) + '×'; }, 800);
+      return;
+    }
+    const clamped = Math.round(mult * 100);
+    sliderSpeed.value = clamped;
+    el.value = (clamped / 100).toFixed(2) + '×';
+    if (sourceNode) sourceNode.playbackRate.value = clamped / 100;
+  }
+}
+
+[['vol', valVol], ['speed', valSpeed]].forEach(([which, el]) => {
+  el.addEventListener('focus', () => el.select());
+  el.addEventListener('keydown', e => {
+    if (e.key === 'Enter')  { e.preventDefault(); commitKnob(which); el.blur(); }
+    if (e.key === 'Escape') { el.value = which === 'vol' ? parseInt(sliderVol.value) + '%' : (parseInt(sliderSpeed.value) / 100).toFixed(2) + '×'; el.blur(); }
+  });
+  el.addEventListener('blur', () => commitKnob(which));
+});
+
+// ── PLAYBACK
+function startLoop() {
+  if (!audioBuffer || !audioCtx) return;
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+
+  stopSourceNode();
+  currentLoopIteration = 0;
+  loopCountDisplay.textContent = '0';
+  isPlaying = true;
+
+  btnPlay.textContent = '⏸ PAUSE';
+  btnPlay.classList.add('playing');
+  playhead.style.display = 'block';
+  setStatus('LOOPING...', true);
+
+  scheduleLoop();
+  startPlayheadAnimation();
+}
+
+function scheduleLoop() {
+  if (!isPlaying) return;
+  if (loopRepeat !== 'inf' && currentLoopIteration >= loopCountMax) {
+    stopPlayback();
+    setStatus(`DONE — ${loopCountMax} LOOP${loopCountMax > 1 ? 'S' : ''} COMPLETE`);
+    return;
+  }
+
+  sourceNode = audioCtx.createBufferSource();
+  sourceNode.buffer = audioBuffer;
+  sourceNode.playbackRate.value = parseInt(sliderSpeed.value) / 100;
+  sourceNode.loop = false;
+
+  gainNode = audioCtx.createGain();
+  gainNode.gain.value = parseInt(sliderVol.value) / 100;
+
+  sourceNode.connect(gainNode);
+  gainNode.connect(audioCtx.destination);
+
+  const loopDur = loopEnd - loopStart;
+  playStartTime = audioCtx.currentTime;
+  playStartOffset = loopStart;
+
+  sourceNode.start(0, loopStart, loopDur);
+
+  sourceNode.onended = () => {
+    if (!isPlaying) return;
+    currentLoopIteration++;
+    loopCountDisplay.textContent = currentLoopIteration;
+    scheduleLoop();
+  };
+}
+
+function restartLoop() {
+  if (!isPlaying) return;
+  stopSourceNode();
+  scheduleLoop();
+}
+
+function stopSourceNode() {
+  if (sourceNode) {
+    try { sourceNode.onended = null; sourceNode.stop(); } catch(e) {}
+    sourceNode = null;
+  }
+}
+
+function stopPlayback() {
+  isPlaying = false;
+  stopSourceNode();
+  btnPlay.textContent = '▶ PLAY LOOP';
+  btnPlay.classList.remove('playing');
+  playhead.style.display = 'none';
+  if (animFrame) cancelAnimationFrame(animFrame);
+  setStatus('STOPPED');
+}
+
+function startPlayheadAnimation() {
+  if (animFrame) cancelAnimationFrame(animFrame);
+  function tick() {
+    if (!isPlaying) return;
+    const elapsed = (audioCtx.currentTime - playStartTime) * (parseInt(sliderSpeed.value) / 100);
+    const loopDur = loopEnd - loopStart;
+    const posInLoop = loopDur > 0 ? (elapsed % loopDur) : 0;
+    const currentTime = loopStart + posInLoop;
+    const pct = duration > 0 ? currentTime / duration : 0;
+    const w = waveformWrapper.clientWidth;
+    playhead.style.left = (pct * w) + 'px';
+    animFrame = requestAnimationFrame(tick);
+  }
+  animFrame = requestAnimationFrame(tick);
+}
+
+btnPlay.addEventListener('click', () => {
+  if (!audioBuffer) return;
+  if (isPlaying) {
+    stopPlayback();
+  } else {
+    startLoop();
+  }
+});
+
+btnStop.addEventListener('click', () => {
+  stopPlayback();
+  loopCountDisplay.textContent = '0';
+});
+
+btnClear.addEventListener('click', () => {
+  stopPlayback();
+  panel.classList.remove('visible');
+  audioBuffer = null;
+  fileInput.value = '';
+  document.getElementById('fileBpm').textContent = '—';
+  setStatus('READY — LOAD AN AUDIO FILE TO BEGIN');
+});
+
+// ── EXPORT LOOP AS WAV
+btnExport.addEventListener('click', async () => {
+  if (!audioBuffer) return;
+  setStatus('RENDERING LOOP REGION TO WAV...', true);
+  btnExport.disabled = true;
+
+  try {
+    const loopDur = loopEnd - loopStart;
+    const sr = audioBuffer.sampleRate;
+    const ch = audioBuffer.numberOfChannels;
+    const startSample = Math.floor(loopStart * sr);
+    const endSample = Math.floor(loopEnd * sr);
+    const frameCount = endSample - startSample;
+
+    const offlineCtx = new OfflineAudioContext(ch, frameCount, sr);
+    const src = offlineCtx.createBufferSource();
+    src.buffer = audioBuffer;
+    src.connect(offlineCtx.destination);
+    src.start(0, loopStart, loopDur);
+
+    const rendered = await offlineCtx.startRendering();
+    const wav = audioBufferToWav(rendered);
+    const blob = new Blob([wav], { type: 'audio/wav' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    const baseName = document.getElementById('fileName').textContent.replace(/\.[^/.]+$/, '');
+    a.download = `${baseName}_loop_${fmtTimeShort(loopStart).replace(':','m')}s-${fmtTimeShort(loopEnd).replace(':','m')}s.wav`;
+    a.click();
+    URL.revokeObjectURL(url);
+    setStatus('EXPORT COMPLETE — WAV FILE SAVED');
+  } catch(e) {
+    setStatus('EXPORT FAILED — SEE CONSOLE');
+    console.error(e);
+  }
+  btnExport.disabled = false;
+});
+
+function audioBufferToWav(buffer) {
+  const numCh = buffer.numberOfChannels;
+  const sr = buffer.sampleRate;
+  const numFrames = buffer.length;
+  const bitsPerSample = 16;
+  const bytesPerSample = bitsPerSample / 8;
+  const blockAlign = numCh * bytesPerSample;
+  const byteRate = sr * blockAlign;
+  const dataSize = numFrames * blockAlign;
+  const wavBuffer = new ArrayBuffer(44 + dataSize);
+  const view = new DataView(wavBuffer);
+
+  function writeStr(o, s) { for (let i = 0; i < s.length; i++) view.setUint8(o + i, s.charCodeAt(i)); }
+  writeStr(0, 'RIFF');
+  view.setUint32(4, 36 + dataSize, true);
+  writeStr(8, 'WAVE');
+  writeStr(12, 'fmt ');
+  view.setUint32(16, 16, true);
+  view.setUint16(20, 1, true);
+  view.setUint16(22, numCh, true);
+  view.setUint32(24, sr, true);
+  view.setUint32(28, byteRate, true);
+  view.setUint16(32, blockAlign, true);
+  view.setUint16(34, bitsPerSample, true);
+  writeStr(36, 'data');
+  view.setUint32(40, dataSize, true);
+
+  let offset = 44;
+  for (let i = 0; i < numFrames; i++) {
+    for (let c = 0; c < numCh; c++) {
+      const sample = Math.max(-1, Math.min(1, buffer.getChannelData(c)[i]));
+      view.setInt16(offset, sample < 0 ? sample * 32768 : sample * 32767, true);
+      offset += 2;
+    }
+  }
+  return wavBuffer;
+}
+
+// ── RESIZE
+window.addEventListener('resize', () => {
+  if (audioBuffer) {
+    drawWaveform();
+    drawRuler();
+    updateLoopRegionUI();
+  }
+});
+</script>
+</body>
+</html>
