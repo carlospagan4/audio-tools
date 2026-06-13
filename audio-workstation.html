@@ -1,0 +1,2821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Crect%20width%3D%2232%22%20height%3D%2232%22%20rx%3D%224%22%20fill%3D%22%230a0a0c%22/%3E%3Crect%20x%3D%223%22%20y%3D%223%22%20width%3D%2226%22%20height%3D%2226%22%20rx%3D%223%22%20fill%3D%22none%22%20stroke%3D%22%2300e5ff%22%20stroke-width%3D%221.5%22/%3E%3Cpolygon%20points%3D%2216%2C6%2026%2C16%2016%2C26%206%2C16%22%20fill%3D%22none%22%20stroke%3D%22%2300e5ff%22%20stroke-width%3D%221.8%22%20stroke-linejoin%3D%22round%22/%3E%3Ccircle%20cx%3D%2216%22%20cy%3D%2216%22%20r%3D%222.5%22%20fill%3D%22%2300e5ff%22/%3E%3C/svg%3E">
+<title>SP-404 STUDIO — Multi-Channel Workstation</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+<style>
+:root {
+  --bg:#08080b; --sf:#0f0f14; --sf2:#141419; --sf3:#1a1a22; --sf4:#20202a;
+  --bd:rgba(255,255,255,0.07); --bd2:rgba(255,255,255,0.12);
+  --tx:#e8e8f0; --txm: #a0a0bc; --txd: #707090;
+  --accent:#ff3c6e;
+  --ch0:#00e5ff; --ch0d:rgba(0,229,255,0.12); --ch0b:rgba(0,229,255,0.28);
+  --ch1:#ff3c6e; --ch1d:rgba(255,60,110,0.12); --ch1b:rgba(255,60,110,0.28);
+  --ch2:#39ff95; --ch2d:rgba(57,255,149,0.12); --ch2b:rgba(57,255,149,0.28);
+  --ch3:#ffb347; --ch3d:rgba(255,179,71,0.12); --ch3b:rgba(255,179,71,0.28);
+}
+body{background:var(--bg);color:var(--tx);font-family:'Barlow',sans-serif;min-height:100vh;overflow-x:hidden;padding-top:var(--wf-nav-h)}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(255,60,110,0.015) 1px,transparent 1px),linear-gradient(90deg,rgba(255,60,110,0.015) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;top:-100%;left:0;right:0;height:180px;background:linear-gradient(transparent,rgba(255,60,110,0.025),transparent);animation:scan 10s linear infinite;pointer-events:none;z-index:0}
+@keyframes scan{to{top:100%}}
+.app{position:relative;z-index:1;max-width:1040px;margin:0 auto;padding:0 18px 80px}
+
+/* HEADER */
+header{padding:24px 0 18px;border-bottom:1px solid var(--bd);margin-bottom:22px;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:11px;letter-spacing:.35em;color:var(--accent);display:flex;align-items:center;gap:8px;text-transform:uppercase}
+.logo::before{content:'';display:inline-block;width:16px;height:2px;background:var(--accent);box-shadow:0 0 8px var(--accent)}
+.title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(1.8rem,4vw,2.8rem);letter-spacing:-.01em;line-height:1;color:var(--tx)}
+.title span{color:var(--accent)}
+.subtitle{font-size:11px;color:var(--txm);letter-spacing:.15em;text-transform:uppercase;font-family:'Share Tech Mono',monospace;margin-top:3px}
+.hdr-meta{text-align:right;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--txd);line-height:1.9}
+.hdr-meta strong{color:var(--accent)}
+
+/* CHANNEL HEADER BAR */
+.ch-count-bar{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.ch-count-label{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--txm);letter-spacing:.15em;text-transform:uppercase;margin-right:4px}
+.ch-count-btn{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:.1em;text-transform:uppercase;padding:7px 16px;border-radius:3px;cursor:pointer;border:1.5px solid var(--bd2);background:var(--sf2);color:var(--txm);transition:all .15s}
+.ch-count-btn.active{background:rgba(0,229,255,.1);border-color:var(--accent);color:var(--accent);box-shadow:0 0 10px rgba(0,229,255,.15)}
+.ch-count-btn:hover:not(.active){border-color:var(--bd2);color:var(--tx)}
+.all-transport{margin-left:auto;display:flex;gap:8px}
+.btn-all{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:.1em;text-transform:uppercase;padding:7px 18px;border-radius:3px;cursor:pointer;border:1.5px solid;transition:all .15s;display:flex;align-items:center;gap:6px}
+.btn-all-play{background:var(--accent);color:var(--bg);border-color:var(--accent);box-shadow:0 0 12px rgba(0,229,255,.2)}
+.btn-all-play:hover{background:#33ecff;box-shadow:0 0 20px rgba(0,229,255,.4)}
+.btn-all-stop{background:transparent;color:var(--txm);border-color:var(--bd2)}
+.btn-all-stop:hover{border-color:#ff3c6e;color:#ff3c6e}
+
+/* CHANNEL GRID */
+.channel-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:20px}
+.channel-grid.count-2 .ch-card:nth-child(3),
+.channel-grid.count-2 .ch-card:nth-child(4){display:none}
+
+/* CHANNEL CARD — base */
+.ch-card{background:var(--sf);border-radius:5px;overflow:hidden;border:1px solid var(--bd)}
+.ch-card[data-ch="0"]{--chcol:var(--ch0);--chd:var(--ch0d);--chb:var(--ch0b)}
+.ch-card[data-ch="1"]{--chcol:var(--ch1);--chd:var(--ch1d);--chb:var(--ch1b)}
+.ch-card[data-ch="2"]{--chcol:var(--ch2);--chd:var(--ch2d);--chb:var(--ch2b)}
+.ch-card[data-ch="3"]{--chcol:var(--ch3);--chd:var(--ch3d);--chb:var(--ch3b)}
+
+/* Channel header */
+.ch-hdr{padding:9px 12px;background:var(--sf2);border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:8px}
+.ch-dot{width:8px;height:8px;border-radius:50%;background:var(--chcol);box-shadow:0 0 8px var(--chcol);flex-shrink:0}
+.ch-name{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;letter-spacing:.1em;color:var(--chcol);text-transform:uppercase}
+.ch-hdr-right{margin-left:auto;display:flex;gap:6px;align-items:center}
+.ch-btn-mute,.ch-btn-solo{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.1em;padding:3px 8px;border-radius:2px;cursor:pointer;border:1px solid var(--bd2);background:none;color:var(--txm);transition:all .15s;text-transform:uppercase}
+.ch-btn-mute:hover{border-color:#ff3c6e;color:#ff3c6e}
+.ch-btn-mute.active{background:rgba(255,60,110,.15);border-color:#ff3c6e;color:#ff3c6e}
+.ch-btn-solo:hover{border-color:var(--chcol);color:var(--chcol)}
+.ch-btn-solo.active{background:var(--chd);border-color:var(--chcol);color:var(--chcol)}
+
+/* Drop zone */
+.ch-drop{padding:22px 12px;text-align:center;cursor:pointer;border-bottom:1px solid var(--bd);background:var(--sf2);transition:all .2s;position:relative}
+.ch-drop:hover,.ch-drop.drag-over{background:var(--chd);border-color:var(--chcol) !important}
+.ch-drop input{display:none}
+.ch-drop-icon{font-size:24px;display:block;margin-bottom:6px;opacity:.6}
+.ch-drop-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--tx);margin-bottom:4px}
+.ch-drop-sub{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--txm);letter-spacing:.08em}
+
+/* File bar */
+.ch-file-bar{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--sf2);border-bottom:1px solid var(--bd);flex-wrap:wrap}
+.ch-filename{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--chcol);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ch-filemeta{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--txm);white-space:nowrap}
+.ch-btn-clear{background:none;border:1px solid var(--bd2);color:var(--txm);font-family:'Share Tech Mono',monospace;font-size:9px;padding:3px 7px;border-radius:2px;cursor:pointer;transition:all .15s;text-transform:uppercase}
+.ch-btn-clear:hover{border-color:#ff3c6e;color:#ff3c6e}
+
+/* Waveform */
+.ch-wave-section{padding:10px 10px 4px;border-bottom:1px solid var(--bd)}
+.ch-wave-wrapper{position:relative;height:72px;background:var(--sf3);border:1px solid var(--bd);border-radius:2px;cursor:crosshair;overflow:hidden;user-select:none}
+.ch-wave-wrapper canvas{position:absolute;inset:0;width:100%;height:100%}
+.ch-loop-region{position:absolute;top:0;bottom:0;background:var(--chd);border-left:2px solid var(--chcol);border-right:2px solid var(--chcol);pointer-events:none;opacity:.8}
+.ch-lbl{position:absolute;top:3px;font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--chcol);white-space:nowrap;text-shadow:0 0 6px var(--chcol)}
+.ch-lbl.in{left:4px}.ch-lbl.out{right:4px}
+.ch-playhead{position:absolute;top:0;bottom:0;width:2px;background:#ff3c6e;box-shadow:0 0 6px #ff3c6e;pointer-events:none;transform:translateX(-50%)}
+.ch-ruler{height:14px;position:relative;margin-top:3px}
+.ch-ruler canvas{width:100%;height:100%}
+
+/* Loop controls */
+.ch-loop-ctrl{padding:8px 10px 4px;border-bottom:1px solid var(--bd)}
+.ch-loop-row{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.ch-pt-lbl{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--txm);text-transform:uppercase;width:20px;text-align:center}
+.ch-pt-lbl.in{color:var(--chcol)}.ch-pt-lbl.out{color:#ff3c6e}
+.ch-disp{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--tx);width:60px;text-align:center;flex-shrink:0}
+.ch-ts{-webkit-appearance:none;flex:1;height:3px;background:var(--sf3);border-radius:2px;outline:none;cursor:pointer;border:1px solid var(--bd)}
+.ch-ts.start::-webkit-slider-thumb{-webkit-appearance:none;width:11px;height:11px;border-radius:2px;background:var(--chcol);box-shadow:0 0 6px var(--chcol);cursor:pointer}
+.ch-ts.end::-webkit-slider-thumb{-webkit-appearance:none;width:11px;height:11px;border-radius:2px;background:#ff3c6e;box-shadow:0 0 6px #ff3c6e;cursor:pointer}
+.ch-dur-row{display:flex;align-items:center;gap:8px;padding-bottom:6px}
+.ch-dur-lbl{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--txm);text-transform:uppercase;width:24px}
+.ch-dur-val{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--chcol);width:60px}
+.ch-dur-track{flex:1;height:4px;background:var(--sf3);border-radius:2px;overflow:hidden;border:1px solid var(--bd)}
+.ch-dur-fill{height:100%;background:linear-gradient(90deg,var(--chcol),var(--accent));border-radius:2px;transition:width .1s;box-shadow:0 0 5px var(--chcol)}
+
+/* Params row */
+.ch-params{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:8px 10px;border-bottom:1px solid var(--bd)}
+.ch-param{display:flex;flex-direction:column;gap:3px;align-items:center}
+.ch-param-lbl{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--txm);text-transform:uppercase;letter-spacing:.1em}
+.ch-param-val{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--chcol)}
+.ch-param-s{-webkit-appearance:none;width:100%;height:3px;background:var(--sf3);border-radius:2px;outline:none;cursor:pointer;border:1px solid var(--bd)}
+.ch-param-s::-webkit-slider-thumb{-webkit-appearance:none;width:11px;height:11px;border-radius:2px;background:var(--chcol);box-shadow:0 0 5px var(--chcol);cursor:pointer}
+.ch-param-s.pitch::-webkit-slider-thumb{background:#a78bfa;box-shadow:0 0 5px #a78bfa}
+
+/* Per-channel filters */
+.ch-filters{padding:8px 10px;border-bottom:1px solid var(--bd);display:flex;flex-direction:column;gap:5px}
+.ch-filt-row{display:flex;align-items:center;gap:6px}
+.ch-filt-btn{font-family:'Share Tech Mono',monospace;font-size:9px;padding:3px 7px;border-radius:2px;border:1px solid var(--bd2);background:none;color:var(--txm);cursor:pointer;transition:all .15s;white-space:nowrap;text-transform:uppercase;width:52px;text-align:center}
+.ch-filt-btn.lp.active{border-color:var(--chcol);color:var(--chcol);background:var(--chd)}
+.ch-filt-btn.hp.active{border-color:#a78bfa;color:#a78bfa;background:rgba(167,139,250,.1)}
+.ch-filt-s{-webkit-appearance:none;flex:1;height:3px;background:var(--sf3);border-radius:2px;outline:none;cursor:pointer;border:1px solid var(--bd)}
+.ch-filt-s.lp::-webkit-slider-thumb{-webkit-appearance:none;width:11px;height:11px;border-radius:2px;background:var(--chcol);box-shadow:0 0 5px var(--chcol);cursor:pointer}
+.ch-filt-s.hp::-webkit-slider-thumb{-webkit-appearance:none;width:11px;height:11px;border-radius:2px;background:#a78bfa;box-shadow:0 0 5px #a78bfa;cursor:pointer}
+.ch-filt-val{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--txm);width:48px;text-align:right;white-space:nowrap}
+
+/* Per-channel 3-band EQ (collapsible) */
+.ch-eq-header{display:flex;align-items:center;gap:8px;padding:7px 10px;cursor:pointer;background:var(--sf2);border-bottom:1px solid var(--bd)}
+.ch-eq-header:hover{background:var(--sf3)}
+.ch-eq-toggle-btn{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--txm);letter-spacing:.1em;text-transform:uppercase;flex:1}
+.ch-eq-arrow{font-size:8px;color:var(--txm);transition:transform .2s}
+.ch-eq-arrow.open{transform:rotate(90deg)}
+.ch-eq-body{display:none;padding:8px 10px;border-bottom:1px solid var(--bd);gap:8px}
+.ch-eq-body.open{display:flex}
+.ch-eq-band{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
+.ch-eq-lbl{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--txm);text-transform:uppercase}
+.ch-eq-s{-webkit-appearance:none;width:100%;height:3px;background:var(--sf3);border-radius:2px;outline:none;cursor:pointer;border:1px solid var(--bd)}
+.ch-eq-s::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;border-radius:2px;background:var(--chcol);cursor:pointer}
+.ch-eq-val{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--txm)}
+.ch-eq-reset{font-family:'Share Tech Mono',monospace;font-size:8px;padding:2px 6px;border-radius:2px;border:1px solid var(--bd2);background:none;color:var(--txd);cursor:pointer;letter-spacing:.08em;text-transform:uppercase;transition:all .15s;margin-left:auto}
+.ch-eq-reset:hover{color:var(--txm);border-color:var(--bd2)}
+
+/* Loop count */
+.ch-loop-sec{display:flex;align-items:center;gap:8px;padding:7px 10px;border-bottom:1px solid var(--bd);background:var(--sf2)}
+.ch-loop-lbl{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--txm);text-transform:uppercase;letter-spacing:.1em}
+.ch-count-btns{display:flex;gap:4px}
+.ch-cnt-btn{font-family:'Share Tech Mono',monospace;font-size:10px;padding:3px 7px;border-radius:2px;border:1px solid var(--bd2);background:var(--sf3);color:var(--txm);cursor:pointer;transition:all .15s;text-transform:uppercase}
+.ch-cnt-btn.active{background:var(--chd);border-color:var(--chcol);color:var(--chcol)}
+.ch-loop-count{margin-left:auto;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--txm)}
+.ch-loop-count strong{color:var(--chcol);font-size:14px}
+
+/* Channel transport */
+.ch-transport{display:flex;gap:6px;padding:10px;align-items:center;flex-wrap:wrap}
+.ch-btn{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:.1em;text-transform:uppercase;padding:8px 14px;border-radius:3px;cursor:pointer;border:1.5px solid;transition:all .15s;display:flex;align-items:center;gap:5px;flex-shrink:0}
+.ch-btn-play{background:var(--chcol);color:var(--bg);border-color:var(--chcol)}
+.ch-btn-play:hover{filter:brightness(1.2);transform:translateY(-1px)}
+.ch-btn-play.playing{background:transparent;color:var(--chcol)}
+.ch-btn-stop{background:transparent;color:var(--txm);border-color:var(--bd2)}
+.ch-btn-stop:hover{border-color:#ff3c6e;color:#ff3c6e}
+.ch-btn-export{background:transparent;color:#a78bfa;border-color:#a78bfa;font-size:11px;padding:7px 10px;margin-left:auto}
+.ch-btn-export:hover{background:rgba(167,139,250,.1)}
+.ch-btn-export:disabled{opacity:.3;cursor:not-allowed;transform:none}
+
+/* ── MASTER SECTION ── */
+.master-section{display:flex;flex-direction:column;gap:14px}
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:5px;overflow:hidden}
+.card-hdr{display:flex;align-items:center;gap:10px;padding:10px 16px;background:var(--sf2);border-bottom:1px solid var(--bd)}
+.card-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.card-dot.cyan{background:var(--ch0);box-shadow:0 0 6px var(--ch0)}
+.card-dot.green{background:var(--ch2);box-shadow:0 0 6px var(--ch2)}
+.card-dot.orange{background:var(--ch3);box-shadow:0 0 6px var(--ch3)}
+.card-dot.purple{background:#a78bfa;box-shadow:0 0 6px #a78bfa}
+.card-dot.pink{background:var(--ch1);box-shadow:0 0 6px var(--ch1)}
+.card-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.1em;color:var(--tx);text-transform:uppercase}
+.card-line{flex:1;height:1px;background:var(--bd)}
+.card-action{font-family:'Share Tech Mono',monospace;font-size:9px;padding:3px 8px;border-radius:2px;border:1px solid var(--bd2);background:none;color:var(--txm);cursor:pointer;letter-spacing:.08em;text-transform:uppercase;transition:all .15s}
+.card-action:hover{color:var(--tx);border-color:var(--bd2)}
+
+/* MASTER EQ */
+.eq-grid{display:flex;align-items:flex-end;gap:0;padding:16px}
+.eq-band{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:0 4px}
+.eq-band-lbl{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:var(--tx);letter-spacing:.05em}
+.eq-band-freq{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--txm)}
+.eq-slider-wrap{position:relative;height:100px;display:flex;align-items:center;justify-content:center;width:100%}
+.eq-zero{position:absolute;left:0;right:0;height:1px;background:var(--bd2);top:50%}
+.eq-vs{-webkit-appearance:none;writing-mode:vertical-lr;direction:rtl;width:100%;height:100px;background:transparent;cursor:pointer;outline:none}
+.eq-vs::-webkit-slider-runnable-track{width:4px;background:var(--sf3);border-radius:2px;border:1px solid var(--bd)}
+.eq-vs::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:2px;cursor:pointer;border:none;margin-left:-5px}
+.eq-vs.bass::-webkit-slider-thumb{background:#ffb347;box-shadow:0 0 6px #ffb347}
+.eq-vs.lomid::-webkit-slider-thumb{background:#39ff95;box-shadow:0 0 6px #39ff95}
+.eq-vs.mid::-webkit-slider-thumb{background:var(--ch0);box-shadow:0 0 6px var(--ch0)}
+.eq-vs.himid::-webkit-slider-thumb{background:#a78bfa;box-shadow:0 0 6px #a78bfa}
+.eq-vs.hi::-webkit-slider-thumb{background:#ff3c6e;box-shadow:0 0 6px #ff3c6e}
+.eq-band-val{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--txm)}
+
+/* MASTER FILTERS */
+.filters-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:14px 16px}
+.filt-unit{background:var(--sf2);border:1px solid var(--bd);border-radius:3px;padding:10px 12px}
+.filt-unit-hdr{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.filt-toggle{font-family:'Share Tech Mono',monospace;font-size:10px;padding:3px 9px;border-radius:2px;border:1px solid var(--bd2);background:none;color:var(--txm);cursor:pointer;transition:all .15s;text-transform:uppercase;letter-spacing:.1em}
+.filt-toggle.lp.active{border-color:var(--ch0);color:var(--ch0);background:var(--ch0d)}
+.filt-toggle.hp.active{border-color:#a78bfa;color:#a78bfa;background:rgba(167,139,250,.1)}
+.filt-toggle.bp.active{border-color:var(--ch2);color:var(--ch2);background:var(--ch2d)}
+.filt-unit-lbl{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:var(--txm);text-transform:uppercase}
+.filt-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.filt-row-lbl{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--txm);text-transform:uppercase;width:28px}
+.filt-s{-webkit-appearance:none;flex:1;height:3px;background:var(--sf3);border-radius:2px;outline:none;cursor:pointer;border:1px solid var(--bd)}
+.filt-s.lp::-webkit-slider-thumb{-webkit-appearance:none;width:11px;height:11px;border-radius:2px;background:var(--ch0);cursor:pointer}
+.filt-s.hp::-webkit-slider-thumb{-webkit-appearance:none;width:11px;height:11px;border-radius:2px;background:#a78bfa;cursor:pointer}
+.filt-s.bp::-webkit-slider-thumb{-webkit-appearance:none;width:11px;height:11px;border-radius:2px;background:var(--ch2);cursor:pointer}
+.filt-val{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--txm);width:48px;text-align:right;white-space:nowrap}
+
+/* MASTER FX */
+.fx-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:14px}
+.fx-unit{background:var(--sf2);border:1px solid var(--bd);border-radius:3px;padding:10px 12px;position:relative}
+.fx-unit-hdr{display:flex;align-items:center;gap:7px;margin-bottom:10px}
+.fx-toggle{font-family:'Share Tech Mono',monospace;font-size:9px;padding:3px 8px;border-radius:2px;border:1px solid var(--bd2);background:none;color:var(--txm);cursor:pointer;transition:all .15s;text-transform:uppercase;letter-spacing:.08em}
+.fx-toggle.active.rv{border-color:var(--ch0);color:var(--ch0);background:var(--ch0d)}
+.fx-toggle.active.dl{border-color:#ffb347;color:#ffb347;background:rgba(255,179,71,.1)}
+.fx-toggle.active.ch{border-color:var(--ch2);color:var(--ch2);background:var(--ch2d)}
+.fx-toggle.active.di{border-color:#ff3c6e;color:#ff3c6e;background:var(--ch1d)}
+.fx-toggle.active.tr{border-color:#a78bfa;color:#a78bfa;background:rgba(167,139,250,.1)}
+.fx-toggle.active.bc{border-color:#ffb347;color:#ffb347;background:rgba(255,179,71,.1)}
+.fx-unit-name{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:var(--tx);text-transform:uppercase;letter-spacing:.05em}
+.fx-row{display:flex;align-items:center;gap:7px;margin-bottom:6px}
+.fx-row-lbl{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--txm);text-transform:uppercase;width:36px}
+.fx-s{-webkit-appearance:none;flex:1;height:3px;background:var(--sf3);border-radius:2px;outline:none;cursor:pointer;border:1px solid var(--bd)}
+.fx-s::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;border-radius:2px;cursor:pointer;border:none}
+.fx-s.rv::-webkit-slider-thumb{background:var(--ch0);box-shadow:0 0 4px var(--ch0)}
+.fx-s.dl::-webkit-slider-thumb{background:#ffb347;box-shadow:0 0 4px #ffb347}
+.fx-s.ch::-webkit-slider-thumb{background:var(--ch2);box-shadow:0 0 4px var(--ch2)}
+.fx-s.di::-webkit-slider-thumb{background:#ff3c6e;box-shadow:0 0 4px #ff3c6e}
+.fx-s.tr::-webkit-slider-thumb{background:#a78bfa;box-shadow:0 0 4px #a78bfa}
+.fx-s.bc::-webkit-slider-thumb{background:#ffb347;box-shadow:0 0 4px #ffb347}
+.fx-val{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--txm);width:36px;text-align:right;white-space:nowrap}
+
+/* UTILITIES */
+.utils-row{display:flex;align-items:center;gap:16px;padding:12px 16px;flex-wrap:wrap;border-top:1px solid var(--bd)}
+.util-cell{display:flex;align-items:center;gap:8px;background:var(--sf2);border:1px solid var(--bd);border-radius:3px;padding:8px 12px}
+.util-lbl{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--txm);text-transform:uppercase;letter-spacing:.1em}
+.bpm-disp{font-family:'Share Tech Mono',monospace;font-size:18px;color:var(--ch0);min-width:50px}
+.btn-detect{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:5px 12px;border-radius:2px;border:1px solid var(--bd2);background:var(--sf3);color:var(--txm);cursor:pointer;transition:all .15s}
+.btn-detect:hover:not(:disabled){border-color:var(--ch0);color:var(--ch0)}
+.btn-detect:disabled{opacity:.3;cursor:not-allowed}
+.btn-mono{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:5px 12px;border-radius:2px;border:1px solid var(--bd2);background:var(--sf3);color:var(--txm);cursor:pointer;transition:all .15s}
+.btn-mono:hover{border-color:var(--ch2);color:var(--ch2)}
+.master-vol-row{display:flex;align-items:center;gap:8px;margin-left:auto}
+.master-vol-lbl{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--txm);text-transform:uppercase}
+.master-vol-s{-webkit-appearance:none;width:100px;height:3px;background:var(--sf3);border-radius:2px;outline:none;cursor:pointer;border:1px solid var(--bd)}
+.master-vol-s::-webkit-slider-thumb{-webkit-appearance:none;width:11px;height:11px;border-radius:2px;background:var(--ch0);box-shadow:0 0 5px var(--ch0);cursor:pointer}
+.master-vol-val{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--ch0);width:32px}
+
+/* STATUS */
+.status-bar{display:flex;align-items:center;gap:10px;padding:8px 16px;background:var(--sf2);border-top:1px solid var(--bd);font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--txd);letter-spacing:.08em}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--txd);flex-shrink:0;transition:all .3s}
+.status-dot.active{background:var(--ch0);box-shadow:0 0 8px var(--ch0);animation:pulse 1.2s ease-in-out infinite}
+.status-dot.err{background:#ff3c6e;box-shadow:0 0 8px #ff3c6e}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(.85)}}
+#statusMsg{color:var(--txm)}
+.hint-bar{padding:8px 16px;border-top:1px solid var(--bd);font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--txd);letter-spacing:.08em;text-align:center;line-height:1.8}
+.hint-bar strong{color:var(--txm)}
+
+/* ── PER-CHANNEL FX ── */
+.ch-pfx-hdr{display:flex;align-items:center;gap:8px;padding:7px 10px;cursor:pointer;background:var(--sf2);border-bottom:1px solid var(--bd)}
+.ch-pfx-hdr:hover{background:var(--sf3)}
+.ch-pfx-hdr-lbl{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--txm);letter-spacing:.1em;text-transform:uppercase;flex:1}
+.ch-pfx-arrow{font-size:8px;color:var(--txm);transition:transform .2s}
+.ch-pfx-arrow.open{transform:rotate(90deg)}
+.ch-pfx-body{display:none;padding:8px 10px;border-bottom:1px solid var(--bd);gap:6px;flex-direction:column}
+.ch-pfx-body.open{display:flex}
+.ch-pfx-unit{background:var(--sf3);border:1px solid var(--bd);border-radius:3px;padding:7px 9px}
+.ch-pfx-unit-hdr{display:flex;align-items:center;gap:7px;margin-bottom:6px}
+.ch-pfx-toggle{font-family:'Share Tech Mono',monospace;font-size:8px;padding:2px 7px;border-radius:2px;border:1px solid var(--bd2);background:none;color:var(--txm);cursor:pointer;transition:all .15s;text-transform:uppercase;letter-spacing:.08em}
+.ch-pfx-toggle.active.dly{border-color:#ffb347;color:#ffb347;background:rgba(255,179,71,.1)}
+.ch-pfx-toggle.active.cho{border-color:var(--ch2);color:var(--ch2);background:var(--ch2d)}
+.ch-pfx-toggle.active.dis{border-color:var(--ch1);color:var(--ch1);background:var(--ch1d)}
+.ch-pfx-toggle.active.trm{border-color:#a78bfa;color:#a78bfa;background:rgba(167,139,250,.1)}
+.ch-pfx-name{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:var(--tx);text-transform:uppercase}
+.ch-pfx-row{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.ch-pfx-row-lbl{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--txm);text-transform:uppercase;width:32px}
+.ch-pfx-s{-webkit-appearance:none;flex:1;height:3px;background:var(--sf2);border-radius:2px;outline:none;cursor:pointer;border:1px solid var(--bd)}
+.ch-pfx-s.dly::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;border-radius:2px;background:#ffb347;cursor:pointer}
+.ch-pfx-s.cho::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;border-radius:2px;background:var(--ch2);cursor:pointer}
+.ch-pfx-s.dis::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;border-radius:2px;background:var(--ch1);cursor:pointer}
+.ch-pfx-s.trm::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;border-radius:2px;background:#a78bfa;cursor:pointer}
+.ch-pfx-val{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--txm);width:36px;text-align:right;white-space:nowrap}
+
+/* ── DRUM MACHINE ── */
+.seq-section{margin-top:14px;margin-bottom:28px}
+.seq-card{background:var(--sf);border:1px solid var(--bd);border-radius:5px;overflow:hidden}
+.seq-toggle-hdr{display:flex;align-items:center;gap:12px;padding:10px 16px;background:var(--sf2);border-bottom:1px solid var(--bd);cursor:pointer}
+.seq-toggle-hdr:hover{background:var(--sf3)}
+.seq-hdr-dot{width:7px;height:7px;border-radius:50%;background:#ff3c6e;box-shadow:0 0 6px #ff3c6e;flex-shrink:0}
+.seq-hdr-dot.playing{animation:pulse 0.8s ease-in-out infinite}
+.seq-hdr-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.1em;color:var(--tx);text-transform:uppercase;flex:1}
+.seq-hdr-arrow{font-size:8px;color:var(--txm);transition:transform .2s}
+.seq-hdr-arrow.open{transform:rotate(90deg)}
+.seq-body{display:none}
+.seq-body.open{display:block}
+.seq-controls{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--bd);flex-wrap:wrap}
+.seq-bpm-block{background:var(--sf2);border:1px solid var(--bd);border-radius:3px;padding:7px 12px;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:80px}
+.seq-bpm-lbl{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:.2em;color:var(--txm);text-transform:uppercase}
+.seq-bpm-val{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:2rem;color:#ff3c6e;line-height:1;text-shadow:0 0 16px rgba(255,60,110,.4);cursor:default}
+.seq-bpm-adj{display:flex;gap:3px}
+.seq-bpm-btn{background:var(--sf3);border:1px solid var(--bd2);color:var(--txm);font-size:11px;width:22px;height:18px;cursor:pointer;border-radius:2px;transition:all .1s;display:flex;align-items:center;justify-content:center}
+.seq-bpm-btn:hover{border-color:#ff3c6e;color:#ff3c6e}
+.seq-bpm-r{-webkit-appearance:none;width:60px;height:3px;background:var(--sf3);border-radius:2px;outline:none;cursor:pointer;border:1px solid var(--bd)}
+.seq-bpm-r::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;border-radius:2px;background:#ff3c6e;cursor:pointer}
+.seq-transport{display:flex;flex-direction:column;gap:6px}
+.seq-trow{display:flex;align-items:center;gap:7px}
+.seq-btn{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:.1em;text-transform:uppercase;padding:8px 16px;border-radius:3px;cursor:pointer;border:1.5px solid;transition:all .15s;display:flex;align-items:center;gap:5px}
+.seq-btn-play{background:#ff3c6e;color:var(--bg);border-color:#ff3c6e}
+.seq-btn-play:hover{background:#ff6b8a}
+.seq-btn-play.on{background:transparent;color:#ff3c6e}
+.seq-btn-stop{background:transparent;color:var(--txm);border-color:var(--bd2)}
+.seq-btn-stop:hover{border-color:#ff3c6e;color:#ff3c6e}
+.seq-tap-btn{background:transparent;color:var(--txm);border:1px solid var(--bd2);font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;padding:5px 10px;border-radius:2px;cursor:pointer;transition:all .1s}
+.seq-tap-btn:hover{border-color:#ff3c6e;color:#ff3c6e}
+.seq-beat-dots{display:flex;gap:3px;align-items:center}
+.seq-bd{border-radius:50%;background:var(--bd2);transition:background .04s,box-shadow .04s;flex-shrink:0}
+.seq-bd.q{width:8px;height:8px}
+.seq-bd.e{width:5px;height:5px}
+.seq-bd.lit.q{background:#ff8c00;box-shadow:0 0 10px #ff8c00}
+.seq-bd.lit.e{background:#ffb347;box-shadow:0 0 6px #ffb347}
+.seq-settings{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-left:auto}
+.seq-si{display:flex;align-items:center;gap:7px}
+.seq-sl{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--txm);letter-spacing:.15em;text-transform:uppercase;white-space:nowrap}
+.seq-sv{font-family:'Share Tech Mono',monospace;font-size:9px;color:#ff3c6e;min-width:26px;text-align:right}
+.seq-mr{-webkit-appearance:none;width:64px;height:3px;background:var(--sf3);border-radius:2px;outline:none;cursor:pointer;border:1px solid var(--bd)}
+.seq-mr::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;border-radius:2px;background:#ff3c6e;cursor:pointer}
+.seq-seg{display:flex;gap:3px}
+.seq-seg-btn{background:var(--sf3);border:1px solid var(--bd2);color:var(--txm);font-family:'Share Tech Mono',monospace;font-size:9px;padding:3px 7px;cursor:pointer;border-radius:2px;transition:all .12s}
+.seq-seg-btn.on{background:rgba(255,60,110,.12);border-color:#ff3c6e;color:#ff3c6e}
+.seq-track-panel{background:var(--sf)}
+.seq-trk{display:flex;align-items:stretch;height:48px;border-bottom:1px solid var(--bd);transition:opacity .15s}
+.seq-trk:last-child{border-bottom:none}
+.seq-trk.muted{opacity:.3}
+.seq-tm{width:160px;flex-shrink:0;display:flex;align-items:center;gap:5px;padding:0 9px;border-right:1px solid var(--bd);background:var(--sf2)}
+.seq-tc{width:3px;align-self:stretch;margin:6px 0;border-radius:2px;flex-shrink:0}
+.seq-tname{flex:1;min-width:0;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.05em;color:var(--tx);text-transform:uppercase;background:none;border:1px solid transparent;border-radius:2px;padding:2px 3px;cursor:pointer;transition:all .15s;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.seq-tname:hover{border-color:var(--bd2)}
+.seq-tname:focus{outline:none;border-color:#ff3c6e}
+.seq-tbtns{display:flex;gap:3px;flex-shrink:0}
+.seq-tb{width:20px;height:20px;border-radius:2px;border:1px solid var(--bd2);background:var(--sf3);color:var(--txm);font-family:'Share Tech Mono',monospace;font-size:7px;cursor:pointer;transition:all .1s;display:flex;align-items:center;justify-content:center}
+.seq-tb.ld{color:#ff3c6e;border-color:rgba(255,60,110,.4)}
+.seq-tb.ld:hover{background:rgba(255,60,110,.15)}
+.seq-tb.M.on{background:rgba(255,60,110,.18);border-color:#ff3c6e;color:#ff3c6e}
+.seq-tb.S.on{background:rgba(125,211,252,.18);border-color:#7dd3fc;color:#7dd3fc}
+.seq-tb:not(.ld):hover{border-color:var(--bd2);background:var(--bd)}
+.seq-tvol{width:44px;flex-shrink:0;display:flex;align-items:center;border-right:1px solid var(--bd);background:var(--sf2);padding:0 7px}
+.seq-vr{-webkit-appearance:none;width:100%;height:3px;background:var(--sf3);border-radius:2px;outline:none;cursor:pointer;border:1px solid var(--bd)}
+.seq-vr::-webkit-slider-thumb{-webkit-appearance:none;width:9px;height:9px;border-radius:1px;background:var(--txm);cursor:pointer}
+.seq-grid{flex:1;display:flex;align-items:center;gap:5px;padding:0 10px;overflow:hidden}
+.seq-grp{flex:1;display:flex;gap:2px}
+.seq-grp.hide{display:none}
+.seq-sb{flex:1;min-width:0;height:30px;border-radius:2px;border:1px solid var(--bd2);background:var(--sf3);cursor:pointer;transition:background .07s,border-color .07s,transform .05s,filter .05s}
+.seq-sb:hover:not(.on){background:var(--bd2)}
+.seq-sb.on{box-shadow:0 0 6px rgba(255,60,110,.2)}
+.seq-sb.now{filter:brightness(2) saturate(1.4);transform:scale(0.85);z-index:1}
+.seq-add-row{height:36px;display:flex;align-items:center;justify-content:center;border-top:1px solid var(--bd);background:var(--sf);cursor:pointer;color:var(--txd);font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;gap:7px;transition:all .15s}
+.seq-add-row:hover{background:var(--sf2);color:#ff3c6e}
+
+/* Deco */
+.waveform-deco{position:fixed;bottom:0;left:0;right:0;height:50px;opacity:.05;pointer-events:none;z-index:0;display:flex;align-items:flex-end;gap:2px;padding:0 6px;overflow:hidden}
+.waveform-deco span{flex:1;background:var(--ch0);border-radius:1px 1px 0 0;animation:wdeco 2s ease-in-out infinite;animation-delay:calc(var(--i)*0.06s)}
+@keyframes wdeco{0%,100%{transform:scaleY(.4)}50%{transform:scaleY(1)}}
+
+@media(max-width:700px){
+  .channel-grid{grid-template-columns:1fr}
+  .channel-grid.count-2 .ch-card:nth-child(3),
+  .channel-grid.count-2 .ch-card:nth-child(4){display:none}
+  .fx-grid{grid-template-columns:repeat(2,1fr)}
+  .filters-grid{grid-template-columns:1fr}
+}
+
+
+/* ── WAVEFORM NAV (inline — works without style.css) ── */
+:root { --wf-nav-h: 48px; }
+.wf-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+  height: var(--wf-nav-h);
+  background: rgba(8,8,11,0.97);
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  display: flex; align-items: center;
+  padding: 0 16px;
+  backdrop-filter: blur(14px);
+}
+[data-theme="light"] .wf-nav {
+  background: rgba(242,242,245,0.97);
+  border-bottom-color: #d0d0dc;
+}
+.wf-nav-logo {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 14px;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: #00e5ff; margin-right: 20px;
+  display: flex; align-items: center; gap: 7px;
+  text-decoration: none; white-space: nowrap; flex-shrink: 0;
+}
+.wf-nav-logo-icon {
+  width: 20px; height: 20px;
+  border: 2px solid #00e5ff; border-radius: 3px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; line-height: 1;
+}
+.wf-nav-tools {
+  display: flex; align-items: center;
+  overflow-x: auto; flex: 1;
+  scrollbar-width: none;
+}
+.wf-nav-tools::-webkit-scrollbar { display: none; }
+.wf-nav-item {
+  display: flex; align-items: center; gap: 5px;
+  padding: 0 11px; height: var(--wf-nav-h);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600; font-size: 11px;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: rgba(255,255,255,0.32);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+  white-space: nowrap;
+}
+[data-theme="light"] .wf-nav-item { color: rgba(0,0,0,0.4); }
+.wf-nav-item:hover {
+  color: #ffffff;
+  border-bottom-color: rgba(255,255,255,0.25);
+  background: rgba(255,255,255,0.05);
+}
+[data-theme="light"] .wf-nav-item:hover {
+  color: #1a1a2e;
+  border-bottom-color: #b8b8c8;
+  background: rgba(0,0,0,0.04);
+}
+.wf-nav-item.wf-active-cyan   { color:#00e5ff; border-bottom-color:#00e5ff; background:rgba(0,229,255,0.07); }
+.wf-nav-item.wf-active-green  { color:#39d98a; border-bottom-color:#39d98a; background:rgba(57,217,138,0.07); }
+.wf-nav-item.wf-active-red    { color:#ff3c6e; border-bottom-color:#ff3c6e; background:rgba(255,60,110,0.07); }
+.wf-nav-item.wf-active-amber  { color:#ff8c00; border-bottom-color:#ff8c00; background:rgba(255,140,0,0.07); }
+.wf-nav-item.wf-active-violet { color:#c084fc; border-bottom-color:#c084fc; background:rgba(192,132,252,0.07); }
+.wf-nav-item.wf-active-pink   { color:#ec4899; border-bottom-color:#ec4899; background:rgba(236,72,153,0.07); }
+.wf-nav-item.wf-active-orange { color:#f97316; border-bottom-color:#f97316; background:rgba(249,115,22,0.07); }
+.wf-nav-item.wf-active-gold   { color:#f5c518; border-bottom-color:#f5c518; background:rgba(245,197,24,0.07); }
+.wf-nav-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: currentColor; opacity: 0.45; flex-shrink: 0;
+}
+.wf-nav-item:not([class*="wf-active"]) .wf-nav-dot { opacity: 0.22; }
+.wf-theme-btn {
+  flex-shrink: 0; margin-left: 8px;
+  width: 30px; height: 30px;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 3px; background: transparent;
+  color: rgba(255,255,255,0.32);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; line-height: 1; transition: all 0.18s;
+}
+[data-theme="light"] .wf-theme-btn {
+  border-color: #d0d0dc; color: #52526e;
+}
+.wf-theme-btn:hover { border-color: #00e5ff; color: #00e5ff; }
+/* ── END NAV ── */
+
+/* ── HEADER EYEBROW UPDATE ── */
+.logo::before { display: none !important; }
+.logo {
+  font-family: 'Share Tech Mono', monospace !important;
+  font-size: 10px !important;
+  letter-spacing: 0.2em !important;
+  opacity: 0.75;
+}
+
+/* ── LIGHT THEME (inline — works without style.css) ─────────── */
+[data-theme="light"] {
+  --bg:       #f2f2f5;
+  --surface:  #ffffff;
+  --surface2: #eaeaef;
+  --surface3: #e2e2ea;
+  --border:   #d0d0dc;
+  --border2:  #b8b8c8;
+  --text:       #1a1a2e;
+  --text-muted: #44445a;
+  --text-dim:   #707090;
+  /* workstation variable aliases */
+  --tx:#1a1a2e; --txm:#44445a; --txd:#707090;
+  --sf:#ffffff; --sf2:#eaeaef; --sf3:#e2e2ea; --sf4:#d8d8e4;
+  --bd:rgba(0,0,0,0.1); --bd2:rgba(0,0,0,0.15);
+}
+[data-theme="light"] body {
+  background: var(--bg);
+  color: var(--text);
+}
+[data-theme="light"] body::before {
+  background-image:
+    linear-gradient(rgba(0,0,40,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,40,0.04) 1px, transparent 1px);
+}
+[data-theme="light"] body::after { opacity: 0; }
+
+/* Nav active — darker for light bg readability */
+[data-theme="light"] .wf-nav-item.wf-active-cyan   { color:#007a90; background:rgba(0,122,144,0.1); border-bottom-color:#007a90; }
+[data-theme="light"] .wf-nav-item.wf-active-green  { color:#1a7a4a; background:rgba(26,122,74,0.1); border-bottom-color:#1a7a4a; }
+[data-theme="light"] .wf-nav-item.wf-active-red    { color:#c0103a; background:rgba(192,16,58,0.1); border-bottom-color:#c0103a; }
+[data-theme="light"] .wf-nav-item.wf-active-amber  { color:#a05000; background:rgba(160,80,0,0.1); border-bottom-color:#a05000; }
+[data-theme="light"] .wf-nav-item.wf-active-violet { color:#7020c0; background:rgba(112,32,192,0.1); border-bottom-color:#7020c0; }
+[data-theme="light"] .wf-nav-item.wf-active-pink   { color:#b01860; background:rgba(176,24,96,0.1); border-bottom-color:#b01860; }
+[data-theme="light"] .wf-nav-item.wf-active-orange { color:#c04800; background:rgba(192,72,0,0.1); border-bottom-color:#c04800; }
+[data-theme="light"] .wf-nav-item.wf-active-gold   { color:#886200; background:rgba(136,98,0,0.1); border-bottom-color:#886200; }
+
+/* ── BEBAS NEUE for tool titles ─────────────────────── */
+.title, h1.title,
+.hero-title,
+.page-title,
+.card-name {
+  font-family: 'Bebas Neue', 'Barlow Condensed', sans-serif;
+}
+.wf-nav-logo {
+  font-family: 'Bebas Neue', 'Barlow Condensed', sans-serif !important;
+  letter-spacing: 0.18em !important;
+}
+
+
+/* ─── Stage 2: Legibility — workstation ─── */
+/* Channel header controls */
+.ch-btn-mute, .ch-btn-solo  { font-size: 10px; }
+.ch-btn-clear, .ch-filemeta { font-size: 10px; }
+.ch-drop-sub                { font-size: 10px; }
+/* Loop / param labels */
+.ch-pt-lbl, .ch-dur-lbl, .ch-param-lbl { font-size: 10px; }
+/* Filter + EQ labels */
+.ch-filt-btn, .ch-filt-val  { font-size: 10px; }
+.ch-eq-toggle-btn           { font-size: 10px; }
+.ch-eq-lbl, .ch-eq-val      { font-size: 10px; }
+.ch-eq-arrow                { font-size: 10px; }
+/* Master section */
+.eq-band-freq, .eq-band-val { font-size: 10px; }
+.filt-row-lbl, .filt-val    { font-size: 10px; }
+.fx-row-lbl                 { font-size: 10px; }
+.card-action                { font-size: 10px; }
+.hdr-meta                   { font-size: 11px; line-height: 2; }
+/* Drum section inside workstation */
+.seq-sl, .seq-sv            { font-size: 11px; }
+.seq-bpm-lbl                { font-size: 10px; }
+.seq-bpm-val                { font-size: 2rem; }
+/* Values and displays */
+.ch-disp                    { font-size: 11px; }
+.ch-filename                { font-size: 12px; }
+.ch-loop-lbl                { font-size: 10px; }
+.ch-cnt-btn                 { font-size: 11px; }
+.ch-loop-count              { font-size: 11px; }
+
+/* ─── Stage 2: Shared legibility ─── */
+.logo-group .subtitle,
+.subtitle                   { font-size: 12px; line-height: 1.6; }
+.header-meta, .hdr-meta     { font-size: 11px; line-height: 2; }
+p, .card-desc               { line-height: 1.7; }
+
+
+/* ── Monospace legibility: faux-bold (Share Tech Mono has no bold weight) ── */
+.logo, .logo-group .logo,
+[class*="-lbl"], [class*="-label"],
+[class*="-meta"], [class*="-sub"]:not(p),
+.wf-label, .panel-label, .card-label,
+.sl, .sv, .bpm-lbl, .seq-sl, .seq-sv, .seq-bpm-lbl,
+.ctrl-label, .wf-eyebrow, .tool-eyebrow,
+.ch-pt-lbl, .ch-dur-lbl, .ch-param-lbl,
+.ch-filt-val, .ch-eq-val, .ch-eq-lbl,
+.card-num, .card-tag, .card-meta,
+.file-meta, .footer-label,
+.flabel, .pedal-item-meta, .effect-row-meta {
+  -webkit-font-smoothing: antialiased;
+  font-weight: 700;
+}
+
+
+/* ── Chord-randomizer button pattern applied to workstation ── */
+.ch-count-btn {
+  background: var(--sf2) !important; border: 1px solid var(--bd2) !important;
+  color: var(--txm) !important; transition: all .15s !important;
+}
+.ch-count-btn:hover:not(.active) { border-color: var(--accent) !important; color: var(--accent) !important; }
+.ch-count-btn.active {
+  background: rgba(255,60,110,0.1) !important; border-color: var(--accent) !important;
+  color: var(--accent) !important; box-shadow: 0 0 10px rgba(255,60,110,0.15) !important;
+}
+.ch-btn-mute { background: var(--sf2) !important; }
+.ch-btn-mute:hover:not(.active) { border-color: #ff3c6e !important; color: #ff3c6e !important; }
+.ch-btn-mute.active { background: rgba(255,60,110,0.1) !important; border-color: #ff3c6e !important; color: #ff3c6e !important; }
+.ch-btn-solo { background: var(--sf2) !important; }
+.ch-btn-solo:hover:not(.active) { border-color: var(--chcol) !important; color: var(--chcol) !important; }
+.ch-btn-solo.active { background: var(--chd) !important; border-color: var(--chcol) !important; color: var(--chcol) !important; }
+.ch-filt-btn { background: var(--sf2) !important; }
+.ch-filt-btn:hover:not(.active) { border-color: var(--chcol) !important; color: var(--chcol) !important; }
+.ch-filt-btn.active.lp { background: var(--chd) !important; border-color: var(--chcol) !important; color: var(--chcol) !important; }
+.fx-toggle { background: var(--sf2) !important; }
+.fx-toggle:hover:not(.active) { border-color: var(--accent) !important; color: var(--accent) !important; }
+.seq-seg-btn { background: var(--sf2) !important; }
+.seq-seg-btn.on { background: rgba(255,60,110,0.1) !important; border-color: var(--accent) !important; color: var(--accent) !important; }
+.card-action:hover { border-color: var(--accent) !important; color: var(--accent) !important; }
+.btn-all-stop:hover { border-color: var(--accent) !important; color: var(--accent) !important; }
+
+</style>
+</head>
+<body>
+<nav class="wf-nav">
+  <a href="hub.html" class="wf-nav-logo"><div class="wf-nav-logo-icon">◈</div>WAVEFORM</a>
+  <div class="wf-nav-tools">
+    <a href="hub.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Hub</a>
+    <a href="audio-converter.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Converter</a>
+    <a href="audio-looper.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Looper</a>
+    <a href="drum-machine.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Drum Machine</a>
+    <a href="audio-workstation.html" class="wf-nav-item wf-active-red"><span class="wf-nav-dot"></span>Workstation</a>
+    <a href="chord-randomizer.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Chord Dice</a>
+    <a href="patch-map.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Patch Map</a>
+    <a href="guitar-book.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Guitar Book</a>
+    <a href="song-chart.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Song Chart</a>
+    </div>
+  <button class="wf-theme-btn" id="wfThemeBtn" title="Toggle theme" aria-label="Toggle theme">◑</button>
+</nav>
+<div class="waveform-deco" id="decoBars"></div>
+<div class="app">
+  <header>
+    <div class="logo-group">
+      <div class="logo">04 · DAW</div>
+      <h1 class="title">SP-404 <span>Workstation</span></h1>
+      <div class="subtitle">Multi-Channel · FX Rack · Drum Machine · Master EQ</div>
+    </div>
+    <div class="hdr-meta">
+      <div>ENGINE <strong>WEB AUDIO API + TONE.JS</strong></div>
+      <div>CHANNELS <strong>2 — 4</strong></div>
+      <div>FX <strong>6 EFFECTS · LP / HP / BP FILTERS</strong></div>
+    </div>
+  </header>
+
+  <!-- Channel selector + global transport -->
+  <div class="ch-count-bar">
+    <span class="ch-count-label">CHANNELS</span>
+    <button class="ch-count-btn active" data-count="2">2 CH</button>
+    <button class="ch-count-btn" data-count="4">4 CH</button>
+    <div class="all-transport">
+      <button class="btn-all btn-all-play" id="btnPlayAll">▶ PLAY ALL</button>
+      <button class="btn-all btn-all-stop" id="btnStopAll">■ STOP ALL</button>
+      <div style="display:flex;align-items:center;gap:6px;margin-left:6px">
+        <select id="exportBars" style="font-family:'Share Tech Mono',monospace;font-size:10px;background:var(--sf2);color:var(--txm);border:1.5px solid var(--bd2);border-radius:3px;padding:6px 8px;cursor:pointer;outline:none">
+          <option value="2">2 bars</option>
+          <option value="4" selected>4 bars</option>
+          <option value="8">8 bars</option>
+          <option value="16">16 bars</option>
+          <option value="32">32 bars</option>
+        </select>
+        <button class="btn-all" id="btnExportMix" style="background:transparent;color:#a78bfa;border-color:#a78bfa;border-width:1.5px;border-style:solid">↓ EXPORT MIX</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Channel grid (4 cards, 2 shown by default) -->
+  <div class="channel-grid count-2" id="channelGrid"></div>
+
+  <!-- ═══════ DRUM MACHINE ═══════ -->
+  <div class="seq-section">
+    <div class="seq-card">
+      <div class="seq-toggle-hdr" onclick="toggleSeq()">
+        <div class="seq-hdr-dot" id="seqDot"></div>
+        <span class="seq-hdr-title">DRUM MACHINE — Step Sequencer</span>
+        <span class="seq-hdr-arrow" id="seqArrow">▶</span>
+      </div>
+      <div class="seq-body" id="seqBody">
+        <div class="seq-controls">
+          <div class="seq-bpm-block">
+            <div class="seq-bpm-lbl">BPM</div>
+            <div class="seq-bpm-val" id="seqBpmDisp">120</div>
+            <div class="seq-bpm-adj">
+              <button class="seq-bpm-btn" id="seqBpmDn">−</button>
+              <button class="seq-bpm-btn" id="seqBpmUp">+</button>
+            </div>
+            <input type="range" class="seq-bpm-r" id="seqBpmR" min="40" max="240" value="120" step="0.5">
+          </div>
+          <div class="seq-transport">
+            <div class="seq-trow">
+              <button class="seq-btn seq-btn-play" id="seqBtnPlay">▶ PLAY</button>
+              <button class="seq-btn seq-btn-stop" id="seqBtnStop">■ STOP</button>
+              <button class="seq-tap-btn" id="seqBtnTap">TAP</button>
+            </div>
+            <div class="seq-trow"><div class="seq-beat-dots" id="seqBeatDots"></div></div>
+          </div>
+          <div class="seq-settings">
+            <div class="seq-si">
+              <span class="seq-sl">SWING</span>
+              <input type="range" class="seq-mr" id="seqSwingR" min="0" max="75" value="0">
+              <span class="seq-sv" id="seqSwingV">0%</span>
+            </div>
+            <div class="seq-si">
+              <span class="seq-sl">VOL</span>
+              <input type="range" class="seq-mr" id="seqMasterR" min="0" max="100" value="85">
+              <span class="seq-sv" id="seqMasterV">85%</span>
+            </div>
+            <div class="seq-si">
+              <span class="seq-sl">STEPS</span>
+              <div class="seq-seg" id="seqStepsSeg">
+                <button class="seq-seg-btn" data-v="8">8</button>
+                <button class="seq-seg-btn on" data-v="16">16</button>
+                <button class="seq-seg-btn" data-v="32">32</button>
+                <button class="seq-seg-btn" data-v="64">64</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="seq-track-panel" id="seqTrackPanel"></div>
+        <div class="seq-add-row" id="seqAddRow">+ ADD TRACK</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Master Section -->
+  <div class="master-section">
+
+    <!-- Master 5-band EQ -->
+    <div class="card" id="masterEqCard">
+      <div class="card-hdr">
+        <div class="card-dot orange"></div>
+        <span class="card-title">Master Equalizer — 5 Band</span>
+        <div class="card-line"></div>
+        <button class="card-action" id="btnMasterEqReset">RESET</button>
+      </div>
+      <div class="eq-grid">
+        <div class="eq-band">
+          <div class="eq-band-lbl">BASS</div><div class="eq-band-freq">80 Hz</div>
+          <div class="eq-slider-wrap"><div class="eq-zero"></div><input type="range" class="eq-vs bass" id="eqLow" min="-12" max="12" value="0" step="0.5"></div>
+          <div class="eq-band-val" id="eqLowV">0.0 dB</div>
+        </div>
+        <div class="eq-band">
+          <div class="eq-band-lbl">LO-MID</div><div class="eq-band-freq">250 Hz</div>
+          <div class="eq-slider-wrap"><div class="eq-zero"></div><input type="range" class="eq-vs lomid" id="eqLomid" min="-12" max="12" value="0" step="0.5"></div>
+          <div class="eq-band-val" id="eqLomidV">0.0 dB</div>
+        </div>
+        <div class="eq-band">
+          <div class="eq-band-lbl">MID</div><div class="eq-band-freq">1 kHz</div>
+          <div class="eq-slider-wrap"><div class="eq-zero"></div><input type="range" class="eq-vs mid" id="eqMid" min="-12" max="12" value="0" step="0.5"></div>
+          <div class="eq-band-val" id="eqMidV">0.0 dB</div>
+        </div>
+        <div class="eq-band">
+          <div class="eq-band-lbl">HI-MID</div><div class="eq-band-freq">4 kHz</div>
+          <div class="eq-slider-wrap"><div class="eq-zero"></div><input type="range" class="eq-vs himid" id="eqHimid" min="-12" max="12" value="0" step="0.5"></div>
+          <div class="eq-band-val" id="eqHimidV">0.0 dB</div>
+        </div>
+        <div class="eq-band">
+          <div class="eq-band-lbl">TREBLE</div><div class="eq-band-freq">12 kHz</div>
+          <div class="eq-slider-wrap"><div class="eq-zero"></div><input type="range" class="eq-vs hi" id="eqHigh" min="-12" max="12" value="0" step="0.5"></div>
+          <div class="eq-band-val" id="eqHighV">0.0 dB</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Master Filters -->
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-dot cyan"></div>
+        <span class="card-title">Master Filters — LP · HP · BP</span>
+        <div class="card-line"></div>
+      </div>
+      <div class="filters-grid">
+        <!-- LP -->
+        <div class="filt-unit">
+          <div class="filt-unit-hdr">
+            <button class="filt-toggle lp" id="btnMLP">LP OFF</button>
+            <span class="filt-unit-lbl">Low Pass</span>
+          </div>
+          <div class="filt-row">
+            <span class="filt-row-lbl">FREQ</span>
+            <input type="range" class="filt-s lp" id="mlpFreq" min="0" max="1000" value="700" step="1">
+            <span class="filt-val" id="mlpFreqV">2.0 kHz</span>
+          </div>
+          <div class="filt-row">
+            <span class="filt-row-lbl">Q</span>
+            <input type="range" class="filt-s lp" id="mlpQ" min="1" max="30" value="7" step="1">
+            <span class="filt-val" id="mlpQV">0.7</span>
+          </div>
+        </div>
+        <!-- HP -->
+        <div class="filt-unit">
+          <div class="filt-unit-hdr">
+            <button class="filt-toggle hp" id="btnMHP">HP OFF</button>
+            <span class="filt-unit-lbl">High Pass</span>
+          </div>
+          <div class="filt-row">
+            <span class="filt-row-lbl">FREQ</span>
+            <input type="range" class="filt-s hp" id="mhpFreq" min="0" max="1000" value="200" step="1">
+            <span class="filt-val" id="mhpFreqV">200 Hz</span>
+          </div>
+          <div class="filt-row">
+            <span class="filt-row-lbl">Q</span>
+            <input type="range" class="filt-s hp" id="mhpQ" min="1" max="30" value="7" step="1">
+            <span class="filt-val" id="mhpQV">0.7</span>
+          </div>
+        </div>
+        <!-- BP -->
+        <div class="filt-unit">
+          <div class="filt-unit-hdr">
+            <button class="filt-toggle bp" id="btnMBP">BP OFF</button>
+            <span class="filt-unit-lbl">Band Pass</span>
+          </div>
+          <div class="filt-row">
+            <span class="filt-row-lbl">FREQ</span>
+            <input type="range" class="filt-s bp" id="mbpFreq" min="0" max="1000" value="500" step="1">
+            <span class="filt-val" id="mbpFreqV">1.0 kHz</span>
+          </div>
+          <div class="filt-row">
+            <span class="filt-row-lbl">Q</span>
+            <input type="range" class="filt-s bp" id="mbpQ" min="1" max="50" value="10" step="1">
+            <span class="filt-val" id="mbpQV">1.0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Master FX Rack -->
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-dot pink"></div>
+        <span class="card-title">FX Rack — 6 Effects</span>
+        <div class="card-line"></div>
+      </div>
+      <div class="fx-grid">
+        <!-- Reverb -->
+        <div class="fx-unit">
+          <div class="fx-unit-hdr">
+            <button class="fx-toggle rv" id="btnRvb">OFF</button>
+            <span class="fx-unit-name">Reverb</span>
+          </div>
+          <div class="fx-row"><span class="fx-row-lbl">WET</span><input type="range" class="fx-s rv" id="rvbWet" min="0" max="100" value="40"><span class="fx-val" id="rvbWetV">40%</span></div>
+          <div class="fx-row"><span class="fx-row-lbl">SIZE</span><input type="range" class="fx-s rv" id="rvbSize" min="5" max="40" value="20"><span class="fx-val" id="rvbSizeV">2.0s</span></div>
+          <div class="fx-row"><span class="fx-row-lbl">DECAY</span><input type="range" class="fx-s rv" id="rvbDecay" min="10" max="50" value="25"><span class="fx-val" id="rvbDecayV">2.5</span></div>
+        </div>
+        <!-- Delay -->
+        <div class="fx-unit">
+          <div class="fx-unit-hdr">
+            <button class="fx-toggle dl" id="btnDly">OFF</button>
+            <span class="fx-unit-name">Delay</span>
+          </div>
+          <div class="fx-row"><span class="fx-row-lbl">WET</span><input type="range" class="fx-s dl" id="dlyWet" min="0" max="100" value="35"><span class="fx-val" id="dlyWetV">35%</span></div>
+          <div class="fx-row"><span class="fx-row-lbl">TIME</span><input type="range" class="fx-s dl" id="dlyTime" min="5" max="200" value="30"><span class="fx-val" id="dlyTimeV">0.30s</span></div>
+          <div class="fx-row"><span class="fx-row-lbl">FDBK</span><input type="range" class="fx-s dl" id="dlyFb" min="0" max="95" value="40"><span class="fx-val" id="dlyFbV">40%</span></div>
+        </div>
+        <!-- Chorus -->
+        <div class="fx-unit">
+          <div class="fx-unit-hdr">
+            <button class="fx-toggle ch" id="btnCho">OFF</button>
+            <span class="fx-unit-name">Chorus</span>
+          </div>
+          <div class="fx-row"><span class="fx-row-lbl">WET</span><input type="range" class="fx-s ch" id="choWet" min="0" max="100" value="50"><span class="fx-val" id="choWetV">50%</span></div>
+          <div class="fx-row"><span class="fx-row-lbl">RATE</span><input type="range" class="fx-s ch" id="choRate" min="1" max="50" value="5"><span class="fx-val" id="choRateV">0.5Hz</span></div>
+          <div class="fx-row"><span class="fx-row-lbl">DEPTH</span><input type="range" class="fx-s ch" id="choDepth" min="1" max="20" value="5"><span class="fx-val" id="choDepthV">5ms</span></div>
+        </div>
+        <!-- Distortion -->
+        <div class="fx-unit">
+          <div class="fx-unit-hdr">
+            <button class="fx-toggle di" id="btnDis">OFF</button>
+            <span class="fx-unit-name">Distortion</span>
+          </div>
+          <div class="fx-row"><span class="fx-row-lbl">WET</span><input type="range" class="fx-s di" id="disWet" min="0" max="100" value="50"><span class="fx-val" id="disWetV">50%</span></div>
+          <div class="fx-row"><span class="fx-row-lbl">DRIVE</span><input type="range" class="fx-s di" id="disDrive" min="1" max="400" value="100"><span class="fx-val" id="disDriveV">100</span></div>
+          <div class="fx-row"><span class="fx-row-lbl">TONE</span><input type="range" class="fx-s di" id="disTone" min="1" max="10" value="8"><span class="fx-val" id="disToneV">8 kHz</span></div>
+        </div>
+        <!-- Tremolo -->
+        <div class="fx-unit">
+          <div class="fx-unit-hdr">
+            <button class="fx-toggle tr" id="btnTrm">OFF</button>
+            <span class="fx-unit-name">Tremolo</span>
+          </div>
+          <div class="fx-row"><span class="fx-row-lbl">WET</span><input type="range" class="fx-s tr" id="trmWet" min="0" max="100" value="60"><span class="fx-val" id="trmWetV">60%</span></div>
+          <div class="fx-row"><span class="fx-row-lbl">RATE</span><input type="range" class="fx-s tr" id="trmRate" min="1" max="200" value="40"><span class="fx-val" id="trmRateV">4.0Hz</span></div>
+          <div class="fx-row"><span class="fx-row-lbl">DEPTH</span><input type="range" class="fx-s tr" id="trmDepth" min="0" max="90" value="60"><span class="fx-val" id="trmDepthV">60%</span></div>
+        </div>
+        <!-- BitCrusher -->
+        <div class="fx-unit">
+          <div class="fx-unit-hdr">
+            <button class="fx-toggle bc" id="btnBC">OFF</button>
+            <span class="fx-unit-name">BitCrusher</span>
+          </div>
+          <div class="fx-row"><span class="fx-row-lbl">WET</span><input type="range" class="fx-s bc" id="bcWetS" min="0" max="100" value="50"><span class="fx-val" id="bcWetV">50%</span></div>
+          <div class="fx-row"><span class="fx-row-lbl">BITS</span><input type="range" class="fx-s bc" id="bcBits" min="2" max="16" value="8"><span class="fx-val" id="bcBitsV">8 bit</span></div>
+          <div class="fx-row"><span class="fx-row-lbl">RATE÷</span><input type="range" class="fx-s bc" id="bcRate" min="1" max="64" value="1"><span class="fx-val" id="bcRateV">÷1</span></div>
+        </div>
+      </div>
+
+      <!-- Utilities row -->
+      <div class="utils-row">
+        <div class="util-cell">
+          <span class="util-lbl">BPM</span>
+          <span class="bpm-disp" id="bpmDisp">—</span>
+          <button class="btn-detect" id="btnDetect" disabled>⟳ DETECT</button>
+        </div>
+        <div class="util-cell">
+          <span class="util-lbl">CHANNEL</span>
+          <button class="btn-mono" id="btnMono">STEREO MODE</button>
+        </div>
+        <div class="master-vol-row">
+          <span class="master-vol-lbl">MASTER VOL</span>
+          <input type="range" class="master-vol-s" id="masterVol" min="0" max="100" value="80">
+          <span class="master-vol-val" id="masterVolV">80%</span>
+        </div>
+      </div>
+
+      <!-- Status -->
+      <div class="status-bar">
+        <div class="status-dot" id="statusDot"></div>
+        <span id="statusMsg">READY — DROP AUDIO FILES INTO THE CHANNELS ABOVE</span>
+      </div>
+      <div class="hint-bar">
+        <strong>DRAG</strong> on waveform to set loop region &nbsp;·&nbsp;
+        <strong>CH FX</strong> per-channel Delay · Chorus · Dist · Tremolo &nbsp;·&nbsp;
+        <strong>MASTER FILTERS</strong> LP · HP · BP &nbsp;·&nbsp;
+        <strong>DRUM MACHINE</strong> open below
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- SEQ SOUND PICKER -->
+<div id="seqPicker" style="position:fixed;z-index:3000;display:none;background:var(--sf2);border:1px solid var(--bd2);border-radius:5px;box-shadow:0 12px 40px rgba(0,0,0,.75);overflow:hidden;min-width:220px">
+  <div style="padding:7px 12px;background:var(--sf3);border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between">
+    <span style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.15em;color:var(--txm);text-transform:uppercase">SELECT SOUND</span>
+    <button id="seqPickerClose" style="background:none;border:none;color:var(--txm);font-size:14px;cursor:pointer;padding:0 2px;line-height:1">✕</button>
+  </div>
+  <div id="seqPickerGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;padding:10px;max-height:260px;overflow-y:auto"></div>
+</div>
+
+<style>
+.seq-tb.pool{color:#39ff95;border-color:rgba(52,211,153,.4);font-size:10px}
+.seq-tb.pool:hover{background:rgba(52,211,153,.12)}
+.seq-tb.pool.has-sound{background:rgba(52,211,153,.15);border-color:#39ff95}
+.seq-picker-tile{background:var(--sf3);border:1px solid var(--bd2);color:var(--txm);font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.05em;padding:6px 4px;text-align:center;cursor:pointer;border-radius:3px;transition:all .12s;text-transform:uppercase;line-height:1.2}
+.seq-picker-tile:hover{border-color:#39ff95;color:#39ff95;background:rgba(52,211,153,.08)}
+.seq-picker-tile.active{border-color:#39ff95;color:#39ff95;background:rgba(52,211,153,.16)}
+.seq-picker-file{grid-column:1/-1;background:none;border:1px dashed var(--bd2);color:var(--txd);font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.1em;padding:7px;text-align:center;cursor:pointer;border-radius:3px;transition:all .12s;text-transform:uppercase}
+.seq-picker-file:hover{border-color:#ffb347;color:#ffb347}
+.seq-picker-div{grid-column:1/-1;height:1px;background:var(--bd);margin:2px 0}
+</style>
+
+<script>
+// ── DECO ──
+const decoEl = document.getElementById('decoBars');
+for (let i = 0; i < 100; i++) {
+  const s = document.createElement('span');
+  s.style.cssText = `--i:${i};height:${18+Math.random()*35}px`;
+  decoEl.appendChild(s);
+}
+
+// ── GLOBAL AUDIO STATE ──
+let audioCtx = null;
+let toneReady = false;
+let chainBuilt = false;
+
+// Master chain nodes
+let masterMixNode, masterGainNode;
+let masterEqBands = [];
+let masterLpNode, masterHpNode, masterBpNode;
+let rvbConv, rvbWet, rvbDry, rvbMerge;
+let dlyNode, dlyFb, dlyWet, dlyDry, dlyMerge;
+let choNodes; // { input, output, wet, dry, delays, lfos }
+let disNodes; // { input, output, wet, dry, shaper, preGain }
+let trmNodes; // { input, output, tremoloGain, lfo, lfoGain, lfoOffset, wet, dry }
+let bcNode, bcWetG, bcDryG, bcMerge;
+let bcBitsVal = 8, bcRateVal = 1;
+
+// FX enabled flags
+const fxEnabled = {rvb:false, dly:false, cho:false, dis:false, trm:false, bc:false};
+
+// Master filter enabled flags
+const masterFiltEnabled = {lp:false, hp:false, bp:false};
+
+// Mono state
+let isMono = false;
+let monoBuffer = null;
+
+// Soloed channel (-1 = none)
+let soloedCh = -1;
+
+// ── CHANNELS ──
+const NUM_CHANNELS = 4;
+const CH_COLORS = ['#00e5ff','#ff3c6e','#39ff95','#ffb347'];
+const CH_NAMES  = ['CH 1','CH 2','CH 3','CH 4'];
+
+class Channel {
+  constructor(id) {
+    this.id = id;
+    this.audioBuffer = null;
+    this.originalBuffer = null;
+    this.duration = 0;
+    this.loopStart = 0;
+    this.loopEnd = 0;
+    this.isPlaying = false;
+    this.isMutedByUser = false;
+    this.userSpeed = 1.0;
+    this.userPitch = 0;
+    this.volume = 0.8;
+    this.loopRepeat = 'inf';
+    this.loopCountMax = Infinity;
+    this.loopIteration = 0;
+    this.chLpEnabled = false;
+    this.chLpFreq = 2000;
+    this.chHpEnabled = false;
+    this.chHpFreq = 200;
+    this.chainBuilt = false;
+    this.pitchNode = null;
+    this.eqBands = null;
+    this.lpNode = null;
+    this.hpNode = null;
+    // Per-channel FX (lazy-built on first enable)
+    this.chFxEnabled = {dly:false, cho:false, dis:false, trm:false};
+    this.chFx = {dly:null, cho:null, dis:null, trm:null};
+    this.chFxBusOut = null; // output merge point before chanGain
+    this.chanGain = null;
+    this.srcNode = null;
+    this.playCtxStart = 0;
+    this.animFrame = null;
+    this.isDragging = false;
+    this.dragStartX = 0;
+    // DOM refs
+    this.el = null;
+    this.waveWrapper = null;
+    this.waveCanvas = null;
+    this.rulerCanvas = null;
+    this.loopRegionEl = null;
+    this.playheadEl = null;
+  }
+
+  buildChain() {
+    if (this.chainBuilt || !audioCtx) return;
+    const ctx = audioCtx;
+    const CH_EQ = [
+      {type:'lowshelf', freq:200},
+      {type:'peaking',  freq:1000, Q:1},
+      {type:'highshelf',freq:4000},
+    ];
+    this.eqBands = CH_EQ.map(c => {
+      const f = ctx.createBiquadFilter();
+      f.type = c.type; f.frequency.value = c.freq;
+      if (c.Q) f.Q.value = c.Q; f.gain.value = 0; return f;
+    });
+    for (let i = 0; i < this.eqBands.length - 1; i++) this.eqBands[i].connect(this.eqBands[i+1]);
+    this.lpNode = ctx.createBiquadFilter(); this.lpNode.type = 'allpass'; this.lpNode.frequency.value = this.chLpFreq;
+    this.hpNode = ctx.createBiquadFilter(); this.hpNode.type = 'allpass'; this.hpNode.frequency.value = this.chHpFreq;
+    this.eqBands[this.eqBands.length-1].connect(this.lpNode);
+    this.lpNode.connect(this.hpNode);
+    // FX bus: hpNode → fxBusOut → chanGain  (FX inserted lazily)
+    this.chFxBusOut = ctx.createGain(); this.chFxBusOut.gain.value = 1;
+    this.hpNode.connect(this.chFxBusOut);
+    this.chanGain = ctx.createGain();
+    this.chanGain.gain.value = this.isMutedByUser ? 0 : this.volume;
+    this.chFxBusOut.connect(this.chanGain);
+    this.chanGain.connect(masterMixNode);
+    if (toneReady) {
+      try {
+        this.pitchNode = new Tone.PitchShift(0);
+        this.pitchNode.wet.value = 1;
+        this.pitchNode.connect(this.eqBands[0]);
+      } catch(e) { this.pitchNode = null; }
+    }
+    this.chainBuilt = true;
+  }
+
+  // Lazily build a specific FX unit and splice it into the bus chain
+  _buildChFxUnit(type) {
+    if (this.chFx[type] || !audioCtx) return;
+    const ctx = audioCtx;
+    let unit;
+    if (type === 'dly') {
+      const input=ctx.createGain(), output=ctx.createGain();
+      const dry=ctx.createGain(), wet=ctx.createGain(), merge=ctx.createGain();
+      dry.gain.value=1; wet.gain.value=0;
+      const dly=ctx.createDelay(4.0); dly.delayTime.value=0.3;
+      const fb=ctx.createGain(); fb.gain.value=0.35;
+      dly.connect(fb); fb.connect(dly);
+      input.connect(dry); dry.connect(merge);
+      input.connect(dly); dly.connect(wet); wet.connect(merge);
+      merge.connect(output);
+      unit={input,output,wet,dry,dly,fb,merge};
+    } else if (type === 'cho') {
+      const input=ctx.createGain(), output=ctx.createGain();
+      const dry=ctx.createGain(), wet=ctx.createGain(), merge=ctx.createGain();
+      dry.gain.value=1; wet.gain.value=0;
+      input.connect(dry); dry.connect(merge);
+      for (let i=0;i<3;i++) {
+        const d=ctx.createDelay(0.05); d.delayTime.value=0.015+i*0.005;
+        const lfo=ctx.createOscillator(); lfo.type='sine'; lfo.frequency.value=0.4+i*0.3;
+        const lg=ctx.createGain(); lg.gain.value=0.003;
+        const vg=ctx.createGain(); vg.gain.value=1/3;
+        lfo.connect(lg); lg.connect(d.delayTime);
+        input.connect(d); d.connect(vg); vg.connect(wet);
+        lfo.start();
+      }
+      wet.connect(merge); merge.connect(output);
+      unit={input,output,wet,dry,merge};
+    } else if (type === 'dis') {
+      const input=ctx.createGain(), output=ctx.createGain();
+      const dry=ctx.createGain(), wet=ctx.createGain(), merge=ctx.createGain();
+      dry.gain.value=1; wet.gain.value=0;
+      const shaper=ctx.createWaveShaper(); shaper.curve=makeDistCurve(100); shaper.oversample='4x';
+      const preGain=ctx.createGain(); preGain.gain.value=1;
+      const postFilt=ctx.createBiquadFilter(); postFilt.type='lowpass'; postFilt.frequency.value=8000;
+      input.connect(dry); dry.connect(merge);
+      input.connect(preGain); preGain.connect(shaper); shaper.connect(postFilt); postFilt.connect(wet); wet.connect(merge);
+      merge.connect(output);
+      unit={input,output,wet,dry,shaper,preGain,postFilt,merge};
+    } else if (type === 'trm') {
+      const input=ctx.createGain(), output=ctx.createGain();
+      const dry=ctx.createGain(), wet=ctx.createGain(), merge=ctx.createGain();
+      dry.gain.value=1; wet.gain.value=0;
+      const trGain=ctx.createGain(); trGain.gain.value=0;
+      const lfo=ctx.createOscillator(); lfo.type='sine'; lfo.frequency.value=4;
+      const lfoG=ctx.createGain(); lfoG.gain.value=0.6;
+      const offset=ctx.createConstantSource(); offset.offset.value=1.0;
+      lfo.connect(lfoG); lfoG.connect(trGain.gain);
+      offset.connect(trGain.gain);
+      lfo.start(); offset.start();
+      input.connect(dry); dry.connect(merge);
+      input.connect(trGain); trGain.connect(wet); wet.connect(merge);
+      merge.connect(output);
+      unit={input,output,wet,dry,trGain,lfo,lfoG,merge};
+    }
+    this.chFx[type] = unit;
+    // Splice into chain: disconnect hpNode→chFxBusOut, insert all built fx in series
+    this._rewireFxChain();
+  }
+
+  _rewireFxChain() {
+    if (!this.hpNode || !this.chFxBusOut) return;
+    // Disconnect everything from hpNode first
+    try { this.hpNode.disconnect(); } catch(e) {}
+    // Build ordered list of built FX
+    const order = ['dly','cho','dis','trm'];
+    const active = order.filter(t => this.chFx[t]);
+    if (active.length === 0) {
+      this.hpNode.connect(this.chFxBusOut);
+    } else {
+      // disconnect previous output connections of each unit
+      active.forEach(t => { try { this.chFx[t].output.disconnect(); } catch(e) {} });
+      this.hpNode.connect(this.chFx[active[0]].input);
+      for (let i=0; i<active.length-1; i++) this.chFx[active[i]].output.connect(this.chFx[active[i+1]].input);
+      this.chFx[active[active.length-1]].output.connect(this.chFxBusOut);
+    }
+  }
+
+  setChFx(type, enabled) {
+    this.chFxEnabled[type] = enabled;
+    if (enabled && !this.chFx[type]) this._buildChFxUnit(type);
+    if (this.chFx[type]) {
+      const u = this.chFx[type];
+      const wetSlider = document.getElementById(`chFX_${type}_wet_${this.id}`);
+      const wetVal = wetSlider ? parseFloat(wetSlider.value)/100 : 0.4;
+      u.wet.gain.value = enabled ? wetVal : 0;
+      u.dry.gain.value = enabled ? (1-wetVal) : 1;
+    }
+  }
+
+  setChFxWet(type, val) {
+    if (!this.chFx[type] || !this.chFxEnabled[type]) return;
+    const u = this.chFx[type];
+    u.wet.gain.value = val; u.dry.gain.value = 1-val;
+  }
+
+  setChFxParam(type, param, val) {
+    const u = this.chFx[type]; if (!u) return;
+    if (type==='dly' && param==='time' && u.dly) u.dly.delayTime.value=val;
+    if (type==='dly' && param==='fb'   && u.fb)  u.fb.gain.value=val;
+    if (type==='dis' && param==='drive' && u.shaper) u.shaper.curve=makeDistCurve(val);
+    if (type==='dis' && param==='tone'  && u.postFilt) u.postFilt.frequency.value=val;
+    if (type==='trm' && param==='rate'  && u.lfo) u.lfo.frequency.value=val;
+    if (type==='trm' && param==='depth' && u.lfoG) u.lfoG.gain.value=val;
+  }
+
+  getChainEntry() {
+    if (this.pitchNode) {
+      const pi = this.pitchNode.input;
+      if (pi instanceof AudioNode) return pi;
+      if (pi?.input instanceof AudioNode) return pi.input;
+      if (pi?._nativeAudioNode instanceof AudioNode) return pi._nativeAudioNode;
+    }
+    return this.eqBands[0];
+  }
+
+  startLoop() {
+    if (!this.audioBuffer || !audioCtx) return;
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    this.stopSrc();
+    this.loopIteration = 0;
+    this.isPlaying = true;
+    this.el.querySelector('.ch-loop-count strong').textContent = '0';
+    this.updatePlayBtn(true);
+    this.scheduleNext();
+    this.startAnim();
+    setStatus('PLAYING...', true);
+  }
+
+  scheduleNext() {
+    if (!this.isPlaying) return;
+    if (this.loopRepeat !== 'inf' && this.loopIteration >= this.loopCountMax) {
+      this.stop(); return;
+    }
+    // Always resume context before playing (handles suspended state)
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+
+    const src = audioCtx.createBufferSource();
+    src.buffer = this.audioBuffer;
+    src.playbackRate.value = this.userSpeed;
+    this.srcNode = src;
+    src.connect(this.getChainEntry());
+    const dur = Math.max(0.01, this.loopEnd - this.loopStart);
+    this.playCtxStart = audioCtx.currentTime;
+    src.start(audioCtx.currentTime, this.loopStart, dur);
+    src.onended = () => {
+      if (!this.isPlaying) return;
+      this.loopIteration++;
+      this.el.querySelector('.ch-loop-count strong').textContent = this.loopIteration;
+      this.scheduleNext();
+    };
+  }
+
+  stopSrc() {
+    if (this.srcNode) {
+      try { this.srcNode.onended = null; this.srcNode.stop(); } catch(e) {}
+      this.srcNode = null;
+    }
+  }
+
+  stop() {
+    this.isPlaying = false;
+    this.stopSrc();
+    this.updatePlayBtn(false);
+    if (this.animFrame) { cancelAnimationFrame(this.animFrame); this.animFrame = null; }
+    if (this.playheadEl) this.playheadEl.style.display = 'none';
+  }
+
+  updatePlayBtn(playing) {
+    const btn = this.el.querySelector('.ch-btn-play');
+    btn.textContent = playing ? '■■ PLAYING' : '▶ PLAY';
+    btn.classList.toggle('playing', playing);
+  }
+
+  startAnim() {
+    if (this.animFrame) cancelAnimationFrame(this.animFrame);
+    const tick = () => {
+      if (!this.isPlaying) return;
+      const elapsed = (audioCtx.currentTime - this.playCtxStart) * this.userSpeed;
+      const ld = this.loopEnd - this.loopStart;
+      const pos = ld > 0 ? elapsed % ld : 0;
+      const t = this.loopStart + pos;
+      const pct = this.duration > 0 ? t / this.duration : 0;
+      const w = this.waveWrapper.clientWidth;
+      this.playheadEl.style.left = (pct * w) + 'px';
+      this.playheadEl.style.display = 'block';
+      this.animFrame = requestAnimationFrame(tick);
+    };
+    this.animFrame = requestAnimationFrame(tick);
+  }
+
+  setVolume(v) {
+    this.volume = v;
+    const muted = soloedCh >= 0 ? soloedCh !== this.id : this.isMutedByUser;
+    if (this.chanGain) this.chanGain.gain.value = muted ? 0 : v;
+  }
+
+  applyMute() {
+    const muted = soloedCh >= 0 ? soloedCh !== this.id : this.isMutedByUser;
+    if (this.chanGain) this.chanGain.gain.value = muted ? 0 : this.volume;
+  }
+
+  setSpeed(v) {
+    this.userSpeed = v;
+    if (this.srcNode) this.srcNode.playbackRate.value = v;
+    this.updatePitch();
+  }
+
+  setPitch(v) { this.userPitch = v; this.updatePitch(); }
+
+  updatePitch() {
+    if (!this.pitchNode) return;
+    const speedSt = Math.log2(this.userSpeed) * 12;
+    try { this.pitchNode.pitch = this.userPitch - speedSt; } catch(e) {}
+  }
+
+  setChLp(enabled, freq) {
+    if (enabled !== undefined) this.chLpEnabled = enabled;
+    if (freq !== undefined) this.chLpFreq = freq;
+    if (!this.lpNode) return;
+    this.lpNode.type = this.chLpEnabled ? 'lowpass' : 'allpass';
+    this.lpNode.frequency.value = this.chLpFreq;
+  }
+
+  setChHp(enabled, freq) {
+    if (enabled !== undefined) this.chHpEnabled = enabled;
+    if (freq !== undefined) this.chHpFreq = freq;
+    if (!this.hpNode) return;
+    this.hpNode.type = this.chHpEnabled ? 'highpass' : 'allpass';
+    this.hpNode.frequency.value = this.chHpFreq;
+  }
+
+  setEq(band, db) {
+    if (this.eqBands && this.eqBands[band]) this.eqBands[band].gain.value = db;
+  }
+
+  drawWaveform() {
+    if (!this.audioBuffer || !this.waveCanvas) return;
+    const w = this.waveWrapper.clientWidth, h = this.waveWrapper.clientHeight;
+    this.waveCanvas.width = w; this.waveCanvas.height = h;
+    const ctx = this.waveCanvas.getContext('2d');
+    ctx.clearRect(0, 0, w, h);
+    const data = this.audioBuffer.getChannelData(0);
+    const step = Math.ceil(data.length / w);
+    const amp = h / 2;
+    const col = CH_COLORS[this.id];
+    for (let i = 0; i < w; i++) {
+      let mn = 1, mx = -1;
+      for (let j = 0; j < step; j++) { const d = data[i*step+j]||0; if(d<mn)mn=d; if(d>mx)mx=d; }
+      const t = (i/w)*this.duration;
+      ctx.strokeStyle = (t>=this.loopStart && t<=this.loopEnd) ? col : '#2a2a40';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(i, amp+mn*amp*0.9);
+      ctx.lineTo(i, amp+mx*amp*0.9);
+      ctx.stroke();
+    }
+  }
+
+  drawRuler() {
+    if (!this.rulerCanvas || !this.duration) return;
+    const w = this.waveWrapper.clientWidth;
+    this.rulerCanvas.width = w; this.rulerCanvas.height = 14;
+    const ctx = this.rulerCanvas.getContext('2d');
+    ctx.clearRect(0,0,w,14);
+    const steps = [1,2,5,10,15,30,60];
+    const step = steps.find(s => this.duration/s <= 14) || 60;
+    ctx.font = '8px "Share Tech Mono",monospace';
+    for (let t = 0; t <= this.duration; t += step) {
+      const x = (t/this.duration)*w;
+      ctx.fillStyle = '#3a3a4a'; ctx.fillRect(x,0,1,5);
+      ctx.fillStyle = '#5a5a6a';
+      const m = Math.floor(t/60), s = Math.floor(t%60);
+      ctx.fillText(`${m}:${String(s).padStart(2,'0')}`, x+2, 5);
+    }
+  }
+
+  updateLoopUI() {
+    if (!this.duration || !this.loopRegionEl) return;
+    const sp = this.loopStart/this.duration, ep = this.loopEnd/this.duration;
+    this.loopRegionEl.style.left = (sp*100)+'%';
+    this.loopRegionEl.style.width = ((ep-sp)*100)+'%';
+    this.el.querySelector('.ch-lbl.in').textContent = '▶ '+fmtShort(this.loopStart);
+    this.el.querySelector('.ch-lbl.out').textContent = fmtShort(this.loopEnd)+' ◀';
+  }
+
+  updateTimeUI() {
+    this.el.querySelector('.ch-disp.start').textContent = fmtTime(this.loopStart);
+    this.el.querySelector('.ch-disp.end').textContent = fmtTime(this.loopEnd);
+    const dur = Math.max(0, this.loopEnd-this.loopStart);
+    this.el.querySelector('.ch-dur-val').textContent = fmtTime(dur);
+    const pct = this.duration>0 ? dur/this.duration*100 : 100;
+    this.el.querySelector('.ch-dur-fill').style.width = Math.max(0,Math.min(100,pct))+'%';
+  }
+}
+
+// ── INSTANTIATE CHANNELS ──
+const channels = Array.from({length:NUM_CHANNELS}, (_,i) => new Channel(i));
+
+// ── HELPERS ──
+function fmtTime(s) {
+  const m = Math.floor(s/60), sec = s%60;
+  return `${m}:${sec.toFixed(3).padStart(6,'0')}`;
+}
+function fmtShort(s) {
+  const m = Math.floor(s/60), sec = Math.floor(s%60);
+  return `${m}:${String(sec).padStart(2,'0')}`;
+}
+function fmtFreq(hz) {
+  return hz >= 1000 ? (hz/1000).toFixed(1)+' kHz' : hz+' Hz';
+}
+function logFreq(val) { // slider 0-1000 → Hz
+  return Math.round(20 * Math.pow(1000, val/1000));
+}
+function setStatus(msg, active=false, err=false) {
+  document.getElementById('statusMsg').textContent = msg;
+  const d = document.getElementById('statusDot');
+  d.classList.toggle('active', active&&!err);
+  d.classList.toggle('err', err);
+}
+
+// ── AUDIO INIT ──
+async function ensureAudio() {
+  if (chainBuilt) return;
+  // Always create a native AudioContext first — never rely on Tone's internal one
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if (audioCtx.state === 'suspended') {
+    try { await audioCtx.resume(); } catch(e) {}
+  }
+  // Point Tone.js at OUR context so PitchShift nodes share it
+  if (typeof Tone !== 'undefined') {
+    try {
+      Tone.setContext(audioCtx);
+      await Tone.start();
+      toneReady = true;
+    } catch(e) { toneReady = false; }
+  }
+  buildMasterChain();
+}
+
+function buildMasterChain() {
+  const ctx = audioCtx;
+  masterMixNode = ctx.createGain(); masterMixNode.gain.value = 1;
+
+  // 5-band EQ
+  const EQ_CFG = [
+    {type:'lowshelf',freq:80},
+    {type:'peaking',freq:250,Q:1.4},
+    {type:'peaking',freq:1000,Q:1},
+    {type:'peaking',freq:4000,Q:1.2},
+    {type:'highshelf',freq:12000},
+  ];
+  masterEqBands = EQ_CFG.map(c => {
+    const f = ctx.createBiquadFilter(); f.type=c.type; f.frequency.value=c.freq;
+    if(c.Q) f.Q.value=c.Q; f.gain.value=0; return f;
+  });
+  for (let i = 0; i < masterEqBands.length-1; i++) masterEqBands[i].connect(masterEqBands[i+1]);
+  masterMixNode.connect(masterEqBands[0]);
+
+  // Master filters (allpass = bypass)
+  masterLpNode = ctx.createBiquadFilter(); masterLpNode.type='allpass'; masterLpNode.frequency.value=2000; masterLpNode.Q.value=0.7;
+  masterHpNode = ctx.createBiquadFilter(); masterHpNode.type='allpass'; masterHpNode.frequency.value=200;  masterHpNode.Q.value=0.7;
+  masterBpNode = ctx.createBiquadFilter(); masterBpNode.type='allpass'; masterBpNode.frequency.value=1000; masterBpNode.Q.value=1;
+  masterEqBands[masterEqBands.length-1].connect(masterLpNode);
+  masterLpNode.connect(masterHpNode);
+  masterHpNode.connect(masterBpNode);
+
+  // ── REVERB ──
+  rvbConv = ctx.createConvolver(); rvbConv.buffer = buildIR(ctx, 2.0, 2.5);
+  rvbWet = ctx.createGain(); rvbWet.gain.value = 0;
+  rvbDry = ctx.createGain(); rvbDry.gain.value = 1;
+  rvbMerge = ctx.createGain();
+  masterBpNode.connect(rvbDry); masterBpNode.connect(rvbConv);
+  rvbConv.connect(rvbWet);
+  rvbDry.connect(rvbMerge); rvbWet.connect(rvbMerge);
+
+  // ── DELAY ──
+  dlyNode = ctx.createDelay(4.0); dlyNode.delayTime.value = 0.3;
+  dlyFb   = ctx.createGain(); dlyFb.gain.value = 0.4;
+  dlyWet  = ctx.createGain(); dlyWet.gain.value = 0;
+  dlyDry  = ctx.createGain(); dlyDry.gain.value = 1;
+  dlyMerge = ctx.createGain();
+  dlyNode.connect(dlyFb); dlyFb.connect(dlyNode);
+  rvbMerge.connect(dlyDry); rvbMerge.connect(dlyNode);
+  dlyNode.connect(dlyWet);
+  dlyDry.connect(dlyMerge); dlyWet.connect(dlyMerge);
+
+  // ── CHORUS ──
+  choNodes = buildChorus(ctx);
+  dlyMerge.connect(choNodes.input);
+
+  // ── DISTORTION ──
+  disNodes = buildDistortion(ctx);
+  choNodes.output.connect(disNodes.input);
+
+  // ── TREMOLO ──
+  trmNodes = buildTremolo(ctx);
+  disNodes.output.connect(trmNodes.input);
+
+  // ── BITCRUSHER ──
+  bcDryG = ctx.createGain(); bcDryG.gain.value = 1;
+  bcWetG = ctx.createGain(); bcWetG.gain.value = 0;
+  bcMerge = ctx.createGain();
+  bcNode = buildBitCrusher(ctx);
+  trmNodes.output.connect(bcDryG);
+  trmNodes.output.connect(bcNode);
+  bcNode.connect(bcWetG);
+  bcDryG.connect(bcMerge); bcWetG.connect(bcMerge);
+
+  // ── MASTER GAIN ──
+  masterGainNode = ctx.createGain();
+  masterGainNode.gain.value = 0.8;
+  bcMerge.connect(masterGainNode);
+  masterGainNode.connect(ctx.destination);
+
+  chainBuilt = true;
+}
+
+function buildIR(ctx, dur, decay) {
+  const sr = ctx.sampleRate, len = Math.floor(sr*dur);
+  const buf = ctx.createBuffer(2,len,sr);
+  for (let c=0;c<2;c++) {
+    const ch = buf.getChannelData(c);
+    for (let i=0;i<len;i++) ch[i] = (Math.random()*2-1)*Math.pow(1-i/len,decay);
+  }
+  return buf;
+}
+
+function buildChorus(ctx) {
+  const input = ctx.createGain(), output = ctx.createGain();
+  const dry = ctx.createGain(), wet = ctx.createGain();
+  dry.gain.value = 1; wet.gain.value = 0;
+  input.connect(dry); dry.connect(output);
+  const voices = 3;
+  for (let i=0;i<voices;i++) {
+    const d = ctx.createDelay(0.05); d.delayTime.value = 0.015+i*0.005;
+    const lfo = ctx.createOscillator(); lfo.type='sine'; lfo.frequency.value = 0.4+i*0.3;
+    const lg = ctx.createGain(); lg.gain.value = 0.003;
+    const vg = ctx.createGain(); vg.gain.value = 1/voices;
+    lfo.connect(lg); lg.connect(d.delayTime);
+    input.connect(d); d.connect(vg); vg.connect(wet);
+    lfo.start();
+  }
+  wet.connect(output);
+  return {input,output,wet,dry};
+}
+
+function buildDistortion(ctx) {
+  const input = ctx.createGain(), output = ctx.createGain();
+  const dry = ctx.createGain(), wet = ctx.createGain();
+  dry.gain.value = 1; wet.gain.value = 0;
+  const shaper = ctx.createWaveShaper();
+  shaper.curve = makeDistCurve(100); shaper.oversample = '4x';
+  const preGain = ctx.createGain(); preGain.gain.value = 1;
+  const postFilt = ctx.createBiquadFilter(); postFilt.type='lowpass'; postFilt.frequency.value=8000;
+  input.connect(dry); dry.connect(output);
+  input.connect(preGain); preGain.connect(shaper); shaper.connect(postFilt); postFilt.connect(wet); wet.connect(output);
+  return {input,output,wet,dry,shaper,preGain,postFilt};
+}
+
+function makeDistCurve(amount) {
+  const n=256, curve=new Float32Array(n), k=amount;
+  for (let i=0;i<n;i++) {
+    const x = (i*2)/n - 1;
+    curve[i] = (3+k)*x*20*(Math.PI/180) / (Math.PI + k*Math.abs(x));
+  }
+  return curve;
+}
+
+function buildTremolo(ctx) {
+  const input = ctx.createGain(), output = ctx.createGain();
+  const dry = ctx.createGain(), wet = ctx.createGain();
+  dry.gain.value = 1; wet.gain.value = 0;
+  input.connect(dry); dry.connect(output);
+  const trGain = ctx.createGain(); trGain.gain.value = 0;
+  const lfo = ctx.createOscillator(); lfo.type='sine'; lfo.frequency.value = 4;
+  const lfoG = ctx.createGain(); lfoG.gain.value = 0.6;
+  const lfoOffset = ctx.createConstantSource(); lfoOffset.offset.value = 1.0;
+  lfo.connect(lfoG); lfoG.connect(trGain.gain);
+  lfoOffset.connect(trGain.gain);
+  lfo.start(); lfoOffset.start();
+  input.connect(trGain); trGain.connect(wet); wet.connect(output);
+  return {input,output,wet,dry,trGain,lfo,lfoG,lfoOffset};
+}
+
+function buildBitCrusher(ctx) {
+  const node = ctx.createScriptProcessor(4096,2,2);
+  node.onaudioprocess = e => {
+    for (let c=0;c<e.inputBuffer.numberOfChannels;c++) {
+      const inp=e.inputBuffer.getChannelData(c), out=e.outputBuffer.getChannelData(c);
+      const step=Math.pow(2,bcBitsVal), rate=Math.max(1,bcRateVal);
+      for (let i=0;i<inp.length;i++) {
+        if (i%rate===0) out[i]=Math.round(inp[i]*step)/step;
+        else out[i]=out[i-(i%rate)]||0;
+      }
+    }
+  };
+  return node;
+}
+
+// ── BUILD CHANNEL HTML ──
+function buildChannelHTML(id) {
+  return `
+  <div class="ch-card" data-ch="${id}" id="chCard${id}">
+    <div class="ch-hdr">
+      <div class="ch-dot"></div>
+      <span class="ch-name">${CH_NAMES[id]}</span>
+      <div class="ch-hdr-right">
+        <button class="ch-btn-solo" data-ch="${id}">SOLO</button>
+        <button class="ch-btn-mute" data-ch="${id}">MUTE</button>
+      </div>
+    </div>
+    <div class="ch-drop" id="chDrop${id}">
+      <input type="file" id="chFile${id}" accept="audio/*,.mp3,.wav,.ogg,.flac,.m4a,.aac,.webm,.aiff,.aif,.opus" style="opacity:0;position:absolute;width:0;height:0;pointer-events:none">
+      <span class="ch-drop-icon">🔁</span>
+      <div class="ch-drop-title">DROP AUDIO</div>
+      <div class="ch-drop-sub">or click to browse</div>
+    </div>
+    <div class="ch-file-bar" id="chFB${id}" style="display:none">
+      <div class="ch-filename" id="chFName${id}">—</div>
+      <div class="ch-filemeta" id="chFMeta${id}">—</div>
+      <button class="ch-btn-clear" id="chBtnClear${id}">✕</button>
+    </div>
+    <div class="ch-wave-section" id="chWS${id}" style="display:none">
+      <div class="ch-wave-wrapper" id="chWave${id}">
+        <canvas id="chWC${id}"></canvas>
+        <div class="ch-loop-region" id="chLR${id}">
+          <div class="ch-lbl in">▶ IN</div>
+          <div class="ch-lbl out">OUT ◀</div>
+        </div>
+        <div class="ch-playhead" id="chPH${id}" style="display:none"></div>
+      </div>
+      <div class="ch-ruler"><canvas id="chRC${id}"></canvas></div>
+    </div>
+    <div class="ch-loop-ctrl" id="chLC${id}" style="display:none">
+      <div class="ch-loop-row">
+        <span class="ch-pt-lbl in">IN</span>
+        <span class="ch-disp start">0:00.000</span>
+        <input type="range" class="ch-ts start" id="chSS${id}" min="0" max="1000" value="0">
+        <span class="ch-disp end">0:00.000</span>
+        <span class="ch-pt-lbl out">OUT</span>
+      </div>
+      <input type="range" class="ch-ts end" id="chSE${id}" min="0" max="1000" value="1000" style="width:100%;margin-top:4px">
+      <div class="ch-dur-row" style="margin-top:6px">
+        <span class="ch-dur-lbl">DUR</span>
+        <span class="ch-dur-val">0:00.000</span>
+        <div class="ch-dur-track"><div class="ch-dur-fill" style="width:100%"></div></div>
+      </div>
+    </div>
+    <div class="ch-params" id="chP${id}" style="display:none">
+      <div class="ch-param">
+        <div class="ch-param-lbl">🐢 SPEED</div>
+        <div class="ch-param-val" id="chSpV${id}">1.00×</div>
+        <input type="range" class="ch-param-s speed" id="chSP${id}" min="25" max="200" value="100">
+      </div>
+      <div class="ch-param">
+        <div class="ch-param-lbl">🎹 PITCH</div>
+        <div class="ch-param-val" id="chPtV${id}">±0 st</div>
+        <input type="range" class="ch-param-s pitch" id="chPT${id}" min="-24" max="24" value="0">
+      </div>
+      <div class="ch-param">
+        <div class="ch-param-lbl">VOL</div>
+        <div class="ch-param-val" id="chVoV${id}">80%</div>
+        <input type="range" class="ch-param-s" id="chVO${id}" min="0" max="100" value="80">
+      </div>
+    </div>
+    <div class="ch-filters" id="chFilt${id}" style="display:none">
+      <div class="ch-filt-row">
+        <button class="ch-filt-btn lp" id="chLP${id}">LP OFF</button>
+        <input type="range" class="ch-filt-s lp" id="chLPF${id}" min="0" max="1000" value="700" step="1">
+        <span class="ch-filt-val" id="chLPV${id}">2.0 kHz</span>
+      </div>
+      <div class="ch-filt-row">
+        <button class="ch-filt-btn hp" id="chHP${id}">HP OFF</button>
+        <input type="range" class="ch-filt-s hp" id="chHPF${id}" min="0" max="1000" value="100" step="1">
+        <span class="ch-filt-val" id="chHPV${id}">200 Hz</span>
+      </div>
+    </div>
+    <div class="ch-eq-header" id="chEQH${id}" style="display:none" onclick="toggleChEQ(${id})">
+      <span class="ch-eq-toggle-btn">▶ 3-BAND EQ</span>
+      <button class="ch-eq-reset" onclick="event.stopPropagation();resetChEQ(${id})">RESET</button>
+      <span class="ch-eq-arrow" id="chEQArrow${id}">▶</span>
+    </div>
+    <div class="ch-eq-body" id="chEQ${id}">
+      <div class="ch-eq-band">
+        <span class="ch-eq-lbl">BASS</span>
+        <input type="range" class="ch-eq-s" id="chEQB${id}" min="-12" max="12" value="0" step="0.5">
+        <span class="ch-eq-val" id="chEQBV${id}">0dB</span>
+      </div>
+      <div class="ch-eq-band">
+        <span class="ch-eq-lbl">MID</span>
+        <input type="range" class="ch-eq-s" id="chEQM${id}" min="-12" max="12" value="0" step="0.5">
+        <span class="ch-eq-val" id="chEQMV${id}">0dB</span>
+      </div>
+      <div class="ch-eq-band">
+        <span class="ch-eq-lbl">HIGH</span>
+        <input type="range" class="ch-eq-s" id="chEQHi${id}" min="-12" max="12" value="0" step="0.5">
+        <span class="ch-eq-val" id="chEQHiV${id}">0dB</span>
+      </div>
+    </div>
+    <div class="ch-pfx-hdr" id="chFXH${id}" style="display:none" onclick="toggleChFX(${id})">
+      <span class="ch-pfx-hdr-lbl">▶ CHANNEL FX — DELAY · CHORUS · DIST · TREMOLO</span>
+      <span class="ch-pfx-arrow" id="chFXArrow${id}">▶</span>
+    </div>
+    <div class="ch-pfx-body" id="chFXB${id}">
+      <div class="ch-pfx-unit">
+        <div class="ch-pfx-unit-hdr"><button class="ch-pfx-toggle dly" id="chFX_dly_btn_${id}">OFF</button><span class="ch-pfx-name">Delay</span></div>
+        <div class="ch-pfx-row"><span class="ch-pfx-row-lbl">WET</span><input type="range" class="ch-pfx-s dly" id="chFX_dly_wet_${id}" min="0" max="100" value="40"><span class="ch-pfx-val" id="chFX_dly_wetV_${id}">40%</span></div>
+        <div class="ch-pfx-row"><span class="ch-pfx-row-lbl">TIME</span><input type="range" class="ch-pfx-s dly" id="chFX_dly_time_${id}" min="5" max="200" value="30"><span class="ch-pfx-val" id="chFX_dly_timeV_${id}">0.30s</span></div>
+        <div class="ch-pfx-row"><span class="ch-pfx-row-lbl">FDBK</span><input type="range" class="ch-pfx-s dly" id="chFX_dly_fb_${id}" min="0" max="90" value="35"><span class="ch-pfx-val" id="chFX_dly_fbV_${id}">35%</span></div>
+      </div>
+      <div class="ch-pfx-unit">
+        <div class="ch-pfx-unit-hdr"><button class="ch-pfx-toggle cho" id="chFX_cho_btn_${id}">OFF</button><span class="ch-pfx-name">Chorus</span></div>
+        <div class="ch-pfx-row"><span class="ch-pfx-row-lbl">WET</span><input type="range" class="ch-pfx-s cho" id="chFX_cho_wet_${id}" min="0" max="100" value="50"><span class="ch-pfx-val" id="chFX_cho_wetV_${id}">50%</span></div>
+      </div>
+      <div class="ch-pfx-unit">
+        <div class="ch-pfx-unit-hdr"><button class="ch-pfx-toggle dis" id="chFX_dis_btn_${id}">OFF</button><span class="ch-pfx-name">Distortion</span></div>
+        <div class="ch-pfx-row"><span class="ch-pfx-row-lbl">WET</span><input type="range" class="ch-pfx-s dis" id="chFX_dis_wet_${id}" min="0" max="100" value="50"><span class="ch-pfx-val" id="chFX_dis_wetV_${id}">50%</span></div>
+        <div class="ch-pfx-row"><span class="ch-pfx-row-lbl">DRIVE</span><input type="range" class="ch-pfx-s dis" id="chFX_dis_drive_${id}" min="1" max="400" value="100"><span class="ch-pfx-val" id="chFX_dis_driveV_${id}">100</span></div>
+        <div class="ch-pfx-row"><span class="ch-pfx-row-lbl">TONE</span><input type="range" class="ch-pfx-s dis" id="chFX_dis_tone_${id}" min="1" max="18" value="8"><span class="ch-pfx-val" id="chFX_dis_toneV_${id}">8kHz</span></div>
+      </div>
+      <div class="ch-pfx-unit">
+        <div class="ch-pfx-unit-hdr"><button class="ch-pfx-toggle trm" id="chFX_trm_btn_${id}">OFF</button><span class="ch-pfx-name">Tremolo</span></div>
+        <div class="ch-pfx-row"><span class="ch-pfx-row-lbl">WET</span><input type="range" class="ch-pfx-s trm" id="chFX_trm_wet_${id}" min="0" max="100" value="60"><span class="ch-pfx-val" id="chFX_trm_wetV_${id}">60%</span></div>
+        <div class="ch-pfx-row"><span class="ch-pfx-row-lbl">RATE</span><input type="range" class="ch-pfx-s trm" id="chFX_trm_rate_${id}" min="1" max="200" value="40"><span class="ch-pfx-val" id="chFX_trm_rateV_${id}">4.0Hz</span></div>
+        <div class="ch-pfx-row"><span class="ch-pfx-row-lbl">DEPTH</span><input type="range" class="ch-pfx-s trm" id="chFX_trm_depth_${id}" min="0" max="90" value="60"><span class="ch-pfx-val" id="chFX_trm_depthV_${id}">60%</span></div>
+      </div>
+    </div>
+    <div class="ch-loop-sec" id="chLS${id}" style="display:none">
+      <div class="ch-count-btns">
+        <button class="ch-cnt-btn active" data-v="inf">∞</button>
+        <button class="ch-cnt-btn" data-v="1">×1</button>
+        <button class="ch-cnt-btn" data-v="2">×2</button>
+        <button class="ch-cnt-btn" data-v="4">×4</button>
+        <button class="ch-cnt-btn" data-v="8">×8</button>
+      </div>
+      <div class="ch-loop-count">LOOPS: <strong>0</strong></div>
+    </div>
+    <div class="ch-transport" id="chTR${id}" style="display:none">
+      <button class="ch-btn ch-btn-play" id="chBP${id}">▶ PLAY</button>
+      <button class="ch-btn ch-btn-stop" id="chBS${id}">■ STOP</button>
+      <button class="ch-btn ch-btn-export" id="chBE${id}" disabled>↓ WAV</button>
+    </div>
+  </div>`;
+}
+
+// ── RENDER CHANNELS ──
+const grid = document.getElementById('channelGrid');
+channels.forEach(ch => {
+  grid.insertAdjacentHTML('beforeend', buildChannelHTML(ch.id));
+  ch.el = document.getElementById(`chCard${ch.id}`);
+  ch.waveWrapper  = document.getElementById(`chWave${ch.id}`);
+  ch.waveCanvas   = document.getElementById(`chWC${ch.id}`);
+  ch.rulerCanvas  = document.getElementById(`chRC${ch.id}`);
+  ch.loopRegionEl = document.getElementById(`chLR${ch.id}`);
+  ch.playheadEl   = document.getElementById(`chPH${ch.id}`);
+  bindChannelEvents(ch);
+});
+
+// ── BIND EVENTS PER CHANNEL ──
+function bindChannelEvents(ch) {
+  const id = ch.id;
+  const drop = document.getElementById(`chDrop${id}`);
+  const fileInput = document.getElementById(`chFile${id}`);
+
+  drop.addEventListener('click', () => { fileInput.style.pointerEvents='auto'; fileInput.click(); setTimeout(()=>fileInput.style.pointerEvents='none', 500); });
+  drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('drag-over'); });
+  drop.addEventListener('dragleave', () => drop.classList.remove('drag-over'));
+  drop.addEventListener('drop', e => { e.preventDefault(); drop.classList.remove('drag-over'); if(e.dataTransfer.files[0]) loadFile(ch, e.dataTransfer.files[0]); });
+  fileInput.addEventListener('change', () => { if(fileInput.files[0]) loadFile(ch, fileInput.files[0]); });
+
+  document.getElementById(`chBtnClear${id}`).addEventListener('click', () => clearChannel(ch));
+
+  // Loop sliders
+  document.getElementById(`chSS${id}`).addEventListener('input', function() {
+    const v = (parseInt(this.value)/1000)*ch.duration;
+    ch.loopStart = Math.max(0, Math.min(v, ch.loopEnd-0.05));
+    ch.updateTimeUI(); ch.updateLoopUI(); ch.drawWaveform();
+    if (ch.isPlaying) { ch.stopSrc(); ch.scheduleNext(); }
+  });
+  document.getElementById(`chSE${id}`).addEventListener('input', function() {
+    const v = (parseInt(this.value)/1000)*ch.duration;
+    ch.loopEnd = Math.min(ch.duration, Math.max(v, ch.loopStart+0.05));
+    ch.updateTimeUI(); ch.updateLoopUI(); ch.drawWaveform();
+    if (ch.isPlaying) { ch.stopSrc(); ch.scheduleNext(); }
+  });
+
+  // Waveform drag
+  ch.waveWrapper.addEventListener('mousedown', e => {
+    if (!ch.audioBuffer) return;
+    ch.isDragging = true; ch.dragStartX = e.offsetX; e.preventDefault();
+  });
+  window.addEventListener('mousemove', e => {
+    if (!ch.isDragging || !ch.audioBuffer) return;
+    const r = ch.waveWrapper.getBoundingClientRect();
+    const x = Math.max(0, Math.min(e.clientX-r.left, r.width));
+    const t1 = (ch.dragStartX/r.width)*ch.duration;
+    const t2 = (x/r.width)*ch.duration;
+    ch.loopStart = Math.max(0, Math.min(t1,t2));
+    ch.loopEnd   = Math.min(ch.duration, Math.max(t1,t2));
+    if (ch.loopEnd-ch.loopStart<0.05) ch.loopEnd = Math.min(ch.duration, ch.loopStart+0.05);
+    document.getElementById(`chSS${id}`).value = Math.round((ch.loopStart/ch.duration)*1000);
+    document.getElementById(`chSE${id}`).value = Math.round((ch.loopEnd/ch.duration)*1000);
+    ch.updateTimeUI(); ch.updateLoopUI(); ch.drawWaveform();
+  });
+  window.addEventListener('mouseup', () => {
+    if (ch.isDragging) { ch.isDragging=false; if(ch.isPlaying){ch.stopSrc();ch.scheduleNext();} }
+  });
+  ch.waveWrapper.addEventListener('touchstart', e => { if(!ch.audioBuffer)return; ch.isDragging=true; const r=ch.waveWrapper.getBoundingClientRect(); ch.dragStartX=e.touches[0].clientX-r.left; e.preventDefault(); },{passive:false});
+  window.addEventListener('touchmove', e => {
+    if(!ch.isDragging||!ch.audioBuffer)return;
+    const r=ch.waveWrapper.getBoundingClientRect();
+    const x=Math.max(0,Math.min(e.touches[0].clientX-r.left,r.width));
+    const t1=(ch.dragStartX/r.width)*ch.duration, t2=(x/r.width)*ch.duration;
+    ch.loopStart=Math.max(0,Math.min(t1,t2)); ch.loopEnd=Math.min(ch.duration,Math.max(t1,t2));
+    if(ch.loopEnd-ch.loopStart<0.05)ch.loopEnd=Math.min(ch.duration,ch.loopStart+0.05);
+    document.getElementById(`chSS${id}`).value=Math.round((ch.loopStart/ch.duration)*1000);
+    document.getElementById(`chSE${id}`).value=Math.round((ch.loopEnd/ch.duration)*1000);
+    ch.updateTimeUI();ch.updateLoopUI();ch.drawWaveform();
+  },{passive:false});
+  window.addEventListener('touchend', ()=>{if(ch.isDragging){ch.isDragging=false;if(ch.isPlaying){ch.stopSrc();ch.scheduleNext();}}});
+
+  // Speed
+  document.getElementById(`chSP${id}`).addEventListener('input', function() {
+    const v = parseInt(this.value)/100;
+    document.getElementById(`chSpV${id}`).textContent = v.toFixed(2)+'×';
+    ch.setSpeed(v);
+  });
+  // Pitch
+  document.getElementById(`chPT${id}`).addEventListener('input', function() {
+    const v = parseInt(this.value);
+    document.getElementById(`chPtV${id}`).textContent = (v>=0?'+':'')+v+' st';
+    ch.setPitch(v);
+  });
+  // Volume
+  document.getElementById(`chVO${id}`).addEventListener('input', function() {
+    const v = parseInt(this.value)/100;
+    document.getElementById(`chVoV${id}`).textContent = Math.round(v*100)+'%';
+    ch.setVolume(v);
+  });
+
+  // Per-channel LP
+  document.getElementById(`chLP${id}`).addEventListener('click', function() {
+    ch.chLpEnabled = !ch.chLpEnabled;
+    this.textContent = 'LP '+(ch.chLpEnabled?'ON':'OFF');
+    this.classList.toggle('active', ch.chLpEnabled);
+    ch.setChLp(ch.chLpEnabled);
+  });
+  document.getElementById(`chLPF${id}`).addEventListener('input', function() {
+    const freq = logFreq(parseInt(this.value));
+    document.getElementById(`chLPV${id}`).textContent = fmtFreq(freq);
+    ch.setChLp(undefined, freq);
+  });
+  // Per-channel HP
+  document.getElementById(`chHP${id}`).addEventListener('click', function() {
+    ch.chHpEnabled = !ch.chHpEnabled;
+    this.textContent = 'HP '+(ch.chHpEnabled?'ON':'OFF');
+    this.classList.toggle('active', ch.chHpEnabled);
+    ch.setChHp(ch.chHpEnabled);
+  });
+  document.getElementById(`chHPF${id}`).addEventListener('input', function() {
+    const freq = logFreq(parseInt(this.value));
+    document.getElementById(`chHPV${id}`).textContent = fmtFreq(freq);
+    ch.setChHp(undefined, freq);
+  });
+
+  // Per-channel EQ
+  [`chEQB${id}`,`chEQM${id}`,`chEQHi${id}`].forEach((eid,band) => {
+    document.getElementById(eid).addEventListener('input', function() {
+      const v = parseFloat(this.value);
+      document.getElementById([`chEQBV${id}`,`chEQMV${id}`,`chEQHiV${id}`][band]).textContent = (v>0?'+':'')+v.toFixed(1)+'dB';
+      ch.setEq(band, v);
+    });
+  });
+
+  // Per-channel FX
+  const fxTypes = ['dly','cho','dis','trm'];
+  fxTypes.forEach(type => {
+    const btn = document.getElementById(`chFX_${type}_btn_${id}`);
+    btn.addEventListener('click', function() {
+      const on = !ch.chFxEnabled[type];
+      ch.setChFx(type, on);
+      this.textContent = on ? 'ON' : 'OFF';
+      this.classList.toggle('active', on);
+    });
+    const wetEl = document.getElementById(`chFX_${type}_wet_${id}`);
+    const wetVEl = document.getElementById(`chFX_${type}_wetV_${id}`);
+    if (wetEl) wetEl.addEventListener('input', function() {
+      const v = parseInt(this.value)/100;
+      wetVEl.textContent = Math.round(v*100)+'%';
+      ch.setChFxWet(type, v);
+    });
+  });
+  // Delay specific
+  document.getElementById(`chFX_dly_time_${id}`).addEventListener('input', function() {
+    const v = parseInt(this.value)/100;
+    document.getElementById(`chFX_dly_timeV_${id}`).textContent = v.toFixed(2)+'s';
+    ch.setChFxParam('dly','time',v);
+  });
+  document.getElementById(`chFX_dly_fb_${id}`).addEventListener('input', function() {
+    const v = parseInt(this.value)/100;
+    document.getElementById(`chFX_dly_fbV_${id}`).textContent = Math.round(v*100)+'%';
+    ch.setChFxParam('dly','fb',v);
+  });
+  // Distortion specific
+  document.getElementById(`chFX_dis_drive_${id}`).addEventListener('input', function() {
+    const v = parseInt(this.value);
+    document.getElementById(`chFX_dis_driveV_${id}`).textContent = v;
+    ch.setChFxParam('dis','drive',v);
+  });
+  document.getElementById(`chFX_dis_tone_${id}`).addEventListener('input', function() {
+    const v = parseInt(this.value)*1000;
+    document.getElementById(`chFX_dis_toneV_${id}`).textContent = (v/1000).toFixed(0)+'kHz';
+    ch.setChFxParam('dis','tone',v);
+  });
+  // Tremolo specific
+  document.getElementById(`chFX_trm_rate_${id}`).addEventListener('input', function() {
+    const v = parseInt(this.value)/10;
+    document.getElementById(`chFX_trm_rateV_${id}`).textContent = v.toFixed(1)+'Hz';
+    ch.setChFxParam('trm','rate',v);
+  });
+  document.getElementById(`chFX_trm_depth_${id}`).addEventListener('input', function() {
+    const v = parseInt(this.value)/100;
+    document.getElementById(`chFX_trm_depthV_${id}`).textContent = Math.round(v*100)+'%';
+    ch.setChFxParam('trm','depth',v);
+  });
+
+  // Loop count
+  ch.el.querySelectorAll('.ch-cnt-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      ch.el.querySelectorAll('.ch-cnt-btn').forEach(b=>b.classList.remove('active'));
+      this.classList.add('active');
+      const v = this.dataset.v;
+      ch.loopRepeat = v==='inf'?'inf':parseInt(v);
+      ch.loopCountMax = ch.loopRepeat==='inf'?Infinity:ch.loopRepeat;
+    });
+  });
+
+  // Mute
+  ch.el.querySelector('.ch-btn-mute').addEventListener('click', function() {
+    ch.isMutedByUser = !ch.isMutedByUser;
+    this.classList.toggle('active', ch.isMutedByUser);
+    this.textContent = ch.isMutedByUser ? 'UNMUTE' : 'MUTE';
+    ch.applyMute();
+  });
+
+  // Solo
+  ch.el.querySelector('.ch-btn-solo').addEventListener('click', function() {
+    if (soloedCh === id) {
+      soloedCh = -1;
+      channels.forEach(c => { c.el.querySelector('.ch-btn-solo').classList.remove('active'); c.applyMute(); });
+    } else {
+      soloedCh = id;
+      channels.forEach(c => {
+        c.el.querySelector('.ch-btn-solo').classList.toggle('active', c.id===id);
+        c.applyMute();
+      });
+    }
+  });
+
+  // Transport
+  document.getElementById(`chBP${id}`).addEventListener('click', () => {
+    if (!ch.audioBuffer) return;
+    if (ch.isPlaying) ch.stop(); else ch.startLoop();
+  });
+  document.getElementById(`chBS${id}`).addEventListener('click', () => {
+    ch.stop();
+    ch.el.querySelector('.ch-loop-count strong').textContent = '0';
+  });
+  document.getElementById(`chBE${id}`).addEventListener('click', () => exportChannel(ch));
+}
+
+// ── LOAD FILE ──
+async function loadFile(ch, file) {
+  await ensureAudio();
+  ch.stop();
+  setStatus('DECODING...', true);
+  try {
+    const ab = await file.arrayBuffer();
+    const decoded = await audioCtx.decodeAudioData(ab);
+    ch.originalBuffer = decoded;
+    ch.audioBuffer = isMono ? makeMono(decoded) : decoded;
+    ch.duration = ch.audioBuffer.duration;
+    ch.loopStart = 0; ch.loopEnd = ch.duration;
+    document.getElementById(`chFName${ch.id}`).textContent = file.name;
+    document.getElementById(`chFMeta${ch.id}`).textContent = `${fmtShort(ch.duration)} · ${decoded.sampleRate}Hz · ${decoded.numberOfChannels===2?'ST':'MONO'}`;
+    // Show UI sections
+    document.getElementById(`chDrop${ch.id}`).style.display = 'none';
+    [`chFB${ch.id}`,`chWS${ch.id}`,`chLC${ch.id}`,`chP${ch.id}`,`chFilt${ch.id}`,`chEQH${ch.id}`,`chFXH${ch.id}`,`chLS${ch.id}`,`chTR${ch.id}`].forEach(id => { document.getElementById(id).style.display=''; });
+    document.getElementById(`chSS${ch.id}`).value = 0;
+    document.getElementById(`chSE${ch.id}`).value = 1000;
+    document.getElementById(`chBE${ch.id}`).disabled = false;
+    ch.buildChain();
+    setTimeout(() => { ch.drawWaveform(); ch.drawRuler(); ch.updateLoopUI(); ch.updateTimeUI(); }, 40);
+    // Enable BPM detect using first loaded channel
+    document.getElementById('btnDetect').disabled = false;
+    setStatus(`CH${ch.id+1} LOADED — ${fmtShort(ch.duration)} · ${decoded.sampleRate} Hz`);
+  } catch(e) {
+    setStatus('ERROR DECODING FILE', false, true);
+    console.error(e);
+  }
+}
+
+function clearChannel(ch) {
+  ch.stop();
+  ch.audioBuffer = null; ch.originalBuffer = null;
+  document.getElementById(`chDrop${ch.id}`).style.display = '';
+  [`chFB${ch.id}`,`chWS${ch.id}`,`chLC${ch.id}`,`chP${ch.id}`,`chFilt${ch.id}`,`chEQH${ch.id}`,`chEQ${ch.id}`,`chFXH${ch.id}`,`chFXB${ch.id}`,`chLS${ch.id}`,`chTR${ch.id}`].forEach(eid => {
+    const el = document.getElementById(eid); if(el) { el.style.display='none'; el.classList.remove('open'); }
+  });
+}
+
+// ── EQ TOGGLE ──
+function toggleChFX(id) {
+  const body = document.getElementById(`chFXB${id}`);
+  const arrow = document.getElementById(`chFXArrow${id}`);
+  body.classList.toggle('open');
+  arrow.classList.toggle('open');
+}
+function toggleChEQ(id) {
+  const body = document.getElementById(`chEQ${id}`);
+  const arrow = document.getElementById(`chEQArrow${id}`);
+  body.classList.toggle('open');
+  arrow.classList.toggle('open');
+}
+function resetChEQ(id) {
+  [`chEQB${id}`,`chEQM${id}`,`chEQHi${id}`].forEach((eid,band) => {
+    document.getElementById(eid).value = 0;
+    document.getElementById([`chEQBV${id}`,`chEQMV${id}`,`chEQHiV${id}`][band]).textContent = '0dB';
+    channels[id].setEq(band, 0);
+  });
+}
+
+// ── CHANNEL COUNT ──
+document.querySelectorAll('.ch-count-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.ch-count-btn').forEach(b=>b.classList.remove('active'));
+    this.classList.add('active');
+    const n = parseInt(this.dataset.count);
+    grid.className = `channel-grid count-${n}`;
+  });
+});
+
+// ── GLOBAL TRANSPORT ──
+document.getElementById('btnPlayAll').addEventListener('click', async () => {
+  await ensureAudio();
+  channels.forEach(ch => { if(ch.audioBuffer && !ch.isPlaying) ch.startLoop(); });
+  // Also start the drum machine if the panel is open or already has steps set
+  if (!seqPlaying) seqStart();
+});
+document.getElementById('btnStopAll').addEventListener('click', () => {
+  channels.forEach(ch => ch.stop());
+  seqStop(true);
+  setStatus('ALL STOPPED');
+});
+
+// ── MASTER EQ ──
+const masterEqDefs = [
+  {id:'eqLow',  vId:'eqLowV',  band:0},
+  {id:'eqLomid',vId:'eqLomidV',band:1},
+  {id:'eqMid',  vId:'eqMidV',  band:2},
+  {id:'eqHimid',vId:'eqHimidV',band:3},
+  {id:'eqHigh', vId:'eqHighV', band:4},
+];
+masterEqDefs.forEach(({id,vId,band}) => {
+  document.getElementById(id).addEventListener('input', function() {
+    const v = parseFloat(this.value);
+    document.getElementById(vId).textContent = (v>0?'+':'')+v.toFixed(1)+' dB';
+    if (masterEqBands[band]) masterEqBands[band].gain.value = v;
+  });
+});
+document.getElementById('btnMasterEqReset').addEventListener('click', () => {
+  masterEqDefs.forEach(({id,vId,band}) => {
+    document.getElementById(id).value=0;
+    document.getElementById(vId).textContent='0.0 dB';
+    if(masterEqBands[band]) masterEqBands[band].gain.value=0;
+  });
+});
+
+// ── MASTER FILTERS ──
+function getMasterFiltNode(type) {
+  if (type === 'lp') return masterLpNode;
+  if (type === 'hp') return masterHpNode;
+  if (type === 'bp') return masterBpNode;
+  return null;
+}
+function setupMasterFilter(btnId, type, freqId, freqVId, qId, qVId) {
+  const btn = document.getElementById(btnId);
+  btn.addEventListener('click', function() {
+    masterFiltEnabled[type] = !masterFiltEnabled[type];
+    this.classList.toggle('active', masterFiltEnabled[type]);
+    const labels = {lp:'LP',hp:'HP',bp:'BP'};
+    this.textContent = labels[type]+' '+(masterFiltEnabled[type]?'ON':'OFF');
+    const node = getMasterFiltNode(type);
+    if (node) node.type = masterFiltEnabled[type] ? (type==='lp'?'lowpass':type==='hp'?'highpass':'bandpass') : 'allpass';
+  });
+  document.getElementById(freqId).addEventListener('input', function() {
+    const freq = logFreq(parseInt(this.value));
+    document.getElementById(freqVId).textContent = fmtFreq(freq);
+    const node = getMasterFiltNode(type);
+    if (node) node.frequency.value = freq;
+  });
+  document.getElementById(qId).addEventListener('input', function() {
+    const q = parseInt(this.value)/10;
+    document.getElementById(qVId).textContent = q.toFixed(1);
+    const node = getMasterFiltNode(type);
+    if (node) node.Q.value = q;
+  });
+}
+setupMasterFilter('btnMLP','lp','mlpFreq','mlpFreqV','mlpQ','mlpQV');
+setupMasterFilter('btnMHP','hp','mhpFreq','mhpFreqV','mhpQ','mhpQV');
+setupMasterFilter('btnMBP','bp','mbpFreq','mbpFreqV','mbpQ','mbpQV');
+
+// ── MASTER FX ──
+function fxBtn(btnId, cls, wetNode, onToggle) {
+  const btn = document.getElementById(btnId);
+  const key = cls;
+  btn.addEventListener('click', function() {
+    fxEnabled[key] = !fxEnabled[key];
+    this.classList.toggle('active', fxEnabled[key]);
+    this.textContent = fxEnabled[key] ? 'ON' : 'OFF';
+    if (onToggle) onToggle(fxEnabled[key]);
+  });
+}
+function fxSlider(id, valId, fmt, onChange) {
+  document.getElementById(id).addEventListener('input', function() {
+    const v = parseFloat(this.value);
+    document.getElementById(valId).textContent = fmt(v);
+    onChange(v);
+  });
+}
+
+// Reverb
+fxBtn('btnRvb','rvb',null, on => { if(!rvbWet)return; rvbWet.gain.value = on?parseFloat(document.getElementById('rvbWet').value)/100:0; rvbDry.gain.value = on?1-parseFloat(document.getElementById('rvbWet').value)/100:1; });
+fxSlider('rvbWet','rvbWetV', v=>Math.round(v)+'%', v => { if(!fxEnabled.rvb||!rvbWet)return; rvbWet.gain.value=v/100; rvbDry.gain.value=1-v/100; });
+fxSlider('rvbSize','rvbSizeV', v=>(v/10).toFixed(1)+'s', v => { if(rvbConv&&audioCtx) rvbConv.buffer=buildIR(audioCtx,v/10,parseFloat(document.getElementById('rvbDecay').value)/10); });
+fxSlider('rvbDecay','rvbDecayV', v=>(v/10).toFixed(1), v => { if(rvbConv&&audioCtx) rvbConv.buffer=buildIR(audioCtx,parseFloat(document.getElementById('rvbSize').value)/10,v/10); });
+
+// Delay
+fxBtn('btnDly','dly',null, on => { if(!dlyWet)return; dlyWet.gain.value=on?parseFloat(document.getElementById('dlyWet').value)/100:0; dlyDry.gain.value=on?1-parseFloat(document.getElementById('dlyWet').value)/100:1; });
+fxSlider('dlyWet','dlyWetV', v=>Math.round(v)+'%', v => { if(!fxEnabled.dly||!dlyWet)return; dlyWet.gain.value=v/100; dlyDry.gain.value=1-v/100; });
+fxSlider('dlyTime','dlyTimeV', v=>(v/100).toFixed(2)+'s', v => { if(dlyNode) dlyNode.delayTime.value=v/100; });
+fxSlider('dlyFb','dlyFbV', v=>Math.round(v)+'%', v => { if(dlyFb) dlyFb.gain.value=v/100; });
+
+// Chorus
+fxBtn('btnCho','cho',null, on => { if(!choNodes)return; choNodes.wet.gain.value=on?parseFloat(document.getElementById('choWet').value)/100:0; choNodes.dry.gain.value=on?1-parseFloat(document.getElementById('choWet').value)/100:1; });
+fxSlider('choWet','choWetV', v=>Math.round(v)+'%', v => { if(!fxEnabled.cho||!choNodes)return; choNodes.wet.gain.value=v/100; choNodes.dry.gain.value=1-v/100; });
+fxSlider('choRate','choRateV', v=>(v/10).toFixed(1)+'Hz', v => { /* LFOs already started */ });
+fxSlider('choDepth','choDepthV', v=>Math.round(v)+'ms', v => { /* depth already in LFO gain */ });
+
+// Distortion
+fxBtn('btnDis','dis',null, on => { if(!disNodes)return; disNodes.wet.gain.value=on?parseFloat(document.getElementById('disWet').value)/100:0; disNodes.dry.gain.value=on?1-parseFloat(document.getElementById('disWet').value)/100:1; });
+fxSlider('disWet','disWetV', v=>Math.round(v)+'%', v => { if(!fxEnabled.dis||!disNodes)return; disNodes.wet.gain.value=v/100; disNodes.dry.gain.value=1-v/100; });
+fxSlider('disDrive','disDriveV', v=>Math.round(v), v => { if(disNodes?.shaper) disNodes.shaper.curve=makeDistCurve(v); });
+fxSlider('disTone','disToneV', v=>Math.round(v)+' kHz', v => { if(disNodes?.postFilt) disNodes.postFilt.frequency.value=v*1000; });
+
+// Tremolo
+fxBtn('btnTrm','trm',null, on => { if(!trmNodes)return; trmNodes.wet.gain.value=on?parseFloat(document.getElementById('trmWet').value)/100:0; trmNodes.dry.gain.value=on?1-parseFloat(document.getElementById('trmWet').value)/100:1; });
+fxSlider('trmWet','trmWetV', v=>Math.round(v)+'%', v => { if(!fxEnabled.trm||!trmNodes)return; trmNodes.wet.gain.value=v/100; trmNodes.dry.gain.value=1-v/100; });
+fxSlider('trmRate','trmRateV', v=>(v/10).toFixed(1)+'Hz', v => { if(trmNodes?.lfo) trmNodes.lfo.frequency.value=v/10; });
+fxSlider('trmDepth','trmDepthV', v=>Math.round(v)+'%', v => { if(trmNodes?.lfoG) trmNodes.lfoG.gain.value=v/100; });
+
+// BitCrusher
+fxBtn('btnBC','bc',null, on => { if(!bcWetG)return; bcWetG.gain.value=on?parseFloat(document.getElementById('bcWetS').value)/100:0; bcDryG.gain.value=on?1-parseFloat(document.getElementById('bcWetS').value)/100:1; });
+fxSlider('bcWetS','bcWetV', v=>Math.round(v)+'%', v => { if(!fxEnabled.bc||!bcWetG)return; bcWetG.gain.value=v/100; bcDryG.gain.value=1-v/100; });
+fxSlider('bcBits','bcBitsV', v=>Math.round(v)+' bit', v => { bcBitsVal=Math.round(v); });
+fxSlider('bcRate','bcRateV', v=>'÷'+Math.round(v), v => { bcRateVal=Math.round(v); });
+
+// ── MASTER VOLUME ──
+document.getElementById('masterVol').addEventListener('input', function() {
+  const v = parseInt(this.value)/100;
+  document.getElementById('masterVolV').textContent = Math.round(v*100)+'%';
+  if (masterGainNode) masterGainNode.gain.value = v;
+});
+
+// ── BPM DETECT ──
+document.getElementById('btnDetect').addEventListener('click', () => {
+  const ch = channels.find(c => c.audioBuffer);
+  if (!ch) return;
+  const bpm = detectBPM(ch.audioBuffer);
+  document.getElementById('bpmDisp').textContent = bpm.toFixed(1);
+  setStatus(`BPM DETECTED: ${bpm.toFixed(1)}`);
+});
+
+function detectBPM(buf) {
+  const sr=buf.sampleRate, data=buf.getChannelData(0);
+  const maxLen=Math.min(data.length,sr*30), rate=200;
+  const hop=Math.floor(sr/rate), n=Math.floor(maxLen/hop);
+  const env=new Float32Array(n);
+  for(let i=0;i<n;i++){let mx=0;const s=i*hop;for(let j=0;j<hop;j++){const v=Math.abs(data[s+j]||0);if(v>mx)mx=v;}env[i]=mx;}
+  const alpha=0.85; for(let i=1;i<env.length;i++) env[i]=alpha*env[i]+(1-alpha)*env[i-1];
+  const minL=Math.floor(rate*60/200), maxL=Math.floor(rate*60/60);
+  let bestLag=minL, bestCorr=-Infinity;
+  for(let lag=minL;lag<=maxL;lag++){let c=0;const avail=env.length-lag;for(let i=0;i<avail;i++)c+=env[i]*env[i+lag];if(c>bestCorr){bestCorr=c;bestLag=lag;}}
+  let bpm=(rate*60)/bestLag;
+  while(bpm<80) bpm*=2; while(bpm>175) bpm/=2;
+  return bpm;
+}
+
+// ── STEREO/MONO ──
+document.getElementById('btnMono').addEventListener('click', function() {
+  isMono = !isMono;
+  this.textContent = isMono ? 'MONO MODE' : 'STEREO MODE';
+  this.style.color = isMono ? 'var(--ch2)' : '';
+  channels.forEach(ch => {
+    if (!ch.originalBuffer) return;
+    ch.audioBuffer = isMono ? makeMono(ch.originalBuffer) : ch.originalBuffer;
+    ch.drawWaveform();
+    if (ch.isPlaying) { ch.stopSrc(); ch.scheduleNext(); }
+  });
+});
+
+function makeMono(buffer) {
+  const sr=buffer.sampleRate, len=buffer.length;
+  const mono=audioCtx.createBuffer(1,len,sr);
+  const out=mono.getChannelData(0);
+  if(buffer.numberOfChannels===1){out.set(buffer.getChannelData(0));}
+  else{const L=buffer.getChannelData(0),R=buffer.getChannelData(1);for(let i=0;i<len;i++)out[i]=(L[i]+R[i])*0.5;}
+  return mono;
+}
+
+// ── EXPORT ──
+
+// iOS Safari requires AudioBuffers to be re-created inside the OfflineAudioContext
+// — passing a buffer from a live AudioContext produces white noise on mobile.
+function cloneBuffer(srcBuf, targetCtx) {
+  const buf = targetCtx.createBuffer(
+    srcBuf.numberOfChannels, srcBuf.length, srcBuf.sampleRate
+  );
+  for (let c = 0; c < srcBuf.numberOfChannels; c++) {
+    buf.copyToChannel(srcBuf.getChannelData(c), c);
+  }
+  return buf;
+}
+
+async function exportChannel(ch) {
+  if (!ch.audioBuffer) return;
+  const btn = document.getElementById(`chBE${ch.id}`);
+  btn.disabled = true;
+  setStatus(`EXPORTING CH${ch.id+1}...`, true);
+  try {
+    const ld=ch.loopEnd-ch.loopStart, sr=ch.audioBuffer.sampleRate;
+    const numCh=ch.audioBuffer.numberOfChannels;
+    const frames=Math.floor(ld*sr);
+    const offCtx=new OfflineAudioContext(numCh,frames,sr);
+    // Apply EQ in offline ctx
+    const CH_EQ=[{type:'lowshelf',freq:200},{type:'peaking',freq:1000,Q:1},{type:'highshelf',freq:4000}];
+    const eqNodes=CH_EQ.map((c,i)=>{const f=offCtx.createBiquadFilter();f.type=c.type;f.frequency.value=c.freq;if(c.Q)f.Q.value=c.Q;if(ch.eqBands&&ch.eqBands[i])f.gain.value=ch.eqBands[i].gain.value;return f;});
+    for(let i=0;i<eqNodes.length-1;i++)eqNodes[i].connect(eqNodes[i+1]);
+    eqNodes[eqNodes.length-1].connect(offCtx.destination);
+    const src=offCtx.createBufferSource();
+    src.buffer = cloneBuffer(ch.audioBuffer, offCtx); // iOS fix: copy into offline ctx
+    src.playbackRate.value=ch.userSpeed;
+    src.connect(eqNodes[0]);
+    src.start(0,ch.loopStart,ld);
+    const rendered=await offCtx.startRendering();
+    const wav=bufToWav(rendered);
+    const blob=new Blob([wav],{type:'audio/wav'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a'); a.href=url;
+    const base=document.getElementById(`chFName${ch.id}`).textContent.replace(/\.[^/.]+$/,'');
+    a.download=`${base}_ch${ch.id+1}_loop.wav`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    setStatus(`CH${ch.id+1} EXPORTED`);
+  } catch(e) { setStatus('EXPORT FAILED', false, true); console.error(e); }
+  btn.disabled = false;
+}
+
+function bufToWav(buffer) {
+  const nCh=buffer.numberOfChannels,sr=buffer.sampleRate,nF=buffer.length;
+  const bps=2,blk=nCh*bps,data=nF*blk;
+  const ab=new ArrayBuffer(44+data); const v=new DataView(ab);
+  const ws=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i));};
+  ws(0,'RIFF'); v.setUint32(4,36+data,true); ws(8,'WAVE'); ws(12,'fmt ');
+  v.setUint32(16,16,true); v.setUint16(20,1,true); v.setUint16(22,nCh,true);
+  v.setUint32(24,sr,true); v.setUint32(28,sr*blk,true); v.setUint16(32,blk,true);
+  v.setUint16(34,16,true); ws(36,'data'); v.setUint32(40,data,true);
+  let off=44;
+  for(let i=0;i<nF;i++) for(let c=0;c<nCh;c++){const s=Math.max(-1,Math.min(1,buffer.getChannelData(c)[i]));v.setInt16(off,s<0?s*32768:s*32767,true);off+=2;}
+  return ab;
+}
+
+// ── EXPORT MIX ──
+document.getElementById('btnExportMix').addEventListener('click', exportMix);
+
+async function exportMix() {
+  const loadedChannels = channels.filter(ch => ch.audioBuffer);
+  if (!loadedChannels.length && !seqTracks.some(t => t.buf)) {
+    setStatus('NOTHING TO EXPORT — load audio into at least one channel or drum track', false, true);
+    return;
+  }
+
+  await ensureAudio();
+  seqEnsureGain();
+
+  const bars     = parseInt(document.getElementById('exportBars').value);
+  const bpm      = seqBpm;
+  const secPerBeat = 60 / bpm;
+  const totalSec = bars * 4 * secPerBeat;   // 4 beats per bar
+  const sr       = audioCtx.sampleRate;
+  const frames   = Math.ceil(totalSec * sr);
+
+  const btn = document.getElementById('btnExportMix');
+  btn.textContent = '⏳ RENDERING...';
+  btn.disabled = true;
+  setStatus(`RENDERING ${bars}-BAR MIX AT ${bpm} BPM (${totalSec.toFixed(1)}s)...`, true);
+
+  try {
+    const offCtx = new OfflineAudioContext(2, frames, sr);
+    const masterOut = offCtx.createGain(); masterOut.gain.value = 0.85;
+    masterOut.connect(offCtx.destination);
+
+    // ── CHANNELS ──
+    for (const ch of loadedChannels) {
+      if (ch.isMutedByUser) continue;
+
+      // Recreate 3-band EQ in offline context
+      const CH_EQ = [{type:'lowshelf',freq:200},{type:'peaking',freq:1000,Q:1},{type:'highshelf',freq:4000}];
+      const eqNodes = CH_EQ.map((c,i) => {
+        const f = offCtx.createBiquadFilter();
+        f.type = c.type; f.frequency.value = c.freq;
+        if (c.Q) f.Q.value = c.Q;
+        if (ch.eqBands && ch.eqBands[i]) f.gain.value = ch.eqBands[i].gain.value;
+        return f;
+      });
+      for (let i = 0; i < eqNodes.length - 1; i++) eqNodes[i].connect(eqNodes[i+1]);
+
+      // LP / HP filters
+      const lp = offCtx.createBiquadFilter();
+      lp.type = ch.chLpEnabled ? 'lowpass' : 'allpass';
+      lp.frequency.value = ch.chLpFreq;
+      const hp = offCtx.createBiquadFilter();
+      hp.type = ch.chHpEnabled ? 'highpass' : 'allpass';
+      hp.frequency.value = ch.chHpFreq;
+      eqNodes[eqNodes.length-1].connect(lp); lp.connect(hp);
+
+      const chGain = offCtx.createGain();
+      chGain.gain.value = ch.volume;
+      hp.connect(chGain); chGain.connect(masterOut);
+
+      // Loop the buffer for the full duration
+      const loopDur = ch.loopEnd - ch.loopStart;
+      if (loopDur <= 0) continue;
+      // Clone into offline ctx — iOS Safari produces white noise if you reuse a live-ctx buffer
+      const offBuf = cloneBuffer(ch.audioBuffer, offCtx);
+      let t = 0;
+      while (t < totalSec) {
+        const src = offCtx.createBufferSource();
+        src.buffer = offBuf;
+        src.playbackRate.value = ch.userSpeed;
+        src.connect(eqNodes[0]);
+        const remaining = totalSec - t;
+        const playDur = Math.min(loopDur, remaining);
+        src.start(t, ch.loopStart, playDur);
+        t += loopDur / ch.userSpeed;
+      }
+    }
+
+    // ── DRUM MACHINE ──
+    const seqGain = offCtx.createGain();
+    seqGain.gain.value = parseFloat(document.getElementById('seqMasterR').value) / 100;
+    seqGain.connect(masterOut);
+
+    const secPer16th = secPerBeat / 4;
+    const swingAmt   = (seqSwingPct / 100) * secPer16th * 0.33;
+    const hasSolo    = seqTracks.some(tr => tr.soloed);
+
+    let stepTime = 0;
+    let step = 0;
+    // Pre-clone all drum buffers into the offline context once (not per-step)
+    const seqBufCache = new Map();
+    seqTracks.forEach(tr => {
+      if (tr.buf) seqBufCache.set(tr.id, cloneBuffer(tr.buf, offCtx));
+    });
+
+    while (stepTime < totalSec) {
+      const stepDur = step % 2 === 0 ? secPer16th - swingAmt : secPer16th + swingAmt;
+      const stepIdx = step % seqNumSteps;
+
+      seqTracks.forEach(tr => {
+        const active = hasSolo ? tr.soloed : !tr.muted;
+        if (!active || !tr.steps[stepIdx] || !seqBufCache.has(tr.id)) return;
+        if (stepTime >= totalSec) return;
+        const src = offCtx.createBufferSource();
+        src.buffer = seqBufCache.get(tr.id);
+        const g = offCtx.createGain(); g.gain.value = tr.vol;
+        src.connect(g); g.connect(seqGain);
+        src.start(stepTime);
+      });
+
+      stepTime += stepDur;
+      step++;
+    }
+
+    const rendered = await offCtx.startRendering();
+    const wav  = bufToWav(rendered);
+    const blob = new Blob([wav], {type:'audio/wav'});
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url;
+    a.download = `mix_${bars}bars_${bpm}bpm.wav`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    setStatus(`MIX EXPORTED — ${bars} bars · ${totalSec.toFixed(1)}s · ${bpm} BPM`);
+  } catch(e) {
+    setStatus('EXPORT FAILED — see console', false, true);
+    console.error(e);
+  }
+
+  btn.textContent = '↓ EXPORT MIX';
+  btn.disabled = false;
+}
+function toggleSeq() {
+  document.getElementById('seqBody').classList.toggle('open');
+  document.getElementById('seqArrow').classList.toggle('open');
+}
+
+// ── SYNTH GENERATORS ──
+function seqGenKick808(sr){const n=~~(sr*.8),d=new Float32Array(n);let ph=0;for(let i=0;i<n;i++){const t=i/sr,f=55+160*Math.exp(-t*28);ph+=(2*Math.PI*f)/sr;d[i]=Math.sin(ph)*Math.exp(-t*5.5)*.9;}return d;}
+function seqGenKickSnap(sr){const n=~~(sr*.35),d=new Float32Array(n);let ph=0;for(let i=0;i<n;i++){const t=i/sr,f=90+260*Math.exp(-t*50);ph+=(2*Math.PI*f)/sr;d[i]=Math.sin(ph)*Math.exp(-t*14)*.85;}return d;}
+function seqGenSnare(sr){const n=~~(sr*.25),d=new Float32Array(n);let ph=0;for(let i=0;i<n;i++){const t=i/sr;ph+=(2*Math.PI*185)/sr;d[i]=(Math.sin(ph)*.3+(Math.random()*2-1)*.7)*Math.exp(-t*18)*.8;}return d;}
+function seqGenSnareTight(sr){const n=~~(sr*.1),d=new Float32Array(n);for(let i=0;i<n;i++){const t=i/sr;d[i]=(Math.random()*2-1)*Math.exp(-t*70)*.85;}return d;}
+function seqGenHHClosed(sr){const n=~~(sr*.07),d=new Float32Array(n);for(let i=0;i<n;i++){const t=i/sr;d[i]=(Math.random()*2-1)*Math.exp(-t*110)*.6;}return d;}
+function seqGenHHOpen(sr){const n=~~(sr*.45),d=new Float32Array(n);for(let i=0;i<n;i++){const t=i/sr;d[i]=(Math.random()*2-1)*Math.exp(-t*7)*.55;}return d;}
+function seqGenClap(sr){const n=~~(sr*.2),d=new Float32Array(n);for(let i=0;i<n;i++){const t=i/sr;const env=Math.exp(-t*300)+(t>.008?Math.exp(-(t-.008)*300):0)*.8+(t>.018?Math.exp(-(t-.018)*120):0)*.5;d[i]=(Math.random()*2-1)*env*.85;}return d;}
+function seqGenCrash(sr){const n=~~(sr*2),d=new Float32Array(n);const fr=[183,247,347,481,643,889,1217,1609],ph=fr.map(()=>0);for(let i=0;i<n;i++){const t=i/sr;let s=0;fr.forEach((f,j)=>{ph[j]+=(2*Math.PI*f)/sr;s+=Math.sin(ph[j])*(.08/(j*.4+1));});d[i]=(s+(Math.random()*2-1)*.35)*Math.exp(-t*3.5)*.7;}return d;}
+function seqGenRide(sr){const n=~~(sr*1),d=new Float32Array(n);const fr=[416,681,852,1221,1607],ph=fr.map(()=>0);for(let i=0;i<n;i++){const t=i/sr;let s=0;fr.forEach((f,j)=>{ph[j]+=(2*Math.PI*f)/sr;s+=Math.sin(ph[j])*(.1/(j*.5+1));});d[i]=(s+(Math.random()*2-1)*.15)*Math.exp(-t*5)*.65;}return d;}
+function seqGenShaker(sr){const n=~~(sr*.1),d=new Float32Array(n);for(let i=0;i<n;i++){const t=i/sr;d[i]=(Math.random()*2-1)*Math.sin(2*Math.PI*6000*t)*Math.exp(-t*45)*.5;}return d;}
+function seqGenTom(sr,bf,dc){const n=~~(sr*.5),d=new Float32Array(n);let ph=0;for(let i=0;i<n;i++){const t=i/sr,f=bf+bf*.6*Math.exp(-t*22);ph+=(2*Math.PI*f)/sr;d[i]=Math.sin(ph)*Math.exp(-t*dc)*.85;}return d;}
+function seqGenRimshot(sr){const n=~~(sr*.07),d=new Float32Array(n);let pA=0,pB=0;for(let i=0;i<n;i++){const t=i/sr;pA+=(2*Math.PI*1050)/sr;pB+=(2*Math.PI*420)/sr;d[i]=((Math.sin(pA)+Math.sin(pB))*.35+(Math.random()*2-1)*.55)*Math.exp(-t*90)*.8;}return d;}
+function seqGenCowbell(sr){const n=~~(sr*.45),d=new Float32Array(n);let p1=0,p2=0;for(let i=0;i<n;i++){const t=i/sr;p1+=(2*Math.PI*562)/sr;p2+=(2*Math.PI*845)/sr;d[i]=Math.tanh((Math.sin(p1)+Math.sin(p2))*1.5)*Math.exp(-t*10)*.65;}return d;}
+function seqGenClave(sr){const n=~~(sr*.09),d=new Float32Array(n);let ph=0;for(let i=0;i<n;i++){const t=i/sr;ph+=(2*Math.PI*2500)/sr;d[i]=Math.sin(ph)*Math.exp(-t*65)*.75;}return d;}
+
+const SEQ_POOL = [
+  {name:'KICK 808',  gen:sr=>seqGenKick808(sr)},
+  {name:'KICK SNAP', gen:sr=>seqGenKickSnap(sr)},
+  {name:'SNARE',     gen:sr=>seqGenSnare(sr)},
+  {name:'SNARE TIGHT',gen:sr=>seqGenSnareTight(sr)},
+  {name:'HH CLOSED', gen:sr=>seqGenHHClosed(sr)},
+  {name:'HH OPEN',   gen:sr=>seqGenHHOpen(sr)},
+  {name:'CLAP',      gen:sr=>seqGenClap(sr)},
+  {name:'CRASH',     gen:sr=>seqGenCrash(sr)},
+  {name:'RIDE',      gen:sr=>seqGenRide(sr)},
+  {name:'SHAKER',    gen:sr=>seqGenShaker(sr)},
+  {name:'TOM HI',    gen:sr=>seqGenTom(sr,220,12)},
+  {name:'TOM MID',   gen:sr=>seqGenTom(sr,155,9)},
+  {name:'TOM LOW',   gen:sr=>seqGenTom(sr,90,7)},
+  {name:'RIMSHOT',   gen:sr=>seqGenRimshot(sr)},
+  {name:'COWBELL',   gen:sr=>seqGenCowbell(sr)},
+  {name:'CLAVE',     gen:sr=>seqGenClave(sr)},
+];
+const SEQ_DEFAULTS = ['KICK 808','SNARE','HH CLOSED','CLAP','CRASH','SHAKER'];
+
+// ── STATE ──
+let seqBpm = 120, seqNumSteps = 16, seqPlaying = false;
+let seqCurStep = 0, seqNextNoteT = 0, seqTimerId = null;
+let seqSwingPct = 0, seqTapTimes = [], seqTrkIdCtr = 0;
+let seqMasterGain = null;
+const seqNoteQ = [];
+let seqLastDisplayStep = -1;
+const SEQ_LOOKAHEAD_MS = 25, SEQ_SCHED_AHEAD = 0.1;
+const SEQ_COLORS = ['#ff3c6e','#ffb347','#39ff95','#00e5ff','#a78bfa','#ff8c00','#f87171','#60a5fa','#fb7185','#a3e635'];
+const SEQ_DNAMES = ['KICK','SNARE','HI-HAT','CLAP','CRASH','SHAKER','PERC','FX'];
+let seqTracks = [];
+let seqPickerTid = null;
+
+function seqMkTrack(name, ci) {
+  return { id:seqTrkIdCtr++, name:name||`TRK ${seqTrkIdCtr}`,
+    buf:null, steps:new Array(64).fill(false), vol:0.8,
+    muted:false, soloed:false, activeNode:null, synthName:null,
+    color:SEQ_COLORS[ci%SEQ_COLORS.length] };
+}
+for (let i=0;i<6;i++) seqTracks.push(seqMkTrack(SEQ_DNAMES[i],i));
+
+function seqEnsureGain() {
+  if (seqMasterGain || !audioCtx) return;
+  seqMasterGain = audioCtx.createGain();
+  seqMasterGain.gain.value = parseFloat(document.getElementById('seqMasterR').value)/100;
+  seqMasterGain.connect(masterMixNode);
+}
+
+function seqApplySynth(tr, name) {
+  const entry = SEQ_POOL.find(p=>p.name===name);
+  if (!entry || !audioCtx) return;
+  const data = entry.gen(audioCtx.sampleRate);
+  const buf = audioCtx.createBuffer(1, data.length, audioCtx.sampleRate);
+  buf.copyToChannel(data, 0);
+  tr.buf = buf; tr.synthName = name;
+  const el = document.querySelector(`.seq-trk[data-stid="${tr.id}"] .seq-tname`);
+  if (el) el.value = tr.name;
+  const pb = document.querySelector(`.seq-trk[data-stid="${tr.id}"] .seq-tb.pool`);
+  if (pb) pb.classList.add('has-sound');
+}
+
+function seqScheduleNote(step, t) {
+  const hasSolo = seqTracks.some(tr=>tr.soloed);
+  seqTracks.forEach(tr => {
+    const active = hasSolo ? tr.soloed : !tr.muted;
+    if (!active || !tr.steps[step] || !tr.buf) return;
+    // Cut previous instance cleanly
+    if (tr.activeNode) { try { tr.activeNode.stop(t); } catch(e){} tr.activeNode=null; }
+    const src = audioCtx.createBufferSource(); src.buffer=tr.buf;
+    const g = audioCtx.createGain(); g.gain.value=tr.vol;
+    src.connect(g); g.connect(seqMasterGain);
+    src.start(t);
+    tr.activeNode = src;
+    src.onended = () => { if(tr.activeNode===src) tr.activeNode=null; };
+  });
+  seqNoteQ.push({step,t});
+}
+
+function seqAdvance() {
+  const sps = (60/seqBpm)/4;
+  const sw = (seqSwingPct/100)*sps*0.33;
+  seqNextNoteT += seqCurStep%2===0 ? sps-sw : sps+sw;
+  seqCurStep = (seqCurStep+1)%seqNumSteps;
+}
+
+function seqScheduler() {
+  while (seqNextNoteT < audioCtx.currentTime + SEQ_SCHED_AHEAD) {
+    seqScheduleNote(seqCurStep, seqNextNoteT);
+    seqAdvance();
+  }
+  seqTimerId = setTimeout(seqScheduler, SEQ_LOOKAHEAD_MS);
+}
+
+function seqStart() {
+  if (seqPlaying) return;
+  ensureAudio().then(() => {
+    seqEnsureGain();
+    // Pre-load default sounds on first start if tracks have no buffer
+    seqTracks.forEach((tr,i) => { if (!tr.buf && SEQ_DEFAULTS[i]) seqApplySynth(tr, SEQ_DEFAULTS[i]); });
+    if (audioCtx.state==='suspended') audioCtx.resume();
+    seqCurStep=0; seqNextNoteT=audioCtx.currentTime+0.05;
+    seqPlaying=true;
+    document.getElementById('seqBtnPlay').textContent='■■ PLAYING';
+    document.getElementById('seqBtnPlay').classList.add('on');
+    document.getElementById('seqDot').classList.add('playing');
+    seqScheduler();
+    requestAnimationFrame(seqDrawFrame);
+  });
+}
+
+function seqStop(reset=false) {
+  seqPlaying=false; clearTimeout(seqTimerId); seqTimerId=null;
+  document.getElementById('seqBtnPlay').textContent='▶ PLAY';
+  document.getElementById('seqBtnPlay').classList.remove('on');
+  document.getElementById('seqDot').classList.remove('playing');
+  seqTracks.forEach(tr=>{if(tr.activeNode){try{tr.activeNode.stop();}catch(e){}tr.activeNode=null;}});
+  seqClearNow(); seqNoteQ.length=0; seqLastDisplayStep=-1;
+  if (reset) seqCurStep=0;
+}
+
+function seqDrawFrame() {
+  if (!seqPlaying) return;
+  while (seqNoteQ.length && seqNoteQ[0].t <= audioCtx.currentTime) {
+    const {step} = seqNoteQ.shift();
+    if (step!==seqLastDisplayStep) { seqHighlightStep(step); seqLastDisplayStep=step; }
+  }
+  requestAnimationFrame(seqDrawFrame);
+}
+
+function seqClearNow() {
+  document.querySelectorAll('.seq-sb.now').forEach(b=>b.classList.remove('now'));
+  document.querySelectorAll('.seq-bd').forEach(d=>d.classList.remove('lit'));
+}
+
+function seqHighlightStep(step) {
+  seqClearNow();
+  document.querySelectorAll('.seq-bd').forEach((d,i)=>d.classList.toggle('lit',i===step));
+  seqTracks.forEach(tr=>{
+    const btn=document.querySelector(`.seq-sb[data-stid="${tr.id}"][data-si="${step}"]`);
+    if (btn) btn.classList.add('now');
+  });
+}
+
+function seqBuildBeatDots() {
+  const el=document.getElementById('seqBeatDots'); el.innerHTML='';
+  for(let i=0;i<seqNumSteps;i++){
+    const d=document.createElement('div');
+    d.className='seq-bd '+(i%4===0?'q':'e');
+    el.appendChild(d);
+  }
+}
+
+function seqRenderTracks() {
+  const panel=document.getElementById('seqTrackPanel'); panel.innerHTML='';
+  seqTracks.forEach(tr=>panel.appendChild(seqMakeTrackEl(tr)));
+  seqBuildBeatDots();
+}
+
+function seqMakeTrackEl(tr) {
+  const row=document.createElement('div');
+  row.className='seq-trk'+(tr.muted?' muted':'');
+  row.dataset.stid=tr.id; // use stid to avoid clash with looper data-tid
+
+  const fi=document.createElement('input'); fi.type='file'; fi.accept='audio/*,.mp3,.wav,.ogg,.flac,.m4a,.aac,.webm,.aiff,.aif,.opus'; fi.style.cssText='opacity:0;position:absolute;width:0;height:0;pointer-events:none';
+  fi.addEventListener('change',()=>{if(fi.files[0])seqLoadFile(tr.id,fi.files[0]);});
+  row.appendChild(fi);
+
+  const tm=document.createElement('div'); tm.className='seq-tm';
+  const bar=document.createElement('div'); bar.className='seq-tc';
+  bar.style.cssText=`background:${tr.color};box-shadow:0 0 5px ${tr.color}88;`;
+  tm.appendChild(bar);
+
+  const nameEl=document.createElement('input'); nameEl.type='text'; nameEl.className='seq-tname';
+  nameEl.value=tr.name; nameEl.spellcheck=false; nameEl.maxLength=10;
+  nameEl.addEventListener('change',()=>{tr.name=nameEl.value.toUpperCase();nameEl.value=tr.name;});
+  nameEl.addEventListener('keydown',e=>{if(e.key==='Enter')nameEl.blur();});
+  nameEl.addEventListener('dragover',e=>{e.preventDefault();nameEl.style.borderColor=tr.color;});
+  nameEl.addEventListener('dragleave',()=>{nameEl.style.borderColor='';});
+  nameEl.addEventListener('drop',e=>{e.preventDefault();nameEl.style.borderColor='';if(e.dataTransfer.files[0])seqLoadFile(tr.id,e.dataTransfer.files[0]);});
+  tm.appendChild(nameEl);
+
+  const btns=document.createElement('div'); btns.className='seq-tbtns';
+  const ldBtn=document.createElement('button'); ldBtn.className='seq-tb ld'; ldBtn.title='Load WAV'; ldBtn.textContent='▲';
+  ldBtn.addEventListener('click',()=>{ fi.style.pointerEvents='auto'; fi.click(); setTimeout(()=>fi.style.pointerEvents='none',500); }); btns.appendChild(ldBtn);
+
+  const poolBtn=document.createElement('button'); poolBtn.className='seq-tb pool'+(tr.synthName?' has-sound':'');
+  poolBtn.title='Pick synth sound'; poolBtn.textContent='♪';
+  poolBtn.addEventListener('click',e=>{e.stopPropagation();seqOpenPicker(tr.id,poolBtn);}); btns.appendChild(poolBtn);
+
+  const muteBtn=document.createElement('button'); muteBtn.className='seq-tb M'+(tr.muted?' on':''); muteBtn.title='Mute'; muteBtn.textContent='M';
+  muteBtn.addEventListener('click',()=>{tr.muted=!tr.muted;muteBtn.className='seq-tb M'+(tr.muted?' on':'');row.classList.toggle('muted',tr.muted);}); btns.appendChild(muteBtn);
+  const soloBtn=document.createElement('button'); soloBtn.className='seq-tb S'+(tr.soloed?' on':''); soloBtn.title='Solo'; soloBtn.textContent='S';
+  soloBtn.addEventListener('click',()=>{tr.soloed=!tr.soloed;soloBtn.className='seq-tb S'+(tr.soloed?' on':'');}); btns.appendChild(soloBtn);
+  tm.appendChild(btns); row.appendChild(tm);
+
+  const tv=document.createElement('div'); tv.className='seq-tvol';
+  const vr=document.createElement('input'); vr.type='range'; vr.className='seq-vr';
+  vr.min=0;vr.max=100;vr.value=Math.round(tr.vol*100);
+  vr.addEventListener('input',()=>{tr.vol=+vr.value/100;}); tv.appendChild(vr); row.appendChild(tv);
+
+  // Step grid — 16 groups × 4 = 64 total steps
+  const grid=document.createElement('div'); grid.className='seq-grid';
+  for(let g=0;g<16;g++){
+    const grp=document.createElement('div');
+    grp.className='seq-grp'+(g*4>=seqNumSteps?' hide':'');
+    grp.dataset.g=g;
+    for(let s=0;s<4;s++){
+      const si=g*4+s;
+      const btn=document.createElement('button');
+      btn.className='seq-sb'+(tr.steps[si]?' on':'');
+      if(tr.steps[si]){btn.style.background=tr.color+'cc';btn.style.borderColor=tr.color;}
+      btn.dataset.stid=tr.id; btn.dataset.si=si;
+      btn.addEventListener('click',()=>{
+        tr.steps[si]=!tr.steps[si];
+        btn.classList.toggle('on',tr.steps[si]);
+        btn.style.background=tr.steps[si]?tr.color+'cc':'';
+        btn.style.borderColor=tr.steps[si]?tr.color:'';
+      });
+      grp.appendChild(btn);
+    }
+    grid.appendChild(grp);
+  }
+  row.appendChild(grid);
+  return row;
+}
+
+async function seqLoadFile(tid, file) {
+  await ensureAudio(); seqEnsureGain();
+  const tr=seqTracks.find(t=>t.id===tid); if(!tr) return;
+  setStatus(`SEQ LOADING: ${file.name}`,true);
+  try {
+    tr.buf=await audioCtx.decodeAudioData(await file.arrayBuffer());
+    tr.synthName=null; tr.name=file.name.replace(/\.[^/.]+$/,'').toUpperCase().slice(0,10);
+    const el=document.querySelector(`.seq-trk[data-stid="${tid}"] .seq-tname`);
+    if(el) el.value=tr.name;
+    const pb=document.querySelector(`.seq-trk[data-stid="${tid}"] .seq-tb.pool`);
+    if(pb) pb.classList.remove('has-sound');
+    setStatus(`SEQ LOADED — ${tr.name}`);
+  } catch(e){setStatus('SEQ LOAD ERROR',false,true);}
+}
+
+// ── SOUND PICKER ──
+function seqOpenPicker(tid, triggerEl) {
+  if (seqPickerTid===tid && document.getElementById('seqPicker').style.display!=='none') {
+    seqClosePicker(); return;
+  }
+  seqPickerTid=tid;
+  ensureAudio().then(()=>{ seqEnsureGain(); seqRenderPickerGrid(); });
+  const picker=document.getElementById('seqPicker');
+  picker.style.display='block';
+
+  // Position relative to viewport (position:fixed — no scrollY/scrollX)
+  const rect = triggerEl.getBoundingClientRect();
+  const pickerH = 340; // estimated max height
+  const pickerW = 220;
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+
+  // Left: align to trigger, clamp to viewport
+  let left = rect.left;
+  if (left + pickerW > vw - 8) left = vw - pickerW - 8;
+  if (left < 8) left = 8;
+
+  // Vertical: prefer below, flip above if not enough room
+  const spaceBelow = vh - rect.bottom - 8;
+  const spaceAbove = rect.top - 8;
+  let top;
+  if (spaceBelow >= pickerH || spaceBelow >= spaceAbove) {
+    top = rect.bottom + 5;
+    // clamp if still overflows
+    if (top + pickerH > vh - 8) top = Math.max(8, vh - pickerH - 8);
+  } else {
+    top = rect.top - pickerH - 5;
+    if (top < 8) top = 8;
+  }
+
+  picker.style.left = left + 'px';
+  picker.style.top  = top  + 'px';
+}
+function seqClosePicker() { document.getElementById('seqPicker').style.display='none'; seqPickerTid=null; }
+function seqRenderPickerGrid() {
+  const tr=seqTracks.find(t=>t.id===seqPickerTid);
+  const grid=document.getElementById('seqPickerGrid'); grid.innerHTML='';
+  SEQ_POOL.forEach(entry=>{
+    const tile=document.createElement('button'); tile.className='seq-picker-tile'+(tr&&tr.synthName===entry.name?' active':'');
+    tile.textContent=entry.name;
+    tile.addEventListener('click',()=>{
+      if(!tr) return;
+      seqApplySynth(tr,entry.name);
+      setStatus(`SEQ SOUND — ${entry.name}`);
+      seqClosePicker();
+    });
+    grid.appendChild(tile);
+  });
+  const div=document.createElement('div'); div.className='seq-picker-div'; grid.appendChild(div);
+  const fileBtn=document.createElement('button'); fileBtn.className='seq-picker-file';
+  fileBtn.textContent='▲ LOAD OWN WAV / MP3';
+  fileBtn.addEventListener('click',()=>{ seqClosePicker(); const inp=document.querySelector(`.seq-trk[data-stid="${seqPickerTid}"] .seq-tb.ld`); if(inp) inp.click(); });
+  grid.appendChild(fileBtn);
+}
+document.getElementById('seqPickerClose').addEventListener('click', seqClosePicker);
+document.addEventListener('click', e=>{
+  if(!e.target.closest('#seqPicker')&&!e.target.classList.contains('pool')) seqClosePicker();
+});
+
+// ── BPM ── (decimal support: step 0.5)
+function seqSetBpm(v) {
+  seqBpm = Math.round(Math.max(40, Math.min(240, v)) * 2) / 2; // snap to .0 or .5
+  document.getElementById('seqBpmDisp').textContent = seqBpm % 1 === 0 ? seqBpm : seqBpm.toFixed(1);
+  document.getElementById('seqBpmR').value = seqBpm;
+}
+document.getElementById('seqBpmR').addEventListener('input',e=>seqSetBpm(+e.target.value));
+document.getElementById('seqBpmUp').addEventListener('click',()=>seqSetBpm(seqBpm+0.5));
+document.getElementById('seqBpmDn').addEventListener('click',()=>seqSetBpm(seqBpm-0.5));
+let seqBpmHold=null;
+['seqBpmUp','seqBpmDn'].forEach(id=>{
+  const el=document.getElementById(id), d=id==='seqBpmUp'?.5:-.5;
+  el.addEventListener('mousedown',()=>{seqBpmHold=setInterval(()=>seqSetBpm(seqBpm+d),80);});
+  ['mouseup','mouseleave'].forEach(ev=>el.addEventListener(ev,()=>clearInterval(seqBpmHold)));
+});
+
+// Tap tempo
+document.getElementById('seqBtnTap').addEventListener('click',()=>{
+  const now=Date.now();
+  if(seqTapTimes.length&&now-seqTapTimes[seqTapTimes.length-1]>3000) seqTapTimes=[];
+  seqTapTimes.push(now);
+  if(seqTapTimes.length>=2){
+    const ints=seqTapTimes.slice(-4);
+    const deltas=ints.slice(1).map((t,i)=>t-ints[i]);
+    const raw=60000/(deltas.reduce((a,b)=>a+b)/deltas.length);
+    seqSetBpm(Math.round(raw*2)/2);
+  }
+});
+
+// Swing
+document.getElementById('seqSwingR').addEventListener('input',e=>{
+  seqSwingPct=+e.target.value;
+  document.getElementById('seqSwingV').textContent=seqSwingPct+'%';
+});
+
+// Master vol
+document.getElementById('seqMasterR').addEventListener('input',e=>{
+  document.getElementById('seqMasterV').textContent=e.target.value+'%';
+  if(seqMasterGain) seqMasterGain.gain.value=+e.target.value/100;
+});
+
+// Steps selector
+document.getElementById('seqStepsSeg').querySelectorAll('.seq-seg-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.seq-seg-btn').forEach(b=>b.classList.remove('on'));
+    btn.classList.add('on');
+    seqNumSteps=+btn.dataset.v;
+    document.querySelectorAll('.seq-grp').forEach(g=>{g.classList.toggle('hide',+g.dataset.g*4>=seqNumSteps);});
+    seqBuildBeatDots();
+    if(seqCurStep>=seqNumSteps) seqCurStep=0;
+  });
+});
+
+// Transport buttons (drum machine's own)
+document.getElementById('seqBtnPlay').addEventListener('click',()=>{ seqPlaying?seqStop(false):seqStart(); });
+document.getElementById('seqBtnStop').addEventListener('click',()=>seqStop(true));
+
+// Add track
+document.getElementById('seqAddRow').addEventListener('click',()=>{
+  if(seqTracks.length>=10){setStatus('SEQ MAX 10 TRACKS');return;}
+  const tr=seqMkTrack(SEQ_DNAMES[seqTracks.length]||`TRK ${seqTracks.length+1}`,seqTracks.length);
+  seqTracks.push(tr);
+  document.getElementById('seqTrackPanel').appendChild(seqMakeTrackEl(tr));
+  seqBuildBeatDots();
+});
+
+// Keyboard
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT') return;
+  if(e.code==='Space'){e.preventDefault();
+    if(document.getElementById('seqBody').classList.contains('open'))
+      document.getElementById('seqBtnPlay').click();
+  }
+  if(e.code==='Escape'){seqStop(true);seqClosePicker();}
+});
+
+// Init
+seqRenderTracks();
+
+// ── RESIZE ──
+window.addEventListener('resize', () => {
+  channels.forEach(ch => { if(ch.audioBuffer){ ch.drawWaveform(); ch.drawRuler(); ch.updateLoopUI(); } });
+});
+</script>
+<script>
+/* WAVEFORM theme */
+(function(){
+  var t = localStorage.getItem('wf-theme');
+  if (t === 'light') document.documentElement.setAttribute('data-theme','light');
+  var btn = document.getElementById('wfThemeBtn');
+  if (!btn) return;
+  btn.addEventListener('click', function(){
+    var isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    if (isLight) {
+      document.documentElement.removeAttribute('data-theme');
+      localStorage.setItem('wf-theme','dark');
+    } else {
+      document.documentElement.setAttribute('data-theme','light');
+      localStorage.setItem('wf-theme','light');
+    }
+  });
+})();
+</script>
+</body>
+</html>

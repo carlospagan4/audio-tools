@@ -3,40 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 <title>CHORD DICE — Chord Randomizer</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700;900&family=Barlow:wght@300;400;500&display=swap');
-
-:root {
-  --bg:#0a0a0c; --surface:#111114; --surface2:#18181d; --surface3:#1f1f26;
-  --border:#2a2a35; --border2:#38384a;
-  --violet:#c084fc; --violet-lo:rgba(192,132,252,0.08); --violet-mid:rgba(192,132,252,0.18);
-  --text:#e8e8f0; --text-muted:#6b6b80; --text-dim:#3a3a4a;
-  --wf-nav-h:48px;
-}
-*{margin:0;padding:0;box-sizing:border-box;}
+:root{--bg:#0a0a0c;--surface:#111114;--surface2:#18181d;--surface3:#1f1f26;--border:#2a2a35;--border2:#38384a;--violet:#c084fc;--violet-lo:rgba(192,132,252,0.08);--text:#e8e8f0;--text-muted: #a0a0bc;--text-dim:   #707090;--wf-nav-h:48px;}
 body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-height:100vh;overflow-x:hidden;padding-top:var(--wf-nav-h);}
 body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(192,132,252,0.016) 1px,transparent 1px),linear-gradient(90deg,rgba(192,132,252,0.016) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
 body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.022) 2px,rgba(0,0,0,0.022) 4px);pointer-events:none;z-index:999;}
-
-/* NAV */
-.wf-nav{position:fixed;top:0;left:0;right:0;z-index:9999;height:var(--wf-nav-h);background:rgba(8,8,11,0.97);border-bottom:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;padding:0 20px;backdrop-filter:blur(14px);}
-.wf-nav-logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;letter-spacing:0.22em;text-transform:uppercase;color:#00e5ff;margin-right:28px;display:flex;align-items:center;gap:7px;text-decoration:none;white-space:nowrap;flex-shrink:0;}
-.wf-nav-logo-icon{width:20px;height:20px;border:2px solid #00e5ff;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:9px;line-height:1;}
-.wf-nav-tools{display:flex;align-items:center;gap:1px;overflow-x:auto;}
-.wf-nav-item{display:flex;align-items:center;gap:5px;padding:0 12px;height:var(--wf-nav-h);font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.35);text-decoration:none;border-bottom:2px solid transparent;transition:color .18s,border-color .18s,background .18s;white-space:nowrap;}
-.wf-nav-item:hover{color:rgba(255,255,255,0.75);border-bottom-color:rgba(255,255,255,0.2);}
-.wf-nav-item.wf-active-cyan{color:#00e5ff;border-bottom-color:#00e5ff;background:rgba(0,229,255,0.05);}
-.wf-nav-item.wf-active-green{color:#39d98a;border-bottom-color:#39d98a;background:rgba(57,217,138,0.05);}
-.wf-nav-item.wf-active-amber{color:#ff8c00;border-bottom-color:#ff8c00;background:rgba(255,140,0,0.05);}
-.wf-nav-item.wf-active-red{color:#ff3c6e;border-bottom-color:#ff3c6e;background:rgba(255,60,110,0.05);}
-.wf-nav-item.wf-active-violet{color:#c084fc;border-bottom-color:#c084fc;background:rgba(192,132,252,0.05);}
-.wf-nav-dot{width:5px;height:5px;border-radius:50%;background:currentColor;opacity:0.6;flex-shrink:0;}
-.wf-nav-item:not([class*="wf-active"]) .wf-nav-dot{opacity:0.3;}
-
 .app{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:0 24px 80px;}
-
-/* HEADER */
 header{padding:28px 0 20px;border-bottom:1px solid var(--border);margin-bottom:20px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
 .logo-group{display:flex;flex-direction:column;gap:2px;margin-right:4px;}
 .logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:11px;letter-spacing:.3em;color:var(--violet);text-transform:uppercase;display:flex;align-items:center;gap:8px;}
@@ -45,8 +20,6 @@ header{padding:28px 0 20px;border-bottom:1px solid var(--border);margin-bottom:2
 .title span{color:var(--violet);text-shadow:0 0 24px rgba(192,132,252,0.35);}
 .header-meta{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-muted);letter-spacing:0.1em;line-height:1.7;}
 .header-meta small{color:var(--text-dim);font-size:9px;}
-
-/* CONTROLS */
 .controls{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:16px 20px;margin-bottom:18px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
 .ctrl-group{display:flex;flex-direction:column;gap:6px;}
 .ctrl-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:0.18em;color:var(--text-muted);text-transform:uppercase;}
@@ -66,12 +39,10 @@ header{padding:28px 0 20px;border-bottom:1px solid var(--border);margin-bottom:2
 .roll-icon{display:inline-block;font-size:16px;}
 .roll-btn.rolling .roll-icon{animation:diceRoll .4s cubic-bezier(.36,.07,.19,.97);}
 @keyframes diceRoll{0%{transform:rotate(0) scale(1)}30%{transform:rotate(-20deg) scale(1.2)}70%{transform:rotate(25deg) scale(1.2)}100%{transform:rotate(0) scale(1)}}
-
-/* TRANSPOSE BAR */
 .transpose-bar{display:none;background:var(--surface);border:1px solid rgba(192,132,252,0.25);border-radius:4px;padding:10px 16px;margin-bottom:14px;align-items:center;gap:14px;flex-wrap:wrap;}
 .transpose-bar.visible{display:flex;}
 .tb-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:0.18em;color:var(--text-muted);text-transform:uppercase;}
-.tb-prog-name{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:0.06em;color:var(--text);}
+.tb-prog-name{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;color:var(--text);}
 .tb-spacer{flex:1;}
 .tb-key-display{font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--violet);font-weight:bold;min-width:30px;text-align:center;}
 .tb-shift-btn{font-family:'Share Tech Mono',monospace;font-size:14px;background:var(--surface2);border:1px solid var(--border2);color:var(--text-muted);width:30px;height:30px;border-radius:2px;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;}
@@ -80,8 +51,6 @@ header{padding:28px 0 20px;border-bottom:1px solid var(--border);margin-bottom:2
 .tb-reset:hover{border-color:var(--text-muted);color:var(--text-muted);}
 .tb-divider{width:1px;height:24px;background:var(--border);}
 .tb-offset{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-muted);letter-spacing:0.1em;min-width:38px;}
-
-/* PROGRESSIONS */
 .prog-section{margin-bottom:20px;}
 .prog-header{display:flex;align-items:center;gap:10px;padding:10px 16px;background:var(--surface);border:1px solid var(--border);border-radius:4px;cursor:pointer;user-select:none;transition:border-color .18s;}
 .prog-header:hover{border-color:rgba(192,132,252,0.4);}
@@ -95,36 +64,42 @@ header{padding:28px 0 20px;border-bottom:1px solid var(--border);margin-bottom:2
 .prog-body.hidden{display:none;}
 .prog-card{background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:10px 12px;cursor:pointer;transition:border-color .18s,background .18s;}
 .prog-card:hover{border-color:rgba(192,132,252,0.45);background:var(--violet-lo);}
-.prog-card-name{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:0.04em;text-transform:uppercase;color:var(--text);line-height:1;margin-bottom:3px;}
+.prog-card-name{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;text-transform:uppercase;color:var(--text);line-height:1;margin-bottom:3px;}
 .prog-card-genre{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:0.1em;color:var(--violet);text-transform:uppercase;margin-bottom:7px;opacity:0.8;}
 .prog-card-chords{display:flex;gap:3px;flex-wrap:wrap;}
 .prog-pill{font-family:'Share Tech Mono',monospace;font-size:8px;padding:2px 5px;background:var(--surface3);border:1px solid var(--border2);border-radius:2px;color:var(--text-muted);}
-
-/* CARDS AREA */
 .cards-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;min-height:22px;}
 .cards-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-dim);}
 .cards-badge{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--violet);background:var(--violet-lo);border:1px solid rgba(192,132,252,0.25);border-radius:2px;padding:2px 8px;}
 #cardsGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(262px,1fr));gap:14px;}
-
-/* CHORD CARD */
 .chord-card{background:var(--surface);border:1px solid var(--border);border-radius:4px;overflow:hidden;display:flex;flex-direction:column;animation:cardIn .38s cubic-bezier(0.34,1.15,0.64,1) both;transition:border-color .2s;}
 .chord-card:hover{border-color:rgba(192,132,252,0.3);}
 .chord-card.rerolled{animation:rerollIn .35s cubic-bezier(0.34,1.15,0.64,1) both;}
+.chord-card.swapped{border-color:rgba(192,132,252,0.5);}
 @keyframes cardIn{from{opacity:0;transform:translateY(16px) scale(0.97)}to{opacity:1;transform:none}}
-@keyframes rerollIn{from{opacity:0;transform:scale(0.92) rotateY(-8deg)}to{opacity:1;transform:none}}
+@keyframes rerollIn{from{opacity:0;transform:scale(0.93) rotateY(-8deg)}to{opacity:1;transform:none}}
 .card-strip{height:2px;background:linear-gradient(90deg,var(--violet),rgba(192,132,252,0.3));opacity:0.5;transition:opacity .2s;}
-.chord-card:hover .card-strip{opacity:1;}
-.card-top{padding:14px 16px 12px;background:linear-gradient(135deg,var(--surface2) 0%,var(--surface) 100%);border-bottom:1px solid var(--border);position:relative;}
-.card-chord-name{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:38px;line-height:1;letter-spacing:0.01em;display:flex;align-items:baseline;gap:1px;}
+.chord-card:hover .card-strip,.chord-card.swapped .card-strip{opacity:1;}
+/* Revert bar */
+.card-revert-bar{display:none;align-items:center;gap:8px;padding:5px 14px;background:rgba(192,132,252,0.07);border-bottom:1px solid rgba(192,132,252,0.2);}
+.card-revert-bar.visible{display:flex;}
+.revert-label{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text-muted);letter-spacing:0.06em;flex:1;}
+.revert-label strong{color:var(--violet);}
+.revert-btn{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:0.1em;text-transform:uppercase;background:none;border:1px solid rgba(192,132,252,0.4);color:var(--violet);padding:2px 8px;border-radius:2px;cursor:pointer;white-space:nowrap;transition:background .15s;}
+.revert-btn:hover{background:var(--violet-lo);}
+.card-top{padding:14px 16px 12px;background:linear-gradient(135deg,var(--surface2) 0%,var(--surface) 100%);border-bottom:1px solid var(--border);}
+.card-chord-name{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:38px;line-height:1;display:flex;align-items:baseline;gap:1px;}
 .card-chord-name .root{color:var(--text);}
-.card-chord-name .quality{font-size:20px;color:var(--violet);letter-spacing:0.03em;}
+.card-chord-name .quality{font-size:20px;color:var(--violet);}
 .card-notes-row{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px;}
 .note-pill{font-family:'Share Tech Mono',monospace;font-size:9px;padding:2px 7px;background:var(--surface3);border:1px solid var(--border2);border-radius:2px;color:var(--text-muted);}
 .note-pill.is-root{border-color:rgba(192,132,252,0.4);color:var(--violet);background:var(--violet-lo);}
-.card-reroll-btn{position:absolute;top:12px;right:12px;width:26px;height:26px;border-radius:3px;background:var(--surface3);border:1px solid var(--border2);color:var(--text-dim);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;opacity:0.55;}
-.card-reroll-btn:hover{border-color:var(--violet);color:var(--violet);background:var(--violet-lo);opacity:1;transform:rotate(30deg) scale(1.1);}
-.card-reroll-btn.spinning{animation:btnSpin .35s cubic-bezier(.36,.07,.19,.97);}
+.card-action-row{display:flex;border-bottom:1px solid var(--border);}
+.card-reroll-btn{flex:1;padding:6px 10px;background:none;border:none;color:var(--text-dim);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:5px;}
+.card-reroll-btn:hover{background:var(--violet-lo);color:var(--violet);}
+.card-reroll-btn.spinning .rr-icon{animation:btnSpin .35s;}
 @keyframes btnSpin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+.rr-icon{display:inline-block;}
 .card-visuals{padding:12px 14px;display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center;border-bottom:1px solid var(--border);}
 .vis-section{display:flex;flex-direction:column;align-items:center;gap:5px;}
 .vis-label{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:0.15em;color:var(--text-dim);text-transform:uppercase;}
@@ -134,13 +109,16 @@ header{padding:28px 0 20px;border-bottom:1px solid var(--border);margin-bottom:2
 .sub-toggle.open{color:var(--violet);}
 .sub-caret{font-size:9px;transition:transform .2s;}
 .sub-toggle.open .sub-caret{transform:rotate(90deg);}
-.sub-panel{display:none;padding:4px 14px 12px;}
-.sub-panel.open{display:flex;flex-direction:column;gap:0;}
-.sub-entry{padding:8px 0;}
-.sub-entry+.sub-entry{border-top:1px solid var(--border);}
+.sub-panel{display:none;padding:0 14px 10px;}
+.sub-panel.open{display:flex;flex-direction:column;}
+.sub-hint{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text-dim);padding:5px 0 6px;letter-spacing:0.08em;border-bottom:1px solid var(--border);}
+/* Sub entries are now buttons */
+.sub-entry{width:100%;text-align:left;background:none;border:none;border-top:1px solid var(--border);padding:8px 4px;cursor:pointer;border-radius:2px;transition:background .15s;}
+.sub-entry:hover{background:var(--violet-lo);}
 .sub-chord-name{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22px;line-height:1;display:flex;align-items:baseline;gap:1px;margin-bottom:2px;}
-.sub-chord-name .sr{color:var(--text);}
-.sub-chord-name .sq{font-size:13px;color:var(--violet);}
+.sub-chord-name .sr{color:var(--text);transition:color .15s;}
+.sub-chord-name .sq{font-size:13px;color:var(--violet);transition:color .15s;}
+.sub-entry:hover .sub-chord-name .sr{color:var(--violet);}
 .sub-technique{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:0.12em;color:var(--violet);text-transform:uppercase;margin-bottom:3px;}
 .sub-technique.sec-dom{color:#f59e0b;}
 .sub-desc{font-size:11px;color:var(--text-muted);line-height:1.45;}
@@ -150,20 +128,192 @@ header{padding:28px 0 20px;border-bottom:1px solid var(--border);margin-bottom:2
 .empty-hint{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);margin-top:6px;letter-spacing:0.08em;}
 .page-footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:20px 48px;display:flex;align-items:center;justify-content:space-between;}
 .footer-label{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);letter-spacing:0.1em;}
+
+/* ── WAVEFORM NAV (inline — works without style.css) ── */
+:root { --wf-nav-h: 48px; }
+.wf-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+  height: var(--wf-nav-h);
+  background: rgba(8,8,11,0.97);
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  display: flex; align-items: center;
+  padding: 0 16px;
+  backdrop-filter: blur(14px);
+}
+[data-theme="light"] .wf-nav {
+  background: rgba(242,242,245,0.97);
+  border-bottom-color: #d0d0dc;
+}
+.wf-nav-logo {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 14px;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: #00e5ff; margin-right: 20px;
+  display: flex; align-items: center; gap: 7px;
+  text-decoration: none; white-space: nowrap; flex-shrink: 0;
+}
+.wf-nav-logo-icon {
+  width: 20px; height: 20px;
+  border: 2px solid #00e5ff; border-radius: 3px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; line-height: 1;
+}
+.wf-nav-tools {
+  display: flex; align-items: center;
+  overflow-x: auto; flex: 1;
+  scrollbar-width: none;
+}
+.wf-nav-tools::-webkit-scrollbar { display: none; }
+.wf-nav-item {
+  display: flex; align-items: center; gap: 5px;
+  padding: 0 11px; height: var(--wf-nav-h);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600; font-size: 11px;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: rgba(255,255,255,0.32);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+  white-space: nowrap;
+}
+[data-theme="light"] .wf-nav-item { color: rgba(0,0,0,0.4); }
+.wf-nav-item:hover {
+  color: #ffffff;
+  border-bottom-color: rgba(255,255,255,0.25);
+  background: rgba(255,255,255,0.05);
+}
+[data-theme="light"] .wf-nav-item:hover {
+  color: #1a1a2e;
+  border-bottom-color: #b8b8c8;
+  background: rgba(0,0,0,0.04);
+}
+.wf-nav-item.wf-active-cyan   { color:#00e5ff; border-bottom-color:#00e5ff; background:rgba(0,229,255,0.07); }
+.wf-nav-item.wf-active-green  { color:#39d98a; border-bottom-color:#39d98a; background:rgba(57,217,138,0.07); }
+.wf-nav-item.wf-active-red    { color:#ff3c6e; border-bottom-color:#ff3c6e; background:rgba(255,60,110,0.07); }
+.wf-nav-item.wf-active-amber  { color:#ff8c00; border-bottom-color:#ff8c00; background:rgba(255,140,0,0.07); }
+.wf-nav-item.wf-active-violet { color:#c084fc; border-bottom-color:#c084fc; background:rgba(192,132,252,0.07); }
+.wf-nav-item.wf-active-pink   { color:#ec4899; border-bottom-color:#ec4899; background:rgba(236,72,153,0.07); }
+.wf-nav-item.wf-active-orange { color:#f97316; border-bottom-color:#f97316; background:rgba(249,115,22,0.07); }
+.wf-nav-item.wf-active-gold   { color:#f5c518; border-bottom-color:#f5c518; background:rgba(245,197,24,0.07); }
+.wf-nav-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: currentColor; opacity: 0.45; flex-shrink: 0;
+}
+.wf-nav-item:not([class*="wf-active"]) .wf-nav-dot { opacity: 0.22; }
+.wf-theme-btn {
+  flex-shrink: 0; margin-left: 8px;
+  width: 30px; height: 30px;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 3px; background: transparent;
+  color: rgba(255,255,255,0.32);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; line-height: 1; transition: all 0.18s;
+}
+[data-theme="light"] .wf-theme-btn {
+  border-color: #d0d0dc; color: #52526e;
+}
+.wf-theme-btn:hover { border-color: #00e5ff; color: #00e5ff; }
+/* ── END NAV ── */
+
+/* ── LIGHT THEME (inline — works without style.css) ─────────── */
+[data-theme="light"] {
+  --bg:       #f2f2f5;
+  --surface:  #ffffff;
+  --surface2: #eaeaef;
+  --surface3: #e2e2ea;
+  --border:   #d0d0dc;
+  --border2:  #b8b8c8;
+  --text:       #1a1a2e;
+  --text-muted: #44445a;
+  --text-dim:   #707090;
+  /* workstation variable aliases */
+  --tx:#1a1a2e; --txm:#44445a; --txd:#707090;
+  --sf:#ffffff; --sf2:#eaeaef; --sf3:#e2e2ea; --sf4:#d8d8e4;
+  --bd:rgba(0,0,0,0.1); --bd2:rgba(0,0,0,0.15);
+}
+[data-theme="light"] body {
+  background: var(--bg);
+  color: var(--text);
+}
+[data-theme="light"] body::before {
+  background-image:
+    linear-gradient(rgba(0,0,40,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,40,0.04) 1px, transparent 1px);
+}
+[data-theme="light"] body::after { opacity: 0; }
+
+/* Nav active — darker for light bg readability */
+[data-theme="light"] .wf-nav-item.wf-active-cyan   { color:#007a90; background:rgba(0,122,144,0.1); border-bottom-color:#007a90; }
+[data-theme="light"] .wf-nav-item.wf-active-green  { color:#1a7a4a; background:rgba(26,122,74,0.1); border-bottom-color:#1a7a4a; }
+[data-theme="light"] .wf-nav-item.wf-active-red    { color:#c0103a; background:rgba(192,16,58,0.1); border-bottom-color:#c0103a; }
+[data-theme="light"] .wf-nav-item.wf-active-amber  { color:#a05000; background:rgba(160,80,0,0.1); border-bottom-color:#a05000; }
+[data-theme="light"] .wf-nav-item.wf-active-violet { color:#7020c0; background:rgba(112,32,192,0.1); border-bottom-color:#7020c0; }
+[data-theme="light"] .wf-nav-item.wf-active-pink   { color:#b01860; background:rgba(176,24,96,0.1); border-bottom-color:#b01860; }
+[data-theme="light"] .wf-nav-item.wf-active-orange { color:#c04800; background:rgba(192,72,0,0.1); border-bottom-color:#c04800; }
+[data-theme="light"] .wf-nav-item.wf-active-gold   { color:#886200; background:rgba(136,98,0,0.1); border-bottom-color:#886200; }
+
+/* ── BEBAS NEUE for tool titles ─────────────────────── */
+.title, h1.title,
+.hero-title,
+.page-title,
+.card-name {
+  font-family: 'Bebas Neue', 'Barlow Condensed', sans-serif;
+}
+.wf-nav-logo {
+  font-family: 'Bebas Neue', 'Barlow Condensed', sans-serif !important;
+  letter-spacing: 0.18em !important;
+}
+
+
+/* ─── Stage 2: Legibility — chord randomizer ─── */
+.ctrl-label                 { font-size: 11px; letter-spacing: 0.15em; }
+
+/* ─── Stage 2: Shared legibility ─── */
+.logo-group .subtitle,
+.subtitle                   { font-size: 12px; line-height: 1.6; }
+.header-meta, .hdr-meta     { font-size: 11px; line-height: 2; }
+p, .card-desc               { line-height: 1.7; }
+
+
+/* ── Monospace legibility: faux-bold (Share Tech Mono has no bold weight) ── */
+.logo, .logo-group .logo,
+[class*="-lbl"], [class*="-label"],
+[class*="-meta"], [class*="-sub"]:not(p),
+.wf-label, .panel-label, .card-label,
+.sl, .sv, .bpm-lbl, .seq-sl, .seq-sv, .seq-bpm-lbl,
+.ctrl-label, .wf-eyebrow, .tool-eyebrow,
+.ch-pt-lbl, .ch-dur-lbl, .ch-param-lbl,
+.ch-filt-val, .ch-eq-val, .ch-eq-lbl,
+.card-num, .card-tag, .card-meta,
+.file-meta, .footer-label,
+.flabel, .pedal-item-meta, .effect-row-meta {
+  -webkit-font-smoothing: antialiased;
+  font-weight: 700;
+}
+
+
+/* ── Soften cyan for large text readability ── */
+.wf-nav-logo { color: #33d6eb !important; }
+.wf-nav-logo-icon { border-color: #33d6eb !important; }
+
 </style>
 </head>
 <body>
-
 <nav class="wf-nav">
   <a href="hub.html" class="wf-nav-logo"><div class="wf-nav-logo-icon">◈</div>WAVEFORM</a>
   <div class="wf-nav-tools">
     <a href="hub.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Hub</a>
-    <a href="converter.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Converter</a>
-    <a href="looper.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Looper</a>
-    <a href="drumachine.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Drum Machine</a>
-    <a href="workstation.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Workstation</a>
+    <a href="audio-converter.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Converter</a>
+    <a href="audio-looper.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Looper</a>
+    <a href="drum-machine.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Drum Machine</a>
+    <a href="audio-workstation.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Workstation</a>
     <a href="chord-randomizer.html" class="wf-nav-item wf-active-violet"><span class="wf-nav-dot"></span>Chord Dice</a>
-  </div>
+    <a href="patch-map.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Patch Map</a>
+    <a href="guitar-book.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Guitar Book</a>
+    <a href="song-chart.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Song Chart</a>
+    </div>
+  <button class="wf-theme-btn" id="wfThemeBtn" title="Toggle theme" aria-label="Toggle theme">◑</button>
 </nav>
 
 <div class="app">
@@ -172,10 +322,7 @@ header{padding:28px 0 20px;border-bottom:1px solid var(--border);margin-bottom:2
       <div class="logo">05 · THEORY</div>
       <div class="title">CHORD <span>DICE</span></div>
     </div>
-    <div class="header-meta">
-      CHORD RANDOMIZER &amp; PROGRESSION EXPLORER<br>
-      <small>GUITAR DIAGRAMS · STAFF NOTATION · SUBSTITUTIONS</small>
-    </div>
+    <div class="header-meta">CHORD RANDOMIZER &amp; PROGRESSION EXPLORER<br><small>GUITAR DIAGRAMS · STAFF NOTATION · SUBSTITUTIONS</small></div>
   </header>
 
   <div class="controls">
@@ -272,94 +419,99 @@ header{padding:28px 0 20px;border-bottom:1px solid var(--border);margin-bottom:2
 <script>
 'use strict';
 // ── Notes ──
-const SHARP_NOTES=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
-const FLAT_NOTES=['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'];
-const FLAT_PREF=new Set(['F','Bb','Eb','Ab','Db','Gb','Cb']);
-const NOTE_IDX={};
-SHARP_NOTES.forEach((n,i)=>NOTE_IDX[n]=i);
-['Db','Eb','Gb','Ab','Bb'].forEach((n,i)=>NOTE_IDX[n]=[1,3,6,8,10][i]);
-NOTE_IDX['Cb']=11;
-function prefFlats(r){return FLAT_PREF.has(r);}
-function noteAt(s,root){const n=((s%12)+12)%12;return(prefFlats(root)?FLAT_NOTES:SHARP_NOTES)[n];}
-function rootIdx(r){return NOTE_IDX[r]??0;}
-function transposeNote(root,st){return noteAt((rootIdx(root)+st+120)%12,root);}
+const SHARP=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+const FLAT=['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'];
+const FLAT_P=new Set(['F','Bb','Eb','Ab','Db','Gb','Cb']);
+const NI={};
+SHARP.forEach((n,i)=>NI[n]=i);
+['Db','Eb','Gb','Ab','Bb'].forEach((n,i)=>NI[n]=[1,3,6,8,10][i]);
+NI['Cb']=11;
+const pf=r=>FLAT_P.has(r);
+const nAt=(s,root)=>(pf(root)?FLAT:SHARP)[((s%12)+12)%12];
+const rIdx=r=>NI[r]??0;
+const tNote=(root,st)=>nAt((rIdx(root)+st+120)%12,root);
 
 // ── Chord types ──
-const CHORD_TYPES={
-  'maj':{intervals:[0,4,7],disp:'',cat:'basic'},
-  'm':{intervals:[0,3,7],disp:'m',cat:'basic'},
-  'dim':{intervals:[0,3,6],disp:'°',cat:'basic'},
-  'aug':{intervals:[0,4,8],disp:'+',cat:'extended'},
-  '7':{intervals:[0,4,7,10],disp:'7',cat:'extended'},
-  'maj7':{intervals:[0,4,7,11],disp:'maj⁷',cat:'extended'},
-  'm7':{intervals:[0,3,7,10],disp:'m⁷',cat:'extended'},
-  'dim7':{intervals:[0,3,6,9],disp:'°⁷',cat:'extended'},
-  'sus2':{intervals:[0,2,7],disp:'ˢᵘˢ²',cat:'extended'},
-  'sus4':{intervals:[0,5,7],disp:'ˢᵘˢ⁴',cat:'extended'},
-  'add9':{intervals:[0,4,7,14],disp:'add9',cat:'all'},
-  '9':{intervals:[0,4,7,10,14],disp:'9',cat:'all'},
-  'm9':{intervals:[0,3,7,10,14],disp:'m⁹',cat:'all'},
-  'maj9':{intervals:[0,4,7,11,14],disp:'maj⁹',cat:'all'},
-  '6':{intervals:[0,4,7,9],disp:'6',cat:'all'},
-  'm6':{intervals:[0,3,7,9],disp:'m6',cat:'all'},
+const CT={
+  'maj' :{iv:[0,4,7],         d:'',       c:'basic'},
+  'm'   :{iv:[0,3,7],         d:'m',      c:'basic'},
+  'dim' :{iv:[0,3,6],         d:'°',      c:'basic'},
+  'aug' :{iv:[0,4,8],         d:'+',      c:'extended'},
+  '7'   :{iv:[0,4,7,10],      d:'7',      c:'extended'},
+  'maj7':{iv:[0,4,7,11],      d:'maj⁷',   c:'extended'},
+  'm7'  :{iv:[0,3,7,10],      d:'m⁷',     c:'extended'},
+  'dim7':{iv:[0,3,6,9],       d:'°⁷',     c:'extended'},
+  'sus2':{iv:[0,2,7],         d:'ˢᵘˢ²',   c:'extended'},
+  'sus4':{iv:[0,5,7],         d:'ˢᵘˢ⁴',   c:'extended'},
+  'add9':{iv:[0,4,7,14],      d:'add9',   c:'all'},
+  '9'   :{iv:[0,4,7,10,14],   d:'9',      c:'all'},
+  'm9'  :{iv:[0,3,7,10,14],   d:'m⁹',     c:'all'},
+  'maj9':{iv:[0,4,7,11,14],   d:'maj⁹',   c:'all'},
+  '6'   :{iv:[0,4,7,9],       d:'6',      c:'all'},
+  'm6'  :{iv:[0,3,7,9],       d:'m6',     c:'all'},
+  '11'  :{iv:[0,7,10,14,17],  d:'11',     c:'all'},
+  'm11' :{iv:[0,3,7,10,14,17],d:'m¹¹',    c:'all'},
+  'maj11':{iv:[0,4,7,11,14,17],d:'maj¹¹', c:'all'},
+  '13'  :{iv:[0,4,7,10,14,21],d:'13',     c:'all'},
+  'm13' :{iv:[0,3,7,10,14,21],d:'m¹³',    c:'all'},
+  'maj13':{iv:[0,4,7,11,14,21],d:'maj¹³', c:'all'},
 };
 const CPLX={
   basic:['maj','m','dim'],
   extended:['maj','m','dim','aug','7','maj7','m7','dim7','sus2','sus4'],
-  all:Object.keys(CHORD_TYPES),
+  all:Object.keys(CT),
 };
-
-// Quality extensions for key-locked — maps basic degree quality → richer options per complexity
-const QUALITY_EXT={
-  'maj':{basic:['maj'],extended:['maj','maj','maj7','7'],all:['maj','maj7','7','add9','maj9','6','sus2','sus4']},
-  'm':{basic:['m'],extended:['m','m','m7'],all:['m','m7','m9','m6','sus2']},
+const QX={
+  'maj':{basic:['maj'],extended:['maj','maj','maj7','7'],all:['maj','maj7','7','add9','maj9','6','sus2','sus4','maj11','maj13']},
+  'm'  :{basic:['m'],extended:['m','m','m7'],all:['m','m7','m9','m6','sus2','m11','m13']},
   'dim':{basic:['dim'],extended:['dim','dim7'],all:['dim','dim7']},
 };
-
-// ── Scales ──
 const SCALES={
-  major:{steps:[0,2,4,5,7,9,11],qualities:['maj','m','m','maj','maj','m','dim']},
-  minor:{steps:[0,2,3,5,7,8,10],qualities:['m','dim','maj','m','m','maj','maj']},
+  major:{steps:[0,2,4,5,7,9,11],q:['maj','m','m','maj','maj','m','dim']},
+  minor:{steps:[0,2,3,5,7,8,10],q:['m','dim','maj','m','m','maj','maj']},
 };
 
-// ── Guitar voicings ──
-const VOICINGS={
+// ── Guitar voicings (explicit) ──
+// f=[E,A,D,G,B,e]  -1=mute  0=open  n=fret n
+// b=barre fret  sf=display start fret (default 1)
+const V={
   'C':{f:[-1,3,2,0,1,0]},'D':{f:[-1,-1,0,2,3,2]},'E':{f:[0,2,2,1,0,0]},
   'F':{f:[1,3,3,2,1,1],b:1},'G':{f:[3,2,0,0,0,3]},'A':{f:[-1,0,2,2,2,0]},
-  'B':{f:[-1,2,4,4,4,2],b:2},'C#':{f:[-1,4,3,1,2,1],b:1,sf:1},
-  'Db':{f:[-1,4,3,1,2,1],b:1,sf:1},'D#':{f:[-1,6,5,3,4,3],b:3,sf:3},
-  'Eb':{f:[-1,6,5,3,4,3],b:3,sf:3},'F#':{f:[2,4,4,3,2,2],b:2},
-  'Gb':{f:[2,4,4,3,2,2],b:2},'G#':{f:[4,6,6,5,4,4],b:4,sf:4},
-  'Ab':{f:[4,6,6,5,4,4],b:4,sf:4},'A#':{f:[-1,1,3,3,3,1],b:1},
-  'Bb':{f:[-1,1,3,3,3,1],b:1},
+  'B':{f:[-1,2,4,4,4,2],b:2},
+  'C#':{f:[-1,4,3,1,2,1],b:1,sf:1},'Db':{f:[-1,4,3,1,2,1],b:1,sf:1},
+  'D#':{f:[-1,6,5,3,4,3],b:3,sf:3},'Eb':{f:[-1,6,5,3,4,3],b:3,sf:3},
+  'F#':{f:[2,4,4,3,2,2],b:2},'Gb':{f:[2,4,4,3,2,2],b:2},
+  'G#':{f:[4,6,6,5,4,4],b:4,sf:4},'Ab':{f:[4,6,6,5,4,4],b:4,sf:4},
+  'A#':{f:[-1,1,3,3,3,1],b:1},'Bb':{f:[-1,1,3,3,3,1],b:1},
   'Cm':{f:[-1,3,5,5,4,3],b:3,sf:3},'Dm':{f:[-1,-1,0,2,3,1]},
   'Em':{f:[0,2,2,0,0,0]},'Fm':{f:[1,3,3,1,1,1],b:1},
   'Gm':{f:[3,5,5,3,3,3],b:3,sf:3},'Am':{f:[-1,0,2,2,1,0]},
-  'Bm':{f:[-1,2,4,4,3,2],b:2},'C#m':{f:[-1,4,6,6,5,4],b:4,sf:4},
-  'Dbm':{f:[-1,4,6,6,5,4],b:4,sf:4},'D#m':{f:[-1,6,8,8,7,6],b:6,sf:6},
-  'Ebm':{f:[-1,6,8,8,7,6],b:6,sf:6},'F#m':{f:[2,4,4,2,2,2],b:2},
-  'Gbm':{f:[2,4,4,2,2,2],b:2},'G#m':{f:[4,6,6,4,4,4],b:4,sf:4},
-  'Abm':{f:[4,6,6,4,4,4],b:4,sf:4},'A#m':{f:[-1,1,3,3,2,1],b:1},
-  'Bbm':{f:[-1,1,3,3,2,1],b:1},
+  'Bm':{f:[-1,2,4,4,3,2],b:2},
+  'C#m':{f:[-1,4,6,6,5,4],b:4,sf:4},'Dbm':{f:[-1,4,6,6,5,4],b:4,sf:4},
+  'D#m':{f:[-1,6,8,8,7,6],b:6,sf:6},'Ebm':{f:[-1,6,8,8,7,6],b:6,sf:6},
+  'F#m':{f:[2,4,4,2,2,2],b:2},'Gbm':{f:[2,4,4,2,2,2],b:2},
+  'G#m':{f:[4,6,6,4,4,4],b:4,sf:4},'Abm':{f:[4,6,6,4,4,4],b:4,sf:4},
+  'A#m':{f:[-1,1,3,3,2,1],b:1},'Bbm':{f:[-1,1,3,3,2,1],b:1},
   'C7':{f:[-1,3,2,3,1,0]},'D7':{f:[-1,-1,0,2,1,2]},
   'E7':{f:[0,2,0,1,0,0]},'F7':{f:[1,3,1,2,1,1],b:1},
   'G7':{f:[3,2,0,0,0,1]},'A7':{f:[-1,0,2,0,2,0]},
   'B7':{f:[-1,2,1,2,0,2]},'Bb7':{f:[-1,1,3,1,3,1],b:1},
-  'Eb7':{f:[-1,6,5,6,4,3],b:3,sf:3},'F#7':{f:[2,4,2,3,2,2],b:2},
-  'Gb7':{f:[2,4,2,3,2,2],b:2},'Ab7':{f:[4,6,4,5,4,4],b:4,sf:4},
-  'G#7':{f:[4,6,4,5,4,4],b:4,sf:4},'C#7':{f:[-1,4,3,4,2,1],b:1,sf:1},
-  'Db7':{f:[-1,4,3,4,2,1],b:1,sf:1},
+  'Eb7':{f:[-1,6,5,6,4,3],b:3,sf:3},'D#7':{f:[-1,6,5,6,4,3],b:3,sf:3},
+  'F#7':{f:[2,4,2,3,2,2],b:2},'Gb7':{f:[2,4,2,3,2,2],b:2},
+  'Ab7':{f:[4,6,4,5,4,4],b:4,sf:4},'G#7':{f:[4,6,4,5,4,4],b:4,sf:4},
+  'C#7':{f:[-1,4,3,4,2,1],b:1,sf:1},'Db7':{f:[-1,4,3,4,2,1],b:1,sf:1},
   'Cmaj7':{f:[-1,3,2,0,0,0]},'Dmaj7':{f:[-1,-1,0,2,2,2]},
   'Emaj7':{f:[0,2,1,1,0,0]},'Fmaj7':{f:[-1,-1,3,2,1,0]},
   'Gmaj7':{f:[3,2,0,0,0,2]},'Amaj7':{f:[-1,0,2,1,2,0]},
   'Bmaj7':{f:[-1,2,4,3,4,2],b:2},'Bbmaj7':{f:[-1,1,3,2,3,1],b:1},
   'Ebmaj7':{f:[-1,6,5,3,3,3],b:3,sf:3},'Abmaj7':{f:[4,6,5,5,4,4],b:4,sf:4},
+  'F#maj7':{f:[-1,-1,4,3,2,2],sf:2},
   'Cm7':{f:[-1,3,5,3,4,3],b:3,sf:3},'Dm7':{f:[-1,-1,0,2,1,1]},
   'Em7':{f:[0,2,0,0,0,0]},'Fm7':{f:[1,3,1,1,1,1],b:1},
   'Gm7':{f:[3,5,3,3,3,3],b:3,sf:3},'Am7':{f:[-1,0,2,0,1,0]},
   'Bm7':{f:[-1,2,4,2,3,2],b:2},'F#m7':{f:[2,4,2,2,2,2],b:2},
   'Bbm7':{f:[-1,1,3,1,2,1],b:1},'Ebm7':{f:[-1,6,8,6,7,6],b:6,sf:6},
-  'Abm7':{f:[4,6,4,4,4,4],b:4,sf:4},
+  'Abm7':{f:[4,6,4,4,4,4],b:4,sf:4},'C#m7':{f:[-1,4,6,4,5,4],b:4,sf:4},
   'Cdim':{f:[-1,-1,1,2,1,2]},'Ddim':{f:[-1,-1,0,1,0,1]},
   'Edim':{f:[0,1,2,3,-1,-1]},'Fdim':{f:[-1,0,1,2,0,-1]},
   'Gdim':{f:[-1,-1,5,6,5,3],sf:3},'Adim':{f:[-1,0,1,2,1,-1]},
@@ -368,351 +520,447 @@ const VOICINGS={
   'Gsus2':{f:[3,0,0,0,1,3]},'Asus2':{f:[-1,0,2,2,0,0]},'Csus2':{f:[-1,3,0,0,1,3]},
   'Csus4':{f:[-1,3,3,0,1,1]},'Dsus4':{f:[-1,-1,0,2,3,3]},
   'Esus4':{f:[0,2,2,2,0,0]},'Fsus4':{f:[1,3,3,3,1,1],b:1},
-  'Gsus4':{f:[3,3,0,0,1,3]},'Asus4':{f:[-1,0,2,2,3,0]},'Bsus4':{f:[-1,2,4,4,5,2],b:2},
+  'Gsus4':{f:[3,3,0,0,1,3]},'Asus4':{f:[-1,0,2,2,3,0]},'Bsus4':{f:[-1,2,4,4,5,2],b:2,sf:2},
   'Caug':{f:[-1,3,2,1,1,0]},'Daug':{f:[-1,-1,0,3,3,2]},
   'Eaug':{f:[0,3,2,1,1,0]},'Faug':{f:[1,0,3,2,2,1]},
   'Gaug':{f:[3,2,1,0,0,-1]},'Aaug':{f:[-1,0,3,2,2,1]},
+  // 9th chords
+  'C9':{f:[-1,3,2,3,3,3]},'D9':{f:[-1,5,4,5,3,0],sf:3},
+  'E9':{f:[0,2,0,1,0,2]},'G9':{f:[3,2,0,2,0,1]},
+  'A9':{f:[-1,0,2,0,2,2]},'Bb9':{f:[-1,1,3,1,3,3],b:1},
+  'Cm9':{f:[-1,3,1,3,4,3],sf:1},'Dm9':{f:[-1,5,3,5,4,5],b:5,sf:3},
+  'Em9':{f:[0,2,0,0,3,0]},'Am9':{f:[-1,0,2,0,1,3]},
+  'Fm9':{f:[1,3,1,1,1,3],b:1},
+  'Cmaj9':{f:[-1,3,0,0,0,2]},'Gmaj9':{f:[3,2,0,2,0,2]},
+  'Amaj9':{f:[-1,0,2,1,0,0]},'Emaj9':{f:[0,2,1,1,0,2]},
+  // 11th chords (dom11 = 9sus4)
+  'C11':{f:[-1,3,3,3,1,1],b:1},'E11':{f:[0,2,0,2,0,0]},
+  'G11':{f:[3,3,3,0,1,1]},'A11':{f:[-1,0,0,0,3,0]},
+  'Cm11':{f:[-1,3,5,3,4,3],b:3,sf:3},'Am11':{f:[-1,0,2,0,1,3]},
+  'Em11':{f:[0,2,0,0,0,3]},'Dm11':{f:[-1,-1,0,2,1,3]},
+  // 13th chords
+  'C13':{f:[-1,3,2,2,2,2]},'G13':{f:[3,2,0,0,2,1]},
+  'A13':{f:[-1,0,2,0,2,2]},'E13':{f:[0,2,0,1,2,2]},
+  'D13':{f:[-1,5,4,4,3,0],sf:3},'F13':{f:[1,3,1,2,3,3],b:1},
+  'Cmaj13':{f:[-1,3,2,2,2,0]},'Gmaj13':{f:[3,2,0,0,2,2]},
+  'Amaj13':{f:[-1,0,2,1,2,2]},'Emaj13':{f:[0,2,1,1,2,2]},
 };
 
-const BARRE_SHAPES={
-  'maj':{e:[0,2,2,1,0,0],a:[-1,0,2,2,2,0]},'m':{e:[0,2,2,0,0,0],a:[-1,0,2,2,1,0]},
-  '7':{e:[0,2,0,1,0,0],a:[-1,0,2,0,2,0]},'maj7':{e:[0,2,1,1,0,0],a:[-1,0,2,1,2,0]},
-  'm7':{e:[0,2,0,0,0,0],a:[-1,0,2,0,1,0]},'dim':{e:[0,1,2,3,0,0],a:[-1,0,1,2,1,0]},
-  'dim7':{e:[0,1,2,0,2,0],a:[-1,0,1,2,1,2]},'aug':{e:[0,3,2,1,0,0],a:[-1,0,3,2,2,0]},
-  'sus4':{e:[0,2,2,2,0,0],a:[-1,0,2,2,3,0]},'sus2':{e:[0,0,2,2,0,0],a:[-1,0,2,2,0,0]},
-  'add9':{e:[0,2,2,1,0,2],a:[-1,0,2,2,2,2]},'9':{e:[0,2,0,1,0,2],a:[-1,0,2,2,2,2]},
-  'm9':{e:[0,2,0,0,0,2],a:[-1,0,2,0,1,2]},'maj9':{e:[0,2,1,1,0,2],a:[-1,0,2,1,2,2]},
-  '6':{e:[0,2,2,1,2,0],a:[-1,0,2,2,2,2]},'m6':{e:[0,2,2,0,2,0],a:[-1,0,2,2,1,2]},
+// Barre shape templates [relative to barre fret, 0=barre fret itself, -1=mute]
+const BS={
+  'maj' :{e:[0,2,2,1,0,0],a:[-1,0,2,2,2,0]},
+  'm'   :{e:[0,2,2,0,0,0],a:[-1,0,2,2,1,0]},
+  '7'   :{e:[0,2,0,1,0,0],a:[-1,0,2,0,2,0]},
+  'maj7':{e:[0,2,1,1,0,0],a:[-1,0,2,1,2,0]},
+  'm7'  :{e:[0,2,0,0,0,0],a:[-1,0,2,0,1,0]},
+  'dim' :{e:[0,1,2,3,0,0],a:[-1,0,1,2,1,0]},
+  'dim7':{e:[0,1,2,0,2,0],a:[-1,0,1,2,1,2]},
+  'aug' :{e:[0,3,2,1,0,0],a:[-1,0,3,2,2,0]},
+  'sus4':{e:[0,2,2,2,0,0],a:[-1,0,2,2,3,0]},
+  'sus2':{e:[0,0,2,2,0,0],a:[-1,0,2,2,0,0]},
+  'add9':{e:[0,2,2,1,0,2],a:[-1,0,2,2,2,2]},
+  '9'   :{e:[0,2,0,1,0,2],a:[-1,0,2,0,2,2]},
+  'm9'  :{e:[0,2,0,0,0,2],a:[-1,0,2,0,1,2]},
+  'maj9':{e:[0,2,1,1,0,2],a:[-1,0,2,1,2,2]},
+  '6'   :{e:[0,2,2,1,2,0],a:[-1,0,2,2,2,2]},
+  'm6'  :{e:[0,2,2,0,2,0],a:[-1,0,2,2,1,2]},
+  '11'  :{e:[0,2,0,2,0,0],a:[-1,0,0,0,3,0]},
+  'm11' :{e:[0,2,0,0,3,0],a:[-1,0,2,0,1,3]},
+  'maj11':{e:[0,2,1,2,0,0],a:[-1,0,2,1,2,0]},
+  '13'  :{e:[0,2,0,1,2,0],a:[-1,0,2,0,2,2]},
+  'm13' :{e:[0,2,0,0,2,2],a:[-1,0,2,0,1,2]},
+  'maj13':{e:[0,2,1,1,2,2],a:[-1,0,2,1,2,2]},
 };
-const OPEN_STRINGS=[4,9,2,7,11,4];
+const OS=[4,9,2,7,11,4]; // open string semitones E A D G B e
 
 function computeBarre(root,quality){
-  const ri=rootIdx(root);
-  const eF=((ri-4)+24)%12, aF=((ri-9)+24)%12;
-  const shp=BARRE_SHAPES[quality]||BARRE_SHAPES['maj'];
+  const ri=rIdx(root);
+  const eF=((ri-4)+12)%12;  // E-shape barre fret (0 = open = use 12)
+  const aF=((ri-9)+12)%12;  // A-shape barre fret
+  const shp=BS[quality]||BS['maj'];
+  // Never use fret 0 for barre shapes — open-position chords are in V dict above
+  const eSafe=eF===0?12:eF;
+  const aSafe=aF===0?12:aF;
   let chosenF,template;
-  if(aF>=1&&aF<=7){chosenF=aF;template=shp.a;}else{chosenF=eF||12;template=shp.e;}
-  const sf=Math.max(1,chosenF);
+  // Prefer A-shape for frets 1–7 (more compact on neck)
+  if(aSafe>=1&&aSafe<=7){chosenF=aSafe;template=shp.a;}
+  else{chosenF=eSafe;template=shp.e;}
+  const sf=chosenF;
   return{f:template.map(x=>x<0?-1:x+chosenF),b:chosenF,sf};
 }
-function getVoicing(root,quality){
-  const key=quality==='maj'?root:root+quality;
-  return VOICINGS[key]||computeBarre(root,quality);
+
+function getV(root,quality){
+  const k=quality==='maj'?root:root+quality;
+  return V[k]||computeBarre(root,quality);
 }
 
 // ── Guitar SVG ──
-function buildGuitarSVG(root,quality){
-  const v=getVoicing(root,quality),frets=v.f,barre=v.b,sf=v.sf??1;
-  const W=68,H=104,strX=[8,19,30,41,52,63],nutY=24,fSp=14,nFrets=4;
-  const fretY=n=>nutY+n*fSp, dotY=n=>nutY+(n-0.5)*fSp;
+function guitarSVG(root,quality){
+  const v=getV(root,quality);
+  const frets=v.f, barre=v.b;
+  // Compute display start fret: use explicit sf, else derive from lowest non-open fret
+  const minFret=Math.min(...frets.filter(f=>f>0));
+  const sf=v.sf??(minFret<=4?1:minFret);
+  const W=92,H=112;
+  const sx=[10,21,32,43,54,65]; // string X positions (fret label lives right of x=65)
+  const nutY=30,fSp=15,nFrets=4;
+  const fretY=n=>nutY+n*fSp;
+  const dotY =n=>nutY+(n-0.5)*fSp;
+  const ri=rIdx(root);
   let s=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg">`;
-  if(sf>1)s+=`<text x="${W-2}" y="${nutY+fSp*0.5+3.5}" font-family="Share Tech Mono,monospace" font-size="7" fill="#5a5a6a" text-anchor="end">${sf}fr</text>`;
-  s+=`<line x1="${strX[0]}" y1="${nutY}" x2="${strX[5]}" y2="${nutY}" stroke="${sf===1?'#c084fc':'#3a3a4a'}" stroke-width="${sf===1?3:1}" stroke-linecap="round"/>`;
-  for(let f=1;f<=nFrets;f++)s+=`<line x1="${strX[0]}" y1="${fretY(f)}" x2="${strX[5]}" y2="${fretY(f)}" stroke="#252530" stroke-width="1"/>`;
-  for(let i=0;i<6;i++)s+=`<line x1="${strX[i]}" y1="${nutY}" x2="${strX[i]}" y2="${fretY(nFrets)}" stroke="#303040" stroke-width="1"/>`;
+
+  // Fret position badge — right of last string, vertically centred on first fret space
+  // Standard chord diagram convention: never overlaps strings or dots
+  if(sf>1){
+    s+=`<text x="${sx[5]+7}" y="${dotY(1)+3}" font-family="Share Tech Mono,monospace" font-size="9" fill="#c084fc" text-anchor="start" font-weight="bold">${sf}fr</text>`;
+  }
+
+  // Nut line — thick violet if at 1st position, thin grey if higher up the neck
+  s+=`<line x1="${sx[0]}" y1="${nutY}" x2="${sx[5]}" y2="${nutY}" stroke="${sf===1?'#c084fc':'#383848'}" stroke-width="${sf===1?3:1.5}" stroke-linecap="round"/>`;
+
+  // Fret lines
+  for(let f=1;f<=nFrets;f++)
+    s+=`<line x1="${sx[0]}" y1="${fretY(f)}" x2="${sx[5]}" y2="${fretY(f)}" stroke="#252532" stroke-width="1"/>`;
+
+  // String lines
+  for(let i=0;i<6;i++)
+    s+=`<line x1="${sx[i]}" y1="${nutY}" x2="${sx[i]}" y2="${fretY(nFrets)}" stroke="#2e2e3c" stroke-width="1"/>`;
+
+  // Barre bar
   if(barre!=null){
     const rF=barre-sf+1;
     if(rF>=1&&rF<=nFrets){
-      let f0=0,f5=5;while(f0<5&&frets[f0]<0)f0++;while(f5>0&&frets[f5]<0)f5--;
-      s+=`<rect x="${strX[f0]-1}" y="${dotY(rF)-5}" width="${strX[f5]-strX[f0]+2}" height="10" rx="5" fill="rgba(192,132,252,0.55)" stroke="#c084fc" stroke-width="0.8"/>`;
+      let lo=0,hi=5;
+      while(lo<5&&frets[lo]<0)lo++;
+      while(hi>0&&frets[hi]<0)hi--;
+      if(hi>lo)
+        s+=`<rect x="${sx[lo]-1}" y="${dotY(rF)-5.5}" width="${sx[hi]-sx[lo]+2}" height="11" rx="5.5" fill="rgba(192,132,252,0.48)" stroke="#c084fc" stroke-width="0.8"/>`;
     }
   }
-  const ri=rootIdx(root);
+
+  // Dots / open / mute
   for(let i=0;i<6;i++){
-    const f=frets[i],x=strX[i];
-    if(f<0){s+=`<line x1="${x-3}" y1="${nutY-11}" x2="${x+3}" y2="${nutY-5}" stroke="#4a4a5a" stroke-width="1.4" stroke-linecap="round"/>`;s+=`<line x1="${x+3}" y1="${nutY-11}" x2="${x-3}" y2="${nutY-5}" stroke="#4a4a5a" stroke-width="1.4" stroke-linecap="round"/>`;}
-    else if(f===0)s+=`<circle cx="${x}" cy="${nutY-8}" r="3.5" fill="none" stroke="#c084fc" stroke-width="1.2"/>`;
-    else{const rF=f-sf+1;if(rF>=1&&rF<=nFrets){const dy=dotY(rF),isR=(OPEN_STRINGS[i]+f)%12===ri;s+=`<circle cx="${x}" cy="${dy}" r="5" fill="${isR?'#c084fc':'#7450a0'}" opacity="0.9"/>`;}}
+    const f=frets[i],x=sx[i];
+    if(f<0){
+      s+=`<line x1="${x-3.5}" y1="${nutY-13}" x2="${x+3.5}" y2="${nutY-6}" stroke="#454558" stroke-width="1.5" stroke-linecap="round"/>`;
+      s+=`<line x1="${x+3.5}" y1="${nutY-13}" x2="${x-3.5}" y2="${nutY-6}" stroke="#454558" stroke-width="1.5" stroke-linecap="round"/>`;
+    } else if(f===0){
+      s+=`<circle cx="${x}" cy="${nutY-9}" r="4" fill="none" stroke="#c084fc" stroke-width="1.3"/>`;
+    } else {
+      const rF=f-sf+1;
+      if(rF>=1&&rF<=nFrets){
+        const dy=dotY(rF);
+        const isRoot=(OS[i]+f)%12===ri;
+        s+=`<circle cx="${x}" cy="${dy}" r="5.5" fill="${isRoot?'#c084fc':'#4e2e7a'}"/>`;
+        if(isRoot) s+=`<circle cx="${x}" cy="${dy}" r="2" fill="rgba(255,255,255,0.45)"/>`;
+      }
+      // else: fret is outside window — skip silently (chord has wide voicing)
+    }
   }
   return s+`</svg>`;
 }
 
 // ── Staff SVG ──
-const DIAT={C:-2,D:-1,E:0,F:1,G:2,A:3,B:4};
-function staffPos(n){return DIAT[n[0]]??0;}
-function chordNotes(root,intervals){
-  const ri=rootIdx(root),result=[],seen=new Set();
-  for(const iv of intervals){
-    const s=(ri+iv)%12;if(seen.has(s))continue;seen.add(s);
-    const name=noteAt(s,root);let pos=staffPos(name);
-    if(pos<-3)pos+=7;if(pos>10)pos-=7;
-    result.push({name,acc:name.length>1?name[1]:'',pos});
+const DPOS={C:-2,D:-1,E:0,F:1,G:2,A:3,B:4};
+const sPos=n=>DPOS[n[0]]??0;
+function staffNotes(root,ivs){
+  const ri=rIdx(root),res=[],seen=new Set();
+  for(const iv of ivs){
+    const s=(ri+iv)%12;
+    if(seen.has(s))continue;seen.add(s);
+    const nm=nAt(s,root);let p=sPos(nm);
+    if(p<-3)p+=7;if(p>10)p-=7;
+    res.push({nm,acc:nm.length>1?nm[1]:'',p});
   }
-  return result;
+  return res;
 }
-function buildStaffSVG(root,intervals){
-  const notes=chordNotes(root,intervals);
+function staffSVG(root,ivs){
+  const ns=staffNotes(root,ivs);
   const W=116,H=68,lx1=22,lx2=W-6,bY=53,sH=3.5;
   const pY=p=>bY-p*sH;
   let s=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg">`;
-  for(const p of[0,2,4,6,8])s+=`<line x1="${lx1}" y1="${pY(p)}" x2="${lx2}" y2="${pY(p)}" stroke="#303042" stroke-width="1"/>`;
-  s+=`<text x="3" y="${bY+4}" font-family="Georgia,serif" font-size="36" fill="#5a5a72">𝄞</text>`;
-  const nx0=50,nSp=Math.min(16,(lx2-nx0-8)/Math.max(notes.length-1,1));
-  const off=Array(notes.length).fill(0);
-  for(let i=1;i<notes.length;i++)if(Math.abs(notes[i].pos-notes[i-1].pos)<=1)off[i]=7;
-  notes.forEach((n,i)=>{
-    const nx=nx0+i*nSp+off[i],ny=pY(n.pos);
-    if(n.pos<=-2)for(let lp=-2;lp>=n.pos;lp-=2)s+=`<line x1="${nx-7}" y1="${pY(lp)}" x2="${nx+9}" y2="${pY(lp)}" stroke="#383850" stroke-width="1"/>`;
-    if(n.pos>=10)for(let lp=10;lp<=n.pos;lp+=2)s+=`<line x1="${nx-7}" y1="${pY(lp)}" x2="${nx+9}" y2="${pY(lp)}" stroke="#383850" stroke-width="1"/>`;
+  for(const p of[0,2,4,6,8])s+=`<line x1="${lx1}" y1="${pY(p)}" x2="${lx2}" y2="${pY(p)}" stroke="#2e2e42" stroke-width="1"/>`;
+  s+=`<text x="3" y="${bY+4}" font-family="Georgia,serif" font-size="36" fill="#555568">𝄞</text>`;
+  const nx0=52,nSp=Math.min(13,(lx2-nx0-6)/Math.max(ns.length-1,1));
+  const off=Array(ns.length).fill(0);
+  for(let i=1;i<ns.length;i++)if(Math.abs(ns[i].p-ns[i-1].p)<=1)off[i]=7;
+  ns.forEach((n,i)=>{
+    const nx=nx0+i*nSp+off[i],ny=pY(n.p);
+    if(n.p<=-2)for(let lp=-2;lp>=n.p;lp-=2)s+=`<line x1="${nx-7}" y1="${pY(lp)}" x2="${nx+9}" y2="${pY(lp)}" stroke="#38385a" stroke-width="1"/>`;
+    if(n.p>=10) for(let lp=10;lp<=n.p;lp+=2)s+=`<line x1="${nx-7}" y1="${pY(lp)}" x2="${nx+9}" y2="${pY(lp)}" stroke="#38385a" stroke-width="1"/>`;
     if(n.acc)s+=`<text x="${nx-7}" y="${ny+3}" font-family="Georgia,serif" font-size="9" fill="#8888a0" text-anchor="middle">${n.acc==='#'?'♯':'♭'}</text>`;
     const fill=i===0?'#c084fc':'#8870b8';
     s+=`<ellipse cx="${nx+1}" cy="${ny}" rx="4.5" ry="3" fill="${fill}" opacity="0.95"/>`;
-    s+=n.pos<=4?`<line x1="${nx+5.5}" y1="${ny}" x2="${nx+5.5}" y2="${ny-18}" stroke="${fill}" stroke-width="1.2" opacity="0.75"/>`:
-                `<line x1="${nx-3.5}" y1="${ny}" x2="${nx-3.5}" y2="${ny+18}" stroke="${fill}" stroke-width="1.2" opacity="0.75"/>`;
+    s+=n.p<=4
+      ?`<line x1="${nx+5.5}" y1="${ny}" x2="${nx+5.5}" y2="${ny-18}" stroke="${fill}" stroke-width="1.2" opacity="0.7"/>`
+      :`<line x1="${nx-3.5}" y1="${ny}" x2="${nx-3.5}" y2="${ny+18}" stroke="${fill}" stroke-width="1.2" opacity="0.7"/>`;
   });
   return s+`</svg>`;
 }
 
-// ── Substitutions ──
+// ── Subs ──
 function getSubs(root,quality){
-  const rel9=transposeNote(root,9),rel3=transposeNote(root,3),tri6=transposeNote(root,6);
-  const secDomRoot=transposeNote(root,7);
-  const s=(chord,technique,desc,isSecDom=false)=>({chord,technique,desc,isSecDom});
-  const secDom=s(secDomRoot+'7','Secondary Dominant',`${secDomRoot}7 → resolves to ${root}. Insert before this chord for a strong chromatic pull in.`,true);
-  const MAP={
-    'maj':[s(rel9+'m','Relative Minor','Same 3 notes, turned inward — instantly more melancholic'),s(root+'maj7','Add Major 7th','One step to jazz warmth — barely changes the function'),s(root+'sus2','Sus2 Suspension','Open, floating feel — the 3rd disappears, tension hangs'),secDom],
-    'm':[s(rel3,'Relative Major','The bright twin — same notes, opposite emotional charge'),s(root+'m7','Add Minor 7th','Soul and jazz flavor with no harmonic disruption'),s(root,'Parallel Major','Modal interchange — a sudden dramatic lift out of minor'),secDom],
-    '7':[s(tri6+'7','Tritone Sub','The jazz reharmonization — shares guide tones, bass moves by half-step'),s(root+'9','Extend to 9th','Blues and funk richness — keeps the tension, adds color'),s(root+'dim7','Diminished Sub','More angular tension — chromatic pull toward the tonic'),secDom],
-    'maj7':[s(rel9+'m7','Relative min7','Darker shade of the same chord — same notes, softer motion'),s(root+'6','Major 6th','Vintage alternative — lighter, less jazz-heavy'),s(root+'add9','Drop 7, Add 9','Open sound without the tension of the seventh'),secDom],
-    'm7':[s(root+'m9','Add the 9th','Neo-soul dreaminess — the most common m7 extension'),s(rel3+'maj7','Mediant maj7','Shares almost all notes — higher and more romantic'),s(root+'m','Strip to triad','Raw and direct — powerful in heavy contexts'),secDom],
-    'dim':[s(transposeNote(root,9)+'7','Dominant 7 sub','Resolves similarly — more grounded and weighted'),s(root+'dim7','Full dim7','Symmetrical tension — adds one note, pure ambiguity'),s(root+'m','Soften to minor','Keeps the darkness without the full tension'),secDom],
-    'dim7':[s(transposeNote(root,3)+'7','Dominant sub','Each note of a dim7 can be the 7th of a dom7'),s(transposeNote(root,6)+'dim7','Enharmonic dim7','Dim7 chords repeat every minor 3rd — same sound, new name'),s(root+'m','Soften to minor','Strip the stacking — raw, less resolved'),secDom],
-    'sus4':[s(root,'Resolve to major','The natural sus4→major resolution — satisfying'),s(root+'sus2','Flip to sus2','Same open character, different tonal lean'),s(root+'add9','Add9','Keep the openness, bring the 3rd back'),secDom],
-    'sus2':[s(root,'Resolve to major','Sus2 and major share the same function — resolve it'),s(root+'sus4','Flip to sus4','Different suspension, same ambiguity'),s(root+'7','Dominant 7th','Same root, adds drive toward the next chord'),secDom],
-    'aug':[s(root+'maj','Drop to major','Removes the raised 5th — loses tension, keeps brightness'),s(root+'7','Dominant 7th','Same root, classic forward motion'),s(transposeNote(root,4)+'aug','Enharmonic aug','Aug chords repeat every major 3rd — same sound, new root'),secDom],
-    'add9':[s(root+'maj','Simplify to major','The add9 minus the 9th — cleaner landing'),s(root+'maj9','Add the 7th back','Full maj9 — lush and open'),s(root+'sus2','Sus2 alternative','Similar openness without the third'),secDom],
-    '6':[s(rel9+'m7','Relative m7','The 6th chord and relative m7 share identical notes'),s(root+'maj7','maj7 swap','Similar brightness — more jazz, less vintage'),s(root+'maj','Plain major','Strip the sixth — stark and strong'),secDom],
-    '9':[s(root+'7','Strip to Dom7','Same tension, less color — more direct'),s(tri6+'9','Tritone Sub 9','Tritone substitution extended — maximum jazz reharmonization'),s(root+'maj9','Lift to maj9','Swap the b7 for maj7 — resolution over tension'),secDom],
-    'm9':[s(root+'m7','Strip to m7','Simpler, still rich, less dense'),s(rel3+'maj9','Mediant maj9','Relative major extended — floaty and romantic'),s(root+'m','Back to triad','Pure and stark'),secDom],
-    'maj9':[s(root+'maj7','Strip the 9','Still jazzy, more grounded'),s(rel9+'m9','Relative m9','Dark mirror — same universe, minor world'),s(root+'add9','Drop the 7','Open without the major 7 tension'),secDom],
-    'm6':[s(root+'m7','Swap 6 for b7','Different color, same darkness'),s(rel3+'6','Relative maj6','Bright lift — same notes rerooted'),s(root+'m','Strip to triad','The most direct minor expression'),secDom],
+  const r9=tNote(root,9),r3=tNote(root,3),t6=tNote(root,6),sdR=tNote(root,7);
+  const s=(chord,tech,desc,isSec=false)=>({chord,tech,desc,isSec});
+  const sec=s(sdR+'7','Secondary Dominant',`${sdR}7 → resolves to ${root}. The V of this chord — insert before it for a strong chromatic pull.`,true);
+  const M={
+    'maj' :[s(r9+'m','Relative Minor','Same 3 notes, turned inward — instantly more melancholic'),s(root+'maj7','Add Major 7th','One step to jazz warmth — barely changes the function'),s(root+'sus2','Sus2 Suspension','Open feel — the 3rd vanishes, tension hangs'),sec],
+    'm'   :[s(r3,'Relative Major','The bright twin — same notes, opposite emotional charge'),s(root+'m7','Add Minor 7th','Soul and jazz flavor, no harmonic disruption'),s(root,'Parallel Major','Modal interchange — a sudden lift out of minor'),sec],
+    '7'   :[s(t6+'7','Tritone Sub','Shares guide tones, bass moves a tritone — the jazz reharmonization'),s(root+'9','Extend to 9th','Blues and funk richness — keeps the tension, adds color'),s(root+'dim7','Diminished Sub','More angular tension — chromatic pull toward the tonic'),sec],
+    'maj7':[s(r9+'m7','Relative min7','Darker shade of the same chord — same notes, softer'),s(root+'6','Major 6th','Vintage alternative — lighter, less jazz-heavy'),s(root+'add9','Drop 7, Add 9','Open sound without the seventh tension'),sec],
+    'm7'  :[s(root+'m9','Add the 9th','Neo-soul dreaminess — the most common m7 extension'),s(r3+'maj7','Mediant maj7','Shares almost all notes — higher and more romantic'),s(root+'m','Strip to triad','Raw and direct — powerful in heavy contexts'),sec],
+    'dim' :[s(tNote(root,9)+'7','Dom7 sub','Resolves similarly — more grounded'),s(root+'dim7','Full dim7','Symmetrical tension — adds one note, pure ambiguity'),s(root+'m','Soften to minor','Keeps darkness without the full tension'),sec],
+    'dim7':[s(tNote(root,3)+'7','Dominant sub','Each dim7 note can be the 7th of a dom7'),s(tNote(root,6)+'dim7','Enharmonic dim7','Dim7 repeats every minor 3rd — same chord, new root'),s(root+'m','Soften to minor','Strip the stacking — raw'),sec],
+    'sus4':[s(root,'Resolve to major','The natural sus4→major resolution'),s(root+'sus2','Flip to sus2','Same open character, different lean'),s(root+'add9','Add 9','Bring the 3rd back with the openness'),sec],
+    'sus2':[s(root,'Resolve to major','Sus2 and major share function — resolve it'),s(root+'sus4','Flip to sus4','Different suspension, same ambiguity'),s(root+'7','Dominant 7th','Same root, adds drive toward next chord'),sec],
+    'aug' :[s(root+'maj','Drop to major','Remove the raised 5th — keep brightness'),s(root+'7','Dominant 7th','Same root, classic forward motion'),s(tNote(root,4)+'aug','Enharmonic aug','Aug chords repeat every major 3rd'),sec],
+    'add9':[s(root+'maj','Simplify to major','The add9 minus the 9th'),s(root+'maj9','Add the 7th back','Full maj9 — lush and open'),s(root+'sus2','Sus2 alternative','Similar openness without the third'),sec],
+    '6'   :[s(r9+'m7','Relative m7','The 6th and relative m7 share identical notes'),s(root+'maj7','maj7 swap','Similar brightness — more jazz, less vintage'),s(root+'maj','Plain major','Strip the sixth — stark and strong'),sec],
+    '9'   :[s(root+'7','Strip to Dom7','Same tension, less color'),s(t6+'9','Tritone Sub 9','Full reharmonization with extension'),s(root+'11','Move to 11th','Suspended 11 flavour — wide and open'),sec],
+    'm9'  :[s(root+'m7','Strip to m7','Simpler, still rich'),s(r3+'maj9','Mediant maj9','Relative major extended — floaty'),s(root+'m11','Add the 11th','Opens up further — wide and expressive'),sec],
+    'maj9':[s(root+'maj7','Strip the 9','Still jazzy, more grounded'),s(r9+'m9','Relative m9','Dark mirror — same universe, minor world'),s(root+'maj13','Extend to 13th','Full lush major extension'),sec],
+    'm6'  :[s(root+'m7','Swap 6 for b7','Different color, same darkness'),s(r3+'6','Relative maj6','Bright lift — same notes rerooted'),s(root+'m','Strip to triad','Most direct minor expression'),sec],
+    '11'  :[s(root+'9','Strip to 9th','Slightly simpler — loses suspension, keeps color'),s(root+'7','Back to Dom7','Classic dominant tension'),s(root+'sus4','Voice as sus4','The 11 and sus4 share identity on guitar'),sec],
+    'm11' :[s(root+'m9','Strip to m9','Rich but slightly less open'),s(root+'m7','Back to m7','Minimal and grounded'),s(r3+'maj9','Relative maj9','Bright modal exchange'),sec],
+    'maj11':[s(root+'maj9','Strip the 11','Cleaner, still extended'),s(root+'maj7','Back to maj7','Classic and warm'),s(root+'add9','Open add9','No 7th — brighter and simpler'),sec],
+    '13'  :[s(root+'9','Drop to 9','Lose the 13th — still jazzy'),s(root+'7','Back to Dom7','Classic dominant'),s(t6+'13','Tritone Sub 13','Full reharmonization'),sec],
+    'm13' :[s(root+'m11','Drop the 13','Still extended, less colorful'),s(root+'m9','Back to m9','Rich but simpler'),s(r3+'maj13','Relative maj13','Bright alternative'),sec],
+    'maj13':[s(root+'maj9','Strip 11+13','Clean maj9 — lush but less busy'),s(root+'maj7','Back to maj7','The jazz standard choice'),s(r9+'m13','Relative m13','Dark mirror of this extension'),sec],
   };
-  return MAP[quality]||[s(root+'maj','Major Triad','Simplest version of this root'),s(root+'m','Minor Triad','Parallel minor — contrasting color'),s(root+'7','Dominant 7th','Adds harmonic tension and motion'),secDom];
+  return M[quality]||[s(root+'maj','Major Triad','Simplest version of this root'),s(root+'m','Minor Triad','Parallel minor'),s(root+'7','Dominant 7th','Harmonic tension and motion'),sec];
 }
 
 // ── Progressions ──
-const PROGRESSIONS=[
-  {name:'Pop Axis',genre:'Pop · EDM',chords:['C','G','Am','F'],desc:'I–V–vi–IV. The most common progression in modern western pop.'},
-  {name:'50s Progression',genre:'Doo-Wop · Rock',chords:['C','Am','F','G'],desc:'The heart of doo-wop. Stand By Me, Blue Moon, Every Breath You Take.'},
-  {name:'Royal Road',genre:'J-Pop · Pop',chords:['C','G','Am','Em','F','C','F','G'],desc:"Japan's most beloved loop. Dreamy diatonic movement with bittersweet pull."},
-  {name:'Sensitive Cadence',genre:'Pop · Indie',chords:['Am','F','C','G'],desc:'vi–IV–I–V. Starting on the relative minor for an introspective feel.'},
-  {name:'Five-Chord Loop',genre:'Pop · Ballad',chords:['C','G','Am','Em','F'],desc:'I–V–vi–iii–IV. Five diatonic chords in sequence — lush and cinematic.'},
-  {name:'Creep Changes',genre:'Alt Rock',chords:['G','B','C','Cm'],desc:'I–III–IV–iv. The major-to-minor drop that creates aching, desperate power.'},
-  {name:'Mixolydian Groove',genre:'Rock · Folk',chords:['G','F','C','G'],desc:'I–bVII–IV. The flat seventh signals Mixolydian — driving and unresolved.'},
-  {name:'Andalusian Cadence',genre:'Flamenco · Classical',chords:['Am','G','F','E'],desc:'The dark descending cadence of flamenco. Dramatic resolution to the major V.'},
-  {name:'12-Bar Blues',genre:'Blues · Rock',chords:['A7','A7','A7','A7','D7','D7','A7','A7','E7','D7','A7','E7'],desc:'Three chords, infinite emotion. The root system of all blues and rock.'},
-  {name:'Minor Blues',genre:'Blues · Soul',chords:['Am7','Am7','Am7','Am7','Dm7','Dm7','Am7','Am7','Em7','Dm7','Am7','Em7'],desc:'12-bar blues in minor — darker, moodier, central to bebop.'},
-  {name:'Neo-Soul Loop',genre:'Neo-Soul · R&B',chords:['Cm9','Fm9','Bb7','Ebmaj7'],desc:"i–iv–VII7–IIImaj7. Rich extensions — the sound of D'Angelo and Erykah Badu."},
-  {name:'ii–V–I (Jazz)',genre:'Jazz',chords:['Dm7','G7','Cmaj7'],desc:'The central building block of jazz harmony. Every standard uses this.'},
-  {name:'Jazz Turnaround',genre:'Jazz · Bebop',chords:['Cmaj7','Am7','Dm7','G7'],desc:'I–vi–ii–V. The looping turnaround — jazz musicians have played this a billion times.'},
-  {name:'Rhythm Changes',genre:'Jazz · Bebop',chords:['Bbmaj7','Gm7','Cm7','F7'],desc:"From Gershwin's I Got Rhythm. The loop that launched a thousand bebop heads."},
-  {name:'iii–VI–ii–V',genre:'Jazz',chords:['Em7','A7','Dm7','G7'],desc:'The backdoor turnaround — starts a third up for a different color before landing on ii–V.'},
-  {name:'Misty Changes',genre:'Jazz Ballad',chords:['Ebmaj7','Bbm7','Eb7','Abmaj7'],desc:"The lush opening of Erroll Garner's Misty. Rich, romantic, endlessly singable."},
-  {name:'Circle Drop',genre:'Jazz · Classical',chords:['C7','F7','Bb7','Eb7'],desc:'Dominant 7ths descending in fourths. Maximum harmonic tension cycling.'},
-  {name:'Coltrane Matrix',genre:'Jazz · Modern',chords:['Cmaj7','Abmaj7','Emaj7','Cmaj7'],desc:'Three tonal centers a major third apart, cycling home — Coltrane substitutions.'},
-  {name:'Pachelbel Canon',genre:'Baroque · Pop',chords:['D','A','Bm','F#m','G','D','G','A'],desc:'The most imitated loop in Western music. From weddings to J-pop.'},
-  {name:'Romanesca',genre:'Baroque · Early Music',chords:['G','Em','C','D'],desc:'I–vi–IV–V. The classical diatonic sequence — recycled across centuries.'},
-  {name:'Circle of Fifths',genre:'Classical · Baroque',chords:['C','G','D','A','E','B','F#','C#'],desc:'Pure circle-of-fifths movement. Bach sequences, psychedelic codas.'},
-  {name:'Natural Minor Loop',genre:'Rock · Metal',chords:['Am','G','F','G'],desc:'i–VII–VI–VII. The most common natural minor loop in rock music.'},
-  {name:'Minor Sentimento',genre:'Rock · Latin',chords:['Am','Bb','C','Dm'],desc:'Dark, driving minor loop. Heard in flamenco, tango, and heavy rock.'},
-  {name:'Dorian Groove',genre:'Rock · Fusion',chords:['Dm','G','Dm','G'],desc:'i–IV in Dorian — the raised 6th makes the IV major, adding brightness to minor.'},
-  {name:'Modal Shift',genre:'Soul · Modal Jazz',chords:['Am7','Bm7'],desc:'Two chords a whole step apart — the So What / Impressions sound. Pure modal suspension.'},
-  {name:'Phrygian Riff',genre:'Metal · Flamenco',chords:['E','F','E','F'],desc:'I–bII. The Phrygian half-step clash — metal, flamenco, and film scores.'},
+const PROGS=[
+  {n:'Pop Axis',g:'Pop · EDM',c:['C','G','Am','F']},
+  {n:'50s Progression',g:'Doo-Wop · Rock',c:['C','Am','F','G']},
+  {n:'Royal Road',g:'J-Pop · Pop',c:['C','G','Am','Em','F','C','F','G']},
+  {n:'Sensitive Cadence',g:'Pop · Indie',c:['Am','F','C','G']},
+  {n:'Five-Chord Loop',g:'Pop · Ballad',c:['C','G','Am','Em','F']},
+  {n:'Creep Changes',g:'Alt Rock',c:['G','B','C','Cm']},
+  {n:'Mixolydian Groove',g:'Rock · Folk',c:['G','F','C','G']},
+  {n:'Andalusian Cadence',g:'Flamenco · Classical',c:['Am','G','F','E']},
+  {n:'12-Bar Blues',g:'Blues · Rock',c:['A7','A7','A7','A7','D7','D7','A7','A7','E7','D7','A7','E7']},
+  {n:'Minor Blues',g:'Blues · Soul',c:['Am7','Am7','Am7','Am7','Dm7','Dm7','Am7','Am7','Em7','Dm7','Am7','Em7']},
+  {n:'Neo-Soul Loop',g:'Neo-Soul · R&B',c:['Cm9','Fm9','Bb7','Ebmaj7']},
+  {n:'ii–V–I (Jazz)',g:'Jazz',c:['Dm7','G7','Cmaj7']},
+  {n:'Jazz Turnaround',g:'Jazz · Bebop',c:['Cmaj7','Am7','Dm7','G7']},
+  {n:'Rhythm Changes',g:'Jazz · Bebop',c:['Bbmaj7','Gm7','Cm7','F7']},
+  {n:'iii–VI–ii–V',g:'Jazz',c:['Em7','A7','Dm7','G7']},
+  {n:'Misty Changes',g:'Jazz Ballad',c:['Ebmaj7','Bbm7','Eb7','Abmaj7']},
+  {n:'Circle Drop',g:'Jazz · Classical',c:['C7','F7','Bb7','Eb7']},
+  {n:'Coltrane Matrix',g:'Jazz · Modern',c:['Cmaj7','Abmaj7','Emaj7','Cmaj7']},
+  {n:'Pachelbel Canon',g:'Baroque · Pop',c:['D','A','Bm','F#m','G','D','G','A']},
+  {n:'Romanesca',g:'Baroque · Early Music',c:['G','Em','C','D']},
+  {n:'Circle of Fifths',g:'Classical · Baroque',c:['C','G','D','A','E','B','F#','C#']},
+  {n:'Natural Minor Loop',g:'Rock · Metal',c:['Am','G','F','G']},
+  {n:'Minor Sentimento',g:'Rock · Latin',c:['Am','Bb','C','Dm']},
+  {n:'Dorian Groove',g:'Rock · Fusion',c:['Dm','G','Dm','G']},
+  {n:'Modal Shift',g:'Soul · Modal Jazz',c:['Am7','Bm7']},
+  {n:'Phrygian Riff',g:'Metal · Flamenco',c:['E','F','E','F']},
 ];
 
 // ── State ──
-let gMode='free', gComplexity='basic', gCount=4;
-let gCurrentChords=[], gCurrentSubtitle='';
-let gProgState=null; // {progIdx, semitoneOffset, origChords}
+let gMode='free',gCplx='basic',gCount=4;
+let gChords=[],gOriginals={},gSubtitle='',gProgState=null;
 
 // ── Controls ──
+const $=id=>document.getElementById(id);
 function setMode(m){
   gMode=m;
-  document.getElementById('btnModeFree').classList.toggle('active',m==='free');
-  document.getElementById('btnModeLocked').classList.toggle('active',m==='locked');
-  document.getElementById('keySelects').classList.toggle('visible',m==='locked');
+  $('btnModeFree').classList.toggle('active',m==='free');
+  $('btnModeLocked').classList.toggle('active',m==='locked');
+  $('keySelects').classList.toggle('visible',m==='locked');
 }
 function setComplexity(c){
-  gComplexity=c;
-  ['basic','extended','all'].forEach(x=>document.getElementById('btnCplx'+x[0].toUpperCase()+x.slice(1)).classList.toggle('active',c===x));
+  gCplx=c;
+  ['basic','extended','all'].forEach(x=>$('btnCplx'+x[0].toUpperCase()+x.slice(1)).classList.toggle('active',c===x));
 }
 function setCount(n){
   gCount=n;
-  [2,4,8].forEach(x=>document.getElementById('btnCount'+x).classList.toggle('active',n===x));
+  [2,4,8].forEach(x=>$('btnCount'+x).classList.toggle('active',n===x));
 }
 
 // ── Generation ──
-const rand=arr=>arr[Math.floor(Math.random()*arr.length)];
-
-function enhanceQ(basicQ){
-  const opts=(QUALITY_EXT[basicQ]||{})[gComplexity];
-  return opts?rand(opts):basicQ;
-}
-
-function generateFree(n){
-  const types=CPLX[gComplexity];
-  return Array.from({length:n},()=>({root:rand(SHARP_NOTES),quality:rand(types)}));
-}
-
-function generateKeyLocked(n){
-  const key=document.getElementById('keySelect').value;
-  const scaleType=document.getElementById('scaleSelect').value;
+const rand=a=>a[Math.floor(Math.random()*a.length)];
+function enhanceQ(q){const o=(QX[q]||{})[gCplx];return o?rand(o):q;}
+function genFree(n){return Array.from({length:n},()=>({root:rand(SHARP),quality:rand(CPLX[gCplx])}));}
+function genLocked(n){
+  const key=$('keySelect').value,st=$('scaleSelect').value;
   let pool=[];
-  const addScale=st=>{
-    SCALES[st].steps.forEach((step,i)=>{
-      const q=enhanceQ(SCALES[st].qualities[i]);
-      pool.push({root:noteAt((rootIdx(key)+step)%12,key),quality:q});
-    });
-  };
-  if(scaleType==='both'){addScale('major');addScale('minor');}else addScale(scaleType);
+  const add=s=>SCALES[s].steps.forEach((step,i)=>pool.push({root:nAt((rIdx(key)+step)%12,key),quality:enhanceQ(SCALES[s].q[i])}));
+  if(st==='both'){add('major');add('minor');}else add(st);
   if(!pool.length)pool=[{root:key,quality:'maj'}];
   return Array.from({length:n},()=>rand(pool));
 }
+function genOne(){return gMode==='free'?genFree(1)[0]:genLocked(1)[0];}
 
-function generateSingle(){
-  return gMode==='free'?generateFree(1)[0]:generateKeyLocked(1)[0];
+// ── Parse ──
+function parseCS(str){
+  const roots=[...FLAT,...SHARP].filter((v,i,a)=>a.indexOf(v)===i).sort((a,b)=>b.length-a.length);
+  for(const r of roots){
+    if(str.startsWith(r)){const rest=str.slice(r.length);const q=rest===''?'maj':rest;return[r,CT[q]?q:'maj'];}
+  }
+  return[str,'maj'];
+}
+function chordNotes(root,quality){
+  const iv=(CT[quality]||CT['maj']).iv;
+  return iv.map(i=>nAt((rIdx(root)+i)%12,root));
 }
 
 // ── Roll ──
 function rollChords(){
-  document.getElementById('rollBtn').classList.add('rolling');
-  setTimeout(()=>document.getElementById('rollBtn').classList.remove('rolling'),450);
-  gProgState=null;
-  hideTransposeBar();
-  const chords=gMode==='free'?generateFree(gCount):generateKeyLocked(gCount);
+  $('rollBtn').classList.add('rolling');
+  setTimeout(()=>$('rollBtn').classList.remove('rolling'),450);
+  gProgState=null;gOriginals={};hideTransposeBar();
+  const ch=gMode==='free'?genFree(gCount):genLocked(gCount);
   const sub=gMode==='locked'
-    ?`${document.getElementById('keySelect').value} ${document.getElementById('scaleSelect').value.toUpperCase()} — ${gComplexity.toUpperCase()}`
-    :`FREE MODE — ${gComplexity.toUpperCase()}`;
-  gCurrentChords=[...chords];
-  gCurrentSubtitle=sub;
-  renderCards(gCurrentChords,sub);
+    ?`${$('keySelect').value} ${$('scaleSelect').value.toUpperCase()} — ${gCplx.toUpperCase()}`
+    :`FREE MODE — ${gCplx.toUpperCase()}`;
+  gChords=[...ch];gSubtitle=sub;
+  render(gChords,sub);
 }
-
 function rerollCard(idx){
-  gCurrentChords[idx]=generateSingle();
-  renderCards(gCurrentChords,gCurrentSubtitle,idx);
+  delete gOriginals[idx];
+  gChords[idx]=genOne();
+  render(gChords,gSubtitle,idx);
 }
 
-// ── Parse chord string ──
-function parseChordStr(str){
-  const roots=[...FLAT_NOTES,...SHARP_NOTES].filter((v,i,a)=>a.indexOf(v)===i).sort((a,b)=>b.length-a.length);
-  for(const r of roots){
-    if(str.startsWith(r)){const rest=str.slice(r.length);const q=rest===''?'maj':rest;return[r,CHORD_TYPES[q]?q:'maj'];}
-  }
-  return[str,'maj'];
+// ── Sub swap ──
+function applySubToCard(idx,chordStr){
+  const[nr,nq]=parseCS(chordStr);
+  if(!gOriginals[idx])gOriginals[idx]={...gChords[idx]};
+  gChords[idx]={root:nr,quality:nq};
+  render(gChords,gSubtitle,idx);
 }
-function getChordNotes(root,quality){
-  const ct=CHORD_TYPES[quality];const iv=ct?ct.intervals:[0,4,7];
-  return iv.map(i=>noteAt((rootIdx(root)+i)%12,root));
+function revertCard(idx){
+  if(gOriginals[idx]){gChords[idx]={...gOriginals[idx]};delete gOriginals[idx];render(gChords,gSubtitle,idx);}
 }
 
 // ── Render ──
-function renderCards(chords,subtitle,rerollIdx){
-  const grid=document.getElementById('cardsGrid');
-  document.getElementById('cardsTitle').textContent=subtitle||`${chords.length} CHORDS`;
-  document.getElementById('cardsBadge').innerHTML=`<span class="cards-badge">${chords.length} CHORD${chords.length>1?'S':''}</span>`;
+function render(chords,subtitle,animIdx){
+  const grid=$('cardsGrid');
+  $('cardsTitle').textContent=subtitle||`${chords.length} CHORDS`;
+  $('cardsBadge').innerHTML=`<span class="cards-badge">${chords.length} CHORD${chords.length>1?'S':''}</span>`;
   grid.innerHTML='';
   chords.forEach((c,idx)=>{
     const{root,quality}=c;
-    const ct=CHORD_TYPES[quality],disp=ct?ct.disp:quality,intervals=ct?ct.intervals:[0,4,7];
-    const notes=getChordNotes(root,quality),subs=getSubs(root,quality);
+    const ct=CT[quality]||CT['maj'];
+    const disp=ct.d,ivs=ct.iv;
+    const notes=chordNotes(root,quality);
+    const subs=getSubs(root,quality);
+    const isSwapped=!!gOriginals[idx];
+    const orig=gOriginals[idx];
     const chips=notes.map((n,i)=>`<span class="note-pill${i===0?' is-root':''}">${n}</span>`).join('');
     const subHTML=subs.map(sub=>{
-      const[sr,sq]=parseChordStr(sub.chord);
-      const sqD=(CHORD_TYPES[sq]||{disp:sq}).disp;
-      return`<div class="sub-entry">
-        <div class="sub-chord-name"><span class="sr">${sr}</span><span class="sq">${sqD}</span></div>
-        <div class="sub-technique${sub.isSecDom?' sec-dom':''}">${sub.isSecDom?`Secondary Dominant → V/${root}`:sub.technique}</div>
+      const[sr,sq]=parseCS(sub.chord);
+      const sqd=(CT[sq]||{d:sq}).d;
+      const tcls=sub.isSec?'sub-technique sec-dom':'sub-technique';
+      const tlbl=sub.isSec?`Secondary Dominant → V/${root}`:sub.tech;
+      const arg=sub.chord.replace(/'/g,"\\'");
+      return`<button class="sub-entry" onclick="applySubToCard(${idx},'${arg}')">
+        <div class="sub-chord-name"><span class="sr">${sr}</span><span class="sq">${sqd}</span></div>
+        <div class="${tcls}">${tlbl}</div>
         <div class="sub-desc">${sub.desc}</div>
-      </div>`;
+      </button>`;
     }).join('');
-    const isRr=rerollIdx!==undefined&&idx===rerollIdx;
+    const isAnim=animIdx!==undefined&&idx===animIdx;
+    const cardCls=isAnim?'chord-card rerolled':(isSwapped?'chord-card swapped':'chord-card');
+    const revertBar=isSwapped?`<div class="card-revert-bar visible">
+      <span class="revert-label">Subbed from <strong>${orig.root}${(CT[orig.quality]||{d:orig.quality}).d}</strong></span>
+      <button class="revert-btn" onclick="revertCard(${idx})">← REVERT</button>
+    </div>`:'<div class="card-revert-bar"></div>';
     const card=document.createElement('div');
-    card.className=isRr?'chord-card rerolled':'chord-card';
-    card.style.animationDelay=`${isRr?0:idx*55}ms`;
+    card.className=cardCls;
+    card.style.animationDelay=`${isAnim?0:idx*55}ms`;
     card.innerHTML=`
       <div class="card-strip"></div>
+      ${revertBar}
       <div class="card-top">
         <div class="card-chord-name"><span class="root">${root}</span><span class="quality">${disp}</span></div>
         <div class="card-notes-row">${chips}</div>
-        <button class="card-reroll-btn" onclick="handleReroll(this,${idx})" title="Re-roll this chord">⚄</button>
+      </div>
+      <div class="card-action-row">
+        <button class="card-reroll-btn" onclick="handleRR(this,${idx})"><span class="rr-icon">⚄</span> Re-roll</button>
       </div>
       <div class="card-visuals">
-        <div class="vis-section"><div class="vis-label">Guitar</div>${buildGuitarSVG(root,quality)}</div>
-        <div class="vis-section" style="flex:1;min-width:0;"><div class="vis-label">Staff</div>${buildStaffSVG(root,intervals)}</div>
+        <div class="vis-section"><div class="vis-label">Guitar</div>${guitarSVG(root,quality)}</div>
+        <div class="vis-section" style="flex:1;min-width:0;"><div class="vis-label">Staff</div>${staffSVG(root,ivs)}</div>
       </div>
       <div class="card-sub-area">
         <button class="sub-toggle" onclick="toggleSub(this)">
           <span>Substitutions (${subs.length})</span><span class="sub-caret">▶</span>
         </button>
-        <div class="sub-panel">${subHTML}</div>
+        <div class="sub-panel">
+          <div class="sub-hint">↓ tap a substitution to swap — revert button appears above</div>
+          ${subHTML}
+        </div>
       </div>`;
     grid.appendChild(card);
   });
 }
-
-function handleReroll(btn,idx){
-  btn.classList.add('spinning');
-  setTimeout(()=>btn.classList.remove('spinning'),360);
-  rerollCard(idx);
-}
+function handleRR(btn,idx){btn.classList.add('spinning');setTimeout(()=>btn.classList.remove('spinning'),360);rerollCard(idx);}
 function toggleSub(btn){btn.classList.toggle('open');btn.nextElementSibling.classList.toggle('open');}
 
 // ── Progressions ──
-function toggleProgressions(){
-  document.getElementById('progHeader').classList.toggle('open');
-  document.getElementById('progBody').classList.toggle('hidden');
+function toggleProgressions(){$('progHeader').classList.toggle('open');$('progBody').classList.toggle('hidden');}
+function loadProg(i){
+  const p=PROGS[i];
+  const orig=p.c.map(s=>{const[r,q]=parseCS(s);return{root:r,quality:q};});
+  gProgState={i,offset:0,orig};gOriginals={};
+  gChords=[...orig];gSubtitle=`${p.n.toUpperCase()} — ${p.g}`;
+  render(gChords,gSubtitle);
+  showTB(p.n,0,orig[0].root);
+  $('cardsGrid').scrollIntoView({behavior:'smooth',block:'start'});
 }
-function loadProgression(i){
-  const prog=PROGRESSIONS[i];
-  const orig=prog.chords.map(str=>{const[r,q]=parseChordStr(str);return{root:r,quality:q};});
-  gProgState={progIdx:i,semitoneOffset:0,origChords:orig};
-  gCurrentChords=[...orig];
-  gCurrentSubtitle=`${prog.name.toUpperCase()} — ${prog.genre}`;
-  renderCards(gCurrentChords,gCurrentSubtitle);
-  showTransposeBar(prog.name,0,orig[0].root);
-  document.getElementById('cardsGrid').scrollIntoView({behavior:'smooth',block:'start'});
+function shiftProgression(d){if(!gProgState)return;gProgState.offset=(gProgState.offset+d+12)%12;applyTP();}
+function resetTranspose(){if(!gProgState)return;gProgState.offset=0;applyTP();}
+function applyTP(){
+  const{i,offset,orig}=gProgState,p=PROGS[i];
+  const sh=orig.map(c=>({root:nAt((rIdx(c.root)+offset)%12,c.root),quality:c.quality}));
+  gOriginals={};gChords=sh;
+  const lbl=offset===0?'':(offset<=6?`+${offset}`:`-${12-offset}`)+' st';
+  gSubtitle=`${p.n.toUpperCase()} — ${p.g}${lbl?' · '+lbl:''}`;
+  render(gChords,gSubtitle);showTB(p.n,offset,sh[0].root);
 }
-function shiftProgression(delta){
-  if(!gProgState)return;
-  gProgState.semitoneOffset=(gProgState.semitoneOffset+delta+12)%12;
-  applyTranspose();
+function showTB(name,offset,key){
+  $('transposeBar').classList.add('visible');
+  $('tbProgName').textContent=name;
+  $('tbKeyDisplay').textContent=key;
+  $('tbOffset').textContent=offset===0?'±0 st':(offset<=6?`+${offset}`:`-${12-offset}`)+' st';
 }
-function resetTranspose(){
-  if(!gProgState)return;
-  gProgState.semitoneOffset=0;
-  applyTranspose();
-}
-function applyTranspose(){
-  const{progIdx,semitoneOffset,origChords}=gProgState;
-  const prog=PROGRESSIONS[progIdx];
-  const shifted=origChords.map(c=>({root:noteAt((rootIdx(c.root)+semitoneOffset)%12,c.root),quality:c.quality}));
-  gCurrentChords=shifted;
-  const label=semitoneOffset===0?'':(semitoneOffset<=6?`+${semitoneOffset}`:`-${12-semitoneOffset}`)+' st';
-  gCurrentSubtitle=`${prog.name.toUpperCase()} — ${prog.genre}${label?' · '+label:''}`;
-  renderCards(gCurrentChords,gCurrentSubtitle);
-  showTransposeBar(prog.name,semitoneOffset,shifted[0].root);
-}
-function showTransposeBar(name,offset,key){
-  document.getElementById('transposeBar').classList.add('visible');
-  document.getElementById('tbProgName').textContent=name;
-  document.getElementById('tbKeyDisplay').textContent=key;
-  document.getElementById('tbOffset').textContent=offset===0?'±0 st':(offset<=6?`+${offset}`:`-${12-offset}`)+' st';
-}
-function hideTransposeBar(){document.getElementById('transposeBar').classList.remove('visible');}
+function hideTransposeBar(){$('transposeBar').classList.remove('visible');}
 
-function initProgressions(){
-  document.getElementById('progCount').textContent=`${PROGRESSIONS.length} progressions`;
-  document.getElementById('progBody').innerHTML=PROGRESSIONS.map((p,i)=>`
-    <div class="prog-card" onclick="loadProgression(${i})" title="${p.desc}">
-      <div class="prog-card-name">${p.name}</div>
-      <div class="prog-card-genre">${p.genre}</div>
-      <div class="prog-card-chords">${p.chords.map(c=>`<span class="prog-pill">${c}</span>`).join('')}</div>
+function initProgs(){
+  $('progCount').textContent=`${PROGS.length} progressions`;
+  $('progBody').innerHTML=PROGS.map((p,i)=>`
+    <div class="prog-card" onclick="loadProg(${i})">
+      <div class="prog-card-name">${p.n}</div>
+      <div class="prog-card-genre">${p.g}</div>
+      <div class="prog-card-chords">${p.c.map(c=>`<span class="prog-pill">${c}</span>`).join('')}</div>
     </div>`).join('');
 }
 
-initProgressions();
-setCount(4);
+initProgs();setCount(4);
+</script>
+<script>
+/* WAVEFORM theme */
+(function(){
+  var t = localStorage.getItem('wf-theme');
+  if (t === 'light') document.documentElement.setAttribute('data-theme','light');
+  var btn = document.getElementById('wfThemeBtn');
+  if (!btn) return;
+  btn.addEventListener('click', function(){
+    var isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    if (isLight) {
+      document.documentElement.removeAttribute('data-theme');
+      localStorage.setItem('wf-theme','dark');
+    } else {
+      document.documentElement.setAttribute('data-theme','light');
+      localStorage.setItem('wf-theme','light');
+    }
+  });
+})();
 </script>
 </body>
 </html>
