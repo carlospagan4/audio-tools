@@ -1,0 +1,1647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<title>WAVEFORM — Patch Map</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Crect%20width%3D%2232%22%20height%3D%2232%22%20rx%3D%224%22%20fill%3D%22%230a0a0c%22/%3E%3Crect%20x%3D%223%22%20y%3D%223%22%20width%3D%2226%22%20height%3D%2226%22%20rx%3D%223%22%20fill%3D%22none%22%20stroke%3D%22%2300e5ff%22%20stroke-width%3D%221.5%22/%3E%3Cpolygon%20points%3D%2216%2C6%2026%2C16%2016%2C26%206%2C16%22%20fill%3D%22none%22%20stroke%3D%22%2300e5ff%22%20stroke-width%3D%221.8%22%20stroke-linejoin%3D%22round%22/%3E%3Ccircle%20cx%3D%2216%22%20cy%3D%2216%22%20r%3D%222.5%22%20fill%3D%22%2300e5ff%22/%3E%3C/svg%3E">
+<style>
+:root {
+  --bg:          #0a0a0c;
+  --surface:     #111114;
+  --surface2:    #18181d;
+  --surface3:    #1e1e26;
+  --border:      #2a2a35;
+  --border2:     #38384a;
+  --accent:      #ec4899;
+  --accent-dim:  rgba(236,72,153,0.12);
+  --accent-glow: rgba(236,72,153,0.28);
+  --text:        #e8e8f0;
+  --text-muted: #a0a0bc;
+  --text-dim:   #707090;
+  --danger:      #ff3c6e;
+  --success:     #39d98a;
+  --wf-nav-h:    48px;
+  --r:           4px;
+}
+html{font-size:16px;}
+body{
+  font-family:'Barlow',sans-serif;font-size:14px;
+  background:var(--bg);color:var(--text);
+  min-height:100vh;overflow-x:hidden;
+  padding-top:var(--wf-nav-h);
+}
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:linear-gradient(rgba(236,72,153,0.016) 1px,transparent 1px),linear-gradient(90deg,rgba(236,72,153,0.016) 1px,transparent 1px);
+  background-size:40px 40px;pointer-events:none;z-index:0;
+}
+body::after{
+  content:'';position:fixed;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.022) 2px,rgba(0,0,0,0.022) 4px);
+  pointer-events:none;z-index:999;
+}
+
+
+/* ── PAGE ── */
+.page{position:relative;z-index:1;max-width:1440px;margin:0 auto;padding:36px 32px 80px;}
+
+/* Page header */
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:30px;gap:20px;flex-wrap:wrap;}
+.page-header-left{display:flex;flex-direction:column;gap:5px;}
+.page-eyebrow{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:var(--accent);opacity:0.7;}
+.map-name{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:38px;letter-spacing:0.06em;text-transform:uppercase;color:var(--text);background:none;border:none;outline:none;min-width:80px;width:auto;border-bottom:2px solid transparent;transition:border-color .2s;line-height:1.1;}
+.map-name:focus{border-bottom-color:var(--accent);}
+.map-stats{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);letter-spacing:0.12em;margin-top:3px;}
+.page-header-right{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding-top:6px;}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 15px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:0.12em;text-transform:uppercase;border:1px solid;border-radius:var(--r);cursor:pointer;transition:all .15s;white-space:nowrap;background:none;}
+.btn-primary{color:var(--accent);border-color:var(--accent);background:var(--accent-dim);}
+.btn-primary:hover{background:rgba(236,72,153,0.22);}
+.btn-ghost{color:var(--text-muted);border-color:var(--border2);}
+.btn-ghost:hover{color:var(--text);border-color:var(--text-muted);background:var(--surface2);}
+.btn-danger{color:var(--danger);border-color:var(--danger);}
+.btn-danger:hover{background:rgba(255,60,110,0.1);}
+.btn-success{color:var(--success);border-color:var(--success);background:rgba(57,217,138,0.1);}
+.btn-success:hover{background:rgba(57,217,138,0.2);}
+.btn-sm{padding:5px 11px;font-size:11px;}
+.btn-xs{padding:4px 9px;font-size:10px;}
+.btn-icon{padding:5px 8px;}
+.btn-pedals-alert{color:var(--accent);border-color:var(--accent);background:var(--accent-dim);position:relative;}
+.btn-pedals-alert::after{content:'';position:absolute;top:-3px;right:-3px;width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse-dot 1.8s ease-in-out infinite;}
+@keyframes pulse-dot{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(1.5);opacity:0.5;}}
+
+/* Banks */
+.banks-container{display:flex;flex-direction:column;gap:14px;}
+.banks-empty{text-align:center;padding:70px 20px;color:var(--text-dim);font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:0.2em;border:1px dashed var(--border);border-radius:8px;cursor:pointer;transition:border-color .2s;}
+.banks-empty:hover{border-color:var(--accent);color:var(--text-muted);}
+
+/* Bank card */
+.bank-card{background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+.bank-card.drop-target{border-color:var(--accent) !important;box-shadow:0 0 0 1px var(--accent-glow);}
+.bank-card.is-dragging{opacity:0.3;}
+
+.bank-header{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border-bottom:1px solid var(--border);}
+.drag-handle{cursor:grab;color:var(--text-dim);font-size:16px;flex-shrink:0;line-height:1;transition:color .15s;}
+.drag-handle:hover{color:var(--accent);}
+.drag-handle:active{cursor:grabbing;}
+.bank-color-dot{width:11px;height:11px;border-radius:50%;flex-shrink:0;cursor:pointer;transition:transform .15s;border:1.5px solid rgba(255,255,255,0.18);}
+.bank-color-dot:hover{transform:scale(1.45);}
+.bank-name-input{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;letter-spacing:0.1em;text-transform:uppercase;color:var(--text);background:none;border:none;outline:none;flex:1;min-width:60px;border-bottom:1px solid transparent;transition:border-color .15s;}
+.bank-name-input:focus{border-bottom-color:var(--accent);}
+.bank-meta{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);letter-spacing:0.1em;white-space:nowrap;}
+.bank-actions{display:flex;align-items:center;gap:5px;margin-left:auto;}
+.add-preset-btn{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#ff8c00;border:1px solid rgba(255,140,0,0.4);border-radius:3px;cursor:pointer;background:rgba(255,140,0,0.08);transition:all .15s;}
+.add-preset-btn:hover{background:rgba(255,140,0,0.18);border-color:#ff8c00;}
+.add-preset-btn svg{flex-shrink:0;}
+
+/* Presets grid */
+.presets-grid{display:grid;gap:1px;background:var(--border);}
+.presets-grid.col-1{grid-template-columns:1fr;}
+.presets-grid.col-2{grid-template-columns:repeat(2,1fr);}
+.presets-grid.col-3{grid-template-columns:repeat(3,1fr);}
+.presets-grid.col-4{grid-template-columns:repeat(4,1fr);}
+.presets-grid.col-5{grid-template-columns:repeat(5,1fr);}
+.presets-grid.col-6{grid-template-columns:repeat(6,1fr);}
+.presets-grid.col-8{grid-template-columns:repeat(8,1fr);}
+.presets-grid.col-many{grid-template-columns:repeat(auto-fill,minmax(180px,1fr));}
+
+/* Preset card */
+.preset-card{background:var(--bg);padding:14px;display:flex;flex-direction:column;gap:8px;min-height:120px;transition:background .15s;position:relative;}
+.preset-card:hover{background:var(--surface);}
+.preset-card.drop-target{background:var(--accent-dim) !important;outline:1px dashed var(--accent);}
+.preset-card.is-dragging{opacity:0.25;}
+.preset-top{display:flex;align-items:flex-start;gap:6px;}
+.preset-drag-handle{cursor:grab;color:var(--text-muted);font-size:14px;flex-shrink:0;opacity:0.45;transition:opacity .15s,color .15s;margin-top:3px;}
+.preset-card:hover .preset-drag-handle{opacity:0.8;}
+.preset-drag-handle:hover{color:var(--accent);opacity:1 !important;}
+.preset-drag-handle:active{cursor:grabbing;}
+.preset-num{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);letter-spacing:0.12em;flex-shrink:0;padding-top:3px;}
+.preset-name-input{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:17px;color:var(--text);background:none;border:none;outline:none;width:100%;border-bottom:1px solid transparent;transition:border-color .15s;letter-spacing:0.03em;}
+.preset-name-input:focus{border-bottom-color:var(--accent);}
+.preset-name-input::placeholder{color:var(--text-dim);}
+.preset-chips{display:flex;flex-wrap:wrap;gap:4px;}
+.chip{display:inline-flex;align-items:center;gap:4px;padding:3px 7px;background:var(--surface2);border:1px solid var(--border2);border-radius:2px;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-muted);max-width:100%;overflow:hidden;}
+.chip-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+.chip-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.chip-midi{font-size:8px;color:var(--text-dim);margin-left:1px;}
+.subchip{display:inline-flex;align-items:center;gap:3px;padding:2px 5px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:1px;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);}
+.preset-notes{font-size:12px;color:var(--text-muted);line-height:1.5;font-style:italic;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+.preset-footer{display:flex;justify-content:flex-end;gap:4px;margin-top:auto;opacity:0;transition:opacity .15s;}
+.preset-card:hover .preset-footer{opacity:1;}
+
+/* ── MODALS ── */
+.overlay{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,0.84);backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s;}
+.overlay.open{opacity:1;pointer-events:all;}
+.modal{background:var(--surface);border:1px solid var(--border2);border-radius:8px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none;box-shadow:0 24px 64px rgba(0,0,0,0.75);}
+.modal::-webkit-scrollbar{display:none;}
+.modal-wide{max-width:760px;}
+.modal-hdr{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--surface);z-index:1;}
+.modal-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:18px;letter-spacing:0.1em;text-transform:uppercase;color:var(--text);}
+.modal-close{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:17px;padding:4px 7px;transition:color .15s,background .15s;line-height:1;border-radius:3px;}
+.modal-close:hover{color:var(--text);background:var(--surface2);}
+.modal-body{padding:24px;}
+.modal-footer{display:flex;justify-content:flex-end;gap:9px;padding:15px 22px;border-top:1px solid var(--border);}
+
+/* Setup wizard steps */
+.setup-step{display:none;}
+.setup-step.active{display:block;}
+.step-indicator{display:flex;gap:6px;margin-bottom:22px;}
+.step-dot{width:24px;height:4px;border-radius:2px;background:var(--border2);transition:background .2s;}
+.step-dot.active{background:var(--accent);}
+.step-dot.done{background:var(--success);}
+
+/* Form */
+.fg{display:flex;flex-direction:column;gap:6px;margin-bottom:18px;}
+.fg:last-child{margin-bottom:0;}
+.flabel{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:var(--text-muted);}
+.finput,.fselect,.ftextarea{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);color:var(--text);padding:9px 12px;font-family:'Barlow',sans-serif;font-size:14px;outline:none;transition:border-color .15s;width:100%;}
+.finput:focus,.fselect:focus,.ftextarea:focus{border-color:var(--accent);}
+.finput::placeholder,.ftextarea::placeholder{color:var(--text-dim);}
+.ftextarea{resize:vertical;min-height:68px;line-height:1.5;}
+.fselect option{background:var(--surface2);}
+.frow{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:10px;}
+.ftoggle-wrap{display:flex;align-items:center;gap:10px;cursor:pointer;}
+.ftoggle{appearance:none;width:38px;height:21px;background:var(--surface2);border:1px solid var(--border2);border-radius:11px;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;}
+.ftoggle::after{content:'';position:absolute;top:2px;left:2px;width:15px;height:15px;border-radius:50%;background:var(--text-muted);transition:all .2s;}
+.ftoggle:checked{background:var(--accent-dim);border-color:var(--accent);}
+.ftoggle:checked::after{left:19px;background:var(--accent);}
+.ftoggle-text{font-size:14px;color:var(--text-muted);}
+.fradio-group{display:flex;gap:18px;}
+.fradio{display:flex;align-items:center;gap:7px;cursor:pointer;font-size:14px;}
+.fradio input{accent-color:var(--accent);}
+
+/* Section header inside modal */
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.sec-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-muted);}
+.divider{height:1px;background:var(--border);margin:20px 0;}
+.empty-state{text-align:center;padding:22px;color:var(--text-dim);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:0.15em;}
+
+/* Pedal list */
+.pedal-list{display:flex;flex-direction:column;gap:8px;}
+.pedal-item{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+.pedal-item-hdr{display:flex;align-items:center;gap:9px;padding:10px 13px;}
+.pedal-item-name{font-weight:600;font-size:15px;flex:1;color:var(--text);}
+.pedal-item-meta{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);letter-spacing:0.08em;}
+.mfx-badge{font-family:'Share Tech Mono',monospace;font-size:8px;padding:2px 6px;background:var(--accent-dim);color:var(--accent);border-radius:2px;letter-spacing:0.1em;}
+.effects-list{padding:0 13px 10px;display:flex;flex-direction:column;gap:4px;}
+.effect-row{display:flex;align-items:center;gap:9px;padding:6px 10px;background:var(--surface);border:1px solid var(--border);border-radius:2px;}
+.effect-row-name{flex:1;font-size:13px;font-weight:500;color:var(--text);}
+.effect-row-meta{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);letter-spacing:0.06em;}
+
+/* Assign list */
+.assign-list{display:flex;flex-direction:column;gap:8px;}
+.assign-item{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+.assign-item-hdr{display:flex;align-items:center;gap:9px;padding:10px 13px;}
+.assign-item-name{font-weight:600;font-size:15px;flex:1;color:var(--text);}
+.assign-fields{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:0 13px 12px;}
+.af{display:flex;flex-direction:column;gap:4px;}
+.af-label{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text-dim);letter-spacing:0.12em;text-transform:uppercase;}
+.af-note{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--accent);opacity:0.6;letter-spacing:0.06em;}
+.af-input{background:var(--surface);border:1px solid var(--border);border-radius:2px;color:var(--text);padding:5px 8px;font-family:'Share Tech Mono',monospace;font-size:12px;outline:none;transition:border-color .15s;width:100%;}
+.af-input:focus{border-color:var(--accent);}
+.af-input::placeholder{color:var(--text-dim);}
+.sub-effects-sec{padding:0 13px 12px;border-top:1px solid var(--border);}
+.sub-eff-title{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);letter-spacing:0.18em;text-transform:uppercase;padding:8px 0 7px;}
+.sub-eff-checks{display:flex;flex-direction:column;gap:5px;}
+.sub-eff-check{display:flex;align-items:center;gap:9px;padding:7px 10px;background:var(--surface);border:1px solid var(--border);border-radius:2px;cursor:pointer;transition:background .12s;}
+.sub-eff-check:hover{background:var(--surface3);}
+.sub-eff-check input{accent-color:var(--accent);width:14px;height:14px;flex-shrink:0;}
+.sub-eff-check-name{flex:1;font-size:13px;font-weight:500;color:var(--text);}
+.sub-eff-check-meta{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);}
+
+/* MFX effect editor */
+.mfx-eff-editor{background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:10px 12px;display:flex;flex-direction:column;gap:8px;}
+
+/* Color swatches */
+.color-swatches{display:flex;gap:11px;flex-wrap:wrap;padding:4px 0;}
+.swatch{width:30px;height:30px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all .15s;}
+.swatch:hover{transform:scale(1.18);}
+.swatch.sel{border-color:white;transform:scale(1.18);}
+
+/* Export dropdown */
+.export-wrap{position:relative;}
+.export-dropdown{position:absolute;top:100%;right:0;z-index:200;background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);overflow:hidden;min-width:175px;box-shadow:0 8px 30px rgba(0,0,0,0.55);display:none;margin-top:4px;}
+.export-wrap.open .export-dropdown{display:block;}
+.export-opt{padding:10px 16px;font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;gap:9px;transition:background .1s,color .1s;background:none;border:none;width:100%;text-align:left;}
+.export-opt:hover{background:var(--surface2);color:var(--text);}
+
+/* Pedal picker */
+.pedal-picker-panel{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-top:10px;display:none;}
+.pedal-picker-panel.open{display:block;}
+
+/* Confirm modal */
+.confirm-modal{max-width:380px;}
+.confirm-msg{font-size:14px;color:var(--text-muted);line-height:1.6;}
+.confirm-target{color:var(--text);font-weight:600;}
+
+/* ── RIG NOTES SECTION ── */
+.rig-section{position:relative;z-index:1;max-width:1440px;margin:32px auto 0;padding:0 32px 80px;}
+.rig-panel{background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+.rig-panel-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;background:var(--surface2);border-bottom:1px solid var(--border);cursor:pointer;user-select:none;}
+.rig-panel-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-muted);display:flex;align-items:center;gap:9px;}
+.rig-panel-toggle{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);transition:color .15s;}
+.rig-panel-hdr:hover .rig-panel-toggle{color:var(--accent);}
+.rig-panel-body{display:none;padding:22px;}
+.rig-panel-body.open{display:block;}
+.rig-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;}
+
+/* Signal chain */
+.chain-area{border-top:1px solid var(--border);margin-top:22px;padding-top:22px;}
+.chain-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-muted);margin-bottom:14px;}
+.chain-diagram{display:flex;align-items:center;flex-wrap:nowrap;overflow-x:auto;gap:0;padding:12px 0;}
+.chain-node{display:flex;align-items:center;flex-shrink:0;}
+.chain-box{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 12px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--r);cursor:grab;min-width:100px;max-width:150px;transition:border-color .15s,background .15s;}
+.chain-box:active{cursor:grabbing;}
+.chain-box:hover{border-color:var(--accent);background:var(--surface3);}
+.chain-box.drop-target-chain{border-color:var(--accent);background:var(--accent-dim);}
+.chain-box.chain-is-dragging{opacity:0.3;}
+.chain-box-fixed{background:var(--surface3);border:1px dashed var(--border2);cursor:default;}
+.chain-box-fixed:hover{border-color:var(--border2);background:var(--surface3);}
+.chain-name{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:12px;color:var(--text);letter-spacing:0.05em;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:130px;}
+.chain-label{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text-dim);letter-spacing:0.1em;}
+.chain-arrow{padding:0 6px;color:var(--text-dim);font-size:14px;flex-shrink:0;}
+
+/* MIDI ref table */
+.midi-table-wrap{margin-top:22px;border-top:1px solid var(--border);padding-top:22px;}
+.midi-table{width:100%;border-collapse:collapse;font-size:13px;}
+.midi-table th{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-dim);padding:6px 10px;border-bottom:1px solid var(--border);text-align:left;}
+.midi-table td{padding:8px 10px;border-bottom:1px solid var(--border);color:var(--text-muted);vertical-align:top;}
+.midi-table td:first-child{color:var(--text);font-weight:500;}
+.midi-table tr:last-child td{border-bottom:none;}
+.midi-table .mono{font-family:'Share Tech Mono',monospace;font-size:11px;}
+.pedal-chain-notes{display:flex;flex-direction:column;gap:10px;}
+.pcn-item{display:flex;flex-direction:column;gap:4px;}
+.pcn-name{font-weight:600;font-size:14px;color:var(--text);}
+.pcn-textarea{background:var(--surface);border:1px solid var(--border);border-radius:3px;color:var(--text-muted);padding:7px 10px;font-family:'Barlow',sans-serif;font-size:13px;outline:none;width:100%;resize:none;min-height:44px;transition:border-color .15s;}
+.pcn-textarea:focus{border-color:var(--accent);}
+.pcn-textarea::placeholder{color:var(--text-dim);}
+
+/* ── PRINT ── */
+@media print{
+  :root{--accent:#c0336e;--text:#111;--text-muted:#444;--text-dim:#888;--bg:#fff;--surface:#fff;--surface2:#f5f5f7;--surface3:#eee;--border:#ccc;--border2:#bbb;}
+  html,body{width:100%;margin:0;padding:0;background:#fff;color:#111;font-size:11px;}
+  body::before,body::after{display:none !important;}
+  /* Hide all UI chrome */
+  .wf-nav,.page-header-right,.bank-actions,.preset-footer,.overlay,.rig-panel-toggle,
+  .add-preset-btn,.pedal-picker-panel,.export-wrap,.btn-icon,.drag-handle,.preset-drag-handle,
+  .bank-color-dot{display:none !important;}
+  /* Page layout */
+  .page{padding:8px;max-width:100%;position:static;z-index:auto;}
+  .rig-section{padding:0 8px 20px;max-width:100%;position:static;margin:0;}
+  /* Page header */
+  .page-header{margin-bottom:14px;flex-wrap:nowrap;}
+  .page-header-left{gap:2px;}
+  .map-name{font-size:22px;color:#111;border:none;background:none;width:auto !important;min-width:0;}
+  .page-eyebrow{color:#888;font-size:8px;}
+  .map-stats{color:#aaa;font-size:8px;}
+  /* Banks */
+  .banks-container{gap:8px;}
+  .bank-card{border:1px solid #ccc;margin-bottom:0;break-inside:avoid;background:#fff;border-radius:3px;}
+  .bank-header{background:#f0f0f2;border-bottom:1px solid #ccc;padding:6px 10px;}
+  .bank-name-input{color:#111;font-size:13px;background:none;border:none;}
+  .bank-meta{color:#888;font-size:8px;}
+  /* Force all preset grids to max 4 columns for print width */
+  .presets-grid{display:grid !important;background:#ddd;gap:1px;width:100%;}
+  .presets-grid.col-1{grid-template-columns:1fr !important;}
+  .presets-grid.col-2{grid-template-columns:repeat(2,1fr) !important;}
+  .presets-grid.col-3{grid-template-columns:repeat(3,1fr) !important;}
+  .presets-grid.col-4,.presets-grid.col-5,.presets-grid.col-6,
+  .presets-grid.col-8,.presets-grid.col-many{grid-template-columns:repeat(4,1fr) !important;}
+  /* Preset cards */
+  .preset-card{background:#fff;border:none;min-height:70px;break-inside:avoid;padding:8px;gap:5px;}
+  .preset-card:hover{background:#fff;}
+  .preset-num{color:#aaa;font-size:8px;}
+  .preset-name-input{color:#111;font-size:13px;font-weight:700;background:none;border:none;width:100%;}
+  .preset-notes{color:#555;-webkit-line-clamp:unset;display:block;font-size:10px;}
+  /* Chips */
+  .preset-chips{flex-wrap:wrap;gap:3px;}
+  .chip{background:#f0f0f0;border-color:#ccc;color:#444;font-size:8px;padding:2px 5px;}
+  .chip-dot{display:none;}
+  .chip-midi{color:#888;}
+  .subchip{background:#f5f5f5;border-color:#ddd;color:#666;font-size:8px;}
+  /* Rig panel */
+  .rig-panel{border:1px solid #ccc;margin-top:12px;border-radius:3px;}
+  .rig-panel-hdr{background:#f0f0f2;padding:8px 12px;}
+  .rig-panel-title{color:#444;font-size:11px;}
+  .rig-panel-body{display:block !important;padding:14px;}
+  .rig-grid{grid-template-columns:1fr 1fr;gap:14px;width:100%;}
+  /* Chain diagram — wrap instead of scroll */
+  .chain-diagram{flex-wrap:wrap;overflow:visible;gap:4px;padding:6px 0;}
+  .chain-node{flex-shrink:1;}
+  .chain-box{background:#f0f0f2;border-color:#bbb;min-width:70px;max-width:110px;padding:5px 8px;cursor:default;}
+  .chain-box-fixed{background:#e8e8ea;}
+  .chain-name{color:#111;font-size:10px;}
+  .chain-label{color:#888;font-size:7px;}
+  .chain-arrow{color:#aaa;font-size:11px;padding:0 3px;}
+  /* MIDI table */
+  .midi-table{font-size:10px;width:100%;}
+  .midi-table th{font-size:7px;color:#888;padding:4px 7px;}
+  .midi-table td{padding:5px 7px;color:#444;}
+  .midi-table td:first-child{color:#111;}
+  /* Misc */
+  .pcn-textarea{border-color:#ccc;color:#444;background:#f8f8f8;font-size:10px;}
+  .pcn-name{font-size:12px;}
+  .finput,.ftextarea{background:#f8f8f8;border-color:#ccc;color:#111;}
+  .sub-eff-title{color:#888;}
+  .sub-effects-sec{border-top-color:#ddd;}
+  .chain-title,.midi-table-wrap .chain-title{color:#555;font-size:10px;}
+  .chain-area,.midi-table-wrap{padding-top:12px;margin-top:12px;}
+  .section-hdr{display:none;}
+}
+
+@media(max-width:1000px){.presets-grid.col-8{grid-template-columns:repeat(4,1fr);}}
+@media(max-width:700px){
+  .page,.rig-section{padding:18px 14px 60px;}
+  .presets-grid.col-4,.presets-grid.col-8{grid-template-columns:repeat(2,1fr);}
+  .assign-fields{grid-template-columns:repeat(2,1fr);}
+  .rig-grid{grid-template-columns:1fr;}
+}
+
+/* ── WAVEFORM NAV (inline — works without style.css) ── */
+:root { --wf-nav-h: 48px; }
+.wf-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+  height: var(--wf-nav-h);
+  background: rgba(8,8,11,0.97);
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  display: flex; align-items: center;
+  padding: 0 16px;
+  backdrop-filter: blur(14px);
+}
+[data-theme="light"] .wf-nav {
+  background: rgba(242,242,245,0.97);
+  border-bottom-color: #d0d0dc;
+}
+.wf-nav-logo {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 14px;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: #00e5ff; margin-right: 20px;
+  display: flex; align-items: center; gap: 7px;
+  text-decoration: none; white-space: nowrap; flex-shrink: 0;
+}
+.wf-nav-logo-icon {
+  width: 20px; height: 20px;
+  border: 2px solid #00e5ff; border-radius: 3px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; line-height: 1;
+}
+.wf-nav-tools {
+  display: flex; align-items: center;
+  overflow-x: auto; flex: 1;
+  scrollbar-width: none;
+}
+.wf-nav-tools::-webkit-scrollbar { display: none; }
+.wf-nav-item {
+  display: flex; align-items: center; gap: 5px;
+  padding: 0 11px; height: var(--wf-nav-h);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600; font-size: 11px;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: rgba(255,255,255,0.32);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+  white-space: nowrap;
+}
+[data-theme="light"] .wf-nav-item { color: rgba(0,0,0,0.4); }
+.wf-nav-item:hover {
+  color: #ffffff;
+  border-bottom-color: rgba(255,255,255,0.25);
+  background: rgba(255,255,255,0.05);
+}
+[data-theme="light"] .wf-nav-item:hover {
+  color: #1a1a2e;
+  border-bottom-color: #b8b8c8;
+  background: rgba(0,0,0,0.04);
+}
+.wf-nav-item.wf-active-cyan   { color:#00e5ff; border-bottom-color:#00e5ff; background:rgba(0,229,255,0.07); }
+.wf-nav-item.wf-active-green  { color:#39d98a; border-bottom-color:#39d98a; background:rgba(57,217,138,0.07); }
+.wf-nav-item.wf-active-red    { color:#ff3c6e; border-bottom-color:#ff3c6e; background:rgba(255,60,110,0.07); }
+.wf-nav-item.wf-active-amber  { color:#ff8c00; border-bottom-color:#ff8c00; background:rgba(255,140,0,0.07); }
+.wf-nav-item.wf-active-violet { color:#c084fc; border-bottom-color:#c084fc; background:rgba(192,132,252,0.07); }
+.wf-nav-item.wf-active-pink   { color:#ec4899; border-bottom-color:#ec4899; background:rgba(236,72,153,0.07); }
+.wf-nav-item.wf-active-orange { color:#f97316; border-bottom-color:#f97316; background:rgba(249,115,22,0.07); }
+.wf-nav-item.wf-active-gold   { color:#f5c518; border-bottom-color:#f5c518; background:rgba(245,197,24,0.07); }
+.wf-nav-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: currentColor; opacity: 0.45; flex-shrink: 0;
+}
+.wf-nav-item:not([class*="wf-active"]) .wf-nav-dot { opacity: 0.22; }
+.wf-theme-btn {
+  flex-shrink: 0; margin-left: 8px;
+  width: 30px; height: 30px;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 3px; background: transparent;
+  color: rgba(255,255,255,0.32);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; line-height: 1; transition: all 0.18s;
+}
+[data-theme="light"] .wf-theme-btn {
+  border-color: #d0d0dc; color: #52526e;
+}
+.wf-theme-btn:hover { border-color: #00e5ff; color: #00e5ff; }
+/* ── END NAV ── */
+
+/* ── LIGHT THEME (inline — works without style.css) ─────────── */
+[data-theme="light"] {
+  --bg:       #f2f2f5;
+  --surface:  #ffffff;
+  --surface2: #eaeaef;
+  --surface3: #e2e2ea;
+  --border:   #d0d0dc;
+  --border2:  #b8b8c8;
+  --text:       #1a1a2e;
+  --text-muted: #44445a;
+  --text-dim:   #707090;
+  /* workstation variable aliases */
+  --tx:#1a1a2e; --txm:#44445a; --txd:#707090;
+  --sf:#ffffff; --sf2:#eaeaef; --sf3:#e2e2ea; --sf4:#d8d8e4;
+  --bd:rgba(0,0,0,0.1); --bd2:rgba(0,0,0,0.15);
+}
+[data-theme="light"] body {
+  background: var(--bg);
+  color: var(--text);
+}
+[data-theme="light"] body::before {
+  background-image:
+    linear-gradient(rgba(0,0,40,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,40,0.04) 1px, transparent 1px);
+}
+[data-theme="light"] body::after { opacity: 0; }
+
+/* Nav active — darker for light bg readability */
+[data-theme="light"] .wf-nav-item.wf-active-cyan   { color:#007a90; background:rgba(0,122,144,0.1); border-bottom-color:#007a90; }
+[data-theme="light"] .wf-nav-item.wf-active-green  { color:#1a7a4a; background:rgba(26,122,74,0.1); border-bottom-color:#1a7a4a; }
+[data-theme="light"] .wf-nav-item.wf-active-red    { color:#c0103a; background:rgba(192,16,58,0.1); border-bottom-color:#c0103a; }
+[data-theme="light"] .wf-nav-item.wf-active-amber  { color:#a05000; background:rgba(160,80,0,0.1); border-bottom-color:#a05000; }
+[data-theme="light"] .wf-nav-item.wf-active-violet { color:#7020c0; background:rgba(112,32,192,0.1); border-bottom-color:#7020c0; }
+[data-theme="light"] .wf-nav-item.wf-active-pink   { color:#b01860; background:rgba(176,24,96,0.1); border-bottom-color:#b01860; }
+[data-theme="light"] .wf-nav-item.wf-active-orange { color:#c04800; background:rgba(192,72,0,0.1); border-bottom-color:#c04800; }
+[data-theme="light"] .wf-nav-item.wf-active-gold   { color:#886200; background:rgba(136,98,0,0.1); border-bottom-color:#886200; }
+
+/* ── BEBAS NEUE for tool titles ─────────────────────── */
+.title, h1.title,
+.hero-title,
+.page-title,
+.card-name {
+  font-family: 'Bebas Neue', 'Barlow Condensed', sans-serif;
+}
+.wf-nav-logo {
+  font-family: 'Bebas Neue', 'Barlow Condensed', sans-serif !important;
+  letter-spacing: 0.18em !important;
+}
+
+
+/* ─── Stage 2: Legibility — patch map ─── */
+.flabel                     { font-size: 10px; }
+.pedal-item-meta            { font-size: 10px; }
+.effect-row-meta            { font-size: 10px; }
+.sub-eff-title              { font-size: 10px; }
+.sub-eff-check-meta         { font-size: 10px; }
+.af-label                   { font-size: 10px; }
+.af-note                    { font-size: 10px; }
+.mfx-badge                  { font-size: 10px; }
+.chip-midi                  { font-size: 10px; }
+.midi-table th,
+.midi-table td              { font-size: 11px; }
+
+/* ─── Stage 2: Shared legibility ─── */
+.logo-group .subtitle,
+.subtitle                   { font-size: 12px; line-height: 1.6; }
+.header-meta, .hdr-meta     { font-size: 11px; line-height: 2; }
+p, .card-desc               { line-height: 1.7; }
+
+
+/* ── Monospace legibility: faux-bold (Share Tech Mono has no bold weight) ── */
+.logo, .logo-group .logo,
+[class*="-lbl"], [class*="-label"],
+[class*="-meta"], [class*="-sub"]:not(p),
+.wf-label, .panel-label, .card-label,
+.sl, .sv, .bpm-lbl, .seq-sl, .seq-sv, .seq-bpm-lbl,
+.ctrl-label, .wf-eyebrow, .tool-eyebrow,
+.ch-pt-lbl, .ch-dur-lbl, .ch-param-lbl,
+.ch-filt-val, .ch-eq-val, .ch-eq-lbl,
+.card-num, .card-tag, .card-meta,
+.file-meta, .footer-label,
+.flabel, .pedal-item-meta, .effect-row-meta {
+  -webkit-font-smoothing: antialiased;
+  font-weight: 700;
+}
+
+
+/* ── Soften cyan for large text readability ── */
+.wf-nav-logo { color: #33d6eb !important; }
+.wf-nav-logo-icon { border-color: #33d6eb !important; }
+
+</style>
+</head>
+<body>
+
+<nav class="wf-nav">
+  <a href="hub.html" class="wf-nav-logo"><div class="wf-nav-logo-icon">◈</div>WAVEFORM</a>
+  <div class="wf-nav-tools">
+    <a href="hub.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Hub</a>
+    <a href="audio-converter.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Converter</a>
+    <a href="audio-looper.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Looper</a>
+    <a href="drum-machine.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Drum Machine</a>
+    <a href="audio-workstation.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Workstation</a>
+    <a href="chord-randomizer.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Chord Dice</a>
+    <a href="patch-map.html" class="wf-nav-item wf-active-pink"><span class="wf-nav-dot"></span>Patch Map</a>
+    <a href="guitar-book.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Guitar Book</a>
+    <a href="song-chart.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Song Chart</a>
+    </div>
+  <button class="wf-theme-btn" id="wfThemeBtn" title="Toggle theme" aria-label="Toggle theme">◑</button>
+</nav>
+
+<div class="page" id="app"></div>
+<div class="rig-section" id="rigSection" style="display:none;"></div>
+
+<!-- ═══════════════════════════════════════════
+     SETUP WIZARD
+════════════════════════════════════════════ -->
+<div class="overlay" id="setupOverlay">
+  <div class="modal" style="max-width:480px;">
+    <div class="modal-hdr">
+      <span class="modal-title" style="color:var(--accent);">◈ Setup Your Rig</span>
+    </div>
+    <div class="modal-body">
+      <div class="step-indicator">
+        <div class="step-dot active" id="sd0"></div>
+        <div class="step-dot" id="sd1"></div>
+        <div class="step-dot" id="sd2"></div>
+      </div>
+
+      <!-- Step 1: Map info -->
+      <div class="setup-step active" id="ss0">
+        <div class="fg">
+          <label class="flabel">Map / Rig Name</label>
+          <input type="text" class="finput" id="setupName" placeholder="e.g. Post Metal Rig" />
+        </div>
+        <div class="fg">
+          <label class="flabel">Number of Banks</label>
+          <input type="number" class="finput" id="setupBanks" value="5" min="1" max="128" />
+        </div>
+        <div class="fg">
+          <label class="flabel">Default Presets per Bank</label>
+          <input type="number" class="finput" id="setupPPB" value="4" min="0" max="64" />
+          <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);margin-top:2px;">You can add or remove presets freely per bank later.</span>
+        </div>
+      </div>
+
+      <!-- Step 2: Add pedals -->
+      <div class="setup-step" id="ss1">
+        <div style="margin-bottom:16px;">
+          <p style="font-size:14px;color:var(--text-muted);line-height:1.6;">Add the pedals in your rig. You'll assign them to presets later. You can also skip this and add them from the main view.</p>
+        </div>
+        <div class="sec-hdr">
+          <span class="sec-title">Global Pedal List</span>
+          <button class="btn btn-primary btn-xs" id="setupNewPedalBtn">+ Add Pedal</button>
+        </div>
+        <div id="setupPedalList" class="pedal-list" style="min-height:50px;"></div>
+      </div>
+
+      <!-- Step 3: Done -->
+      <div class="setup-step" id="ss2">
+        <div style="text-align:center;padding:14px 0;">
+          <div style="font-size:36px;margin-bottom:14px;">◈</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:20px;letter-spacing:0.1em;text-transform:uppercase;color:var(--text);margin-bottom:8px;">Rig Ready</div>
+          <div style="font-size:14px;color:var(--text-muted);line-height:1.6;" id="setupSummary"></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="setupBack" style="display:none;">← Back</button>
+      <button class="btn btn-primary" id="setupNext">Next →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PEDAL MANAGER
+════════════════════════════════════════════ -->
+<div class="overlay" id="pedalMgrOverlay">
+  <div class="modal modal-wide">
+    <div class="modal-hdr">
+      <span class="modal-title">Global Pedal List</span>
+      <button class="modal-close" data-close="pedalMgrOverlay">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="font-size:13px;color:var(--text-dim);margin-bottom:16px;font-family:'Share Tech Mono',monospace;letter-spacing:0.06em;">These are the pedals in your rig. Assign them to individual presets with custom MIDI overrides.</div>
+      <div class="sec-hdr">
+        <span class="sec-title">Rig Pedals</span>
+        <button class="btn btn-primary btn-xs" id="newPedalBtn">+ Add Pedal</button>
+      </div>
+      <div id="pedalList" class="pedal-list"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" data-close="pedalMgrOverlay">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PEDAL EDITOR
+════════════════════════════════════════════ -->
+<div class="overlay" id="pedalEditorOverlay">
+  <div class="modal">
+    <div class="modal-hdr">
+      <span class="modal-title" id="pedalEditorTitle">Add Pedal</span>
+      <button class="modal-close" id="pedalEdClose">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="fg">
+        <label class="flabel">Pedal Name</label>
+        <input type="text" class="finput" id="peName" placeholder="e.g. Source Audio Collider" />
+      </div>
+      <div class="frow">
+        <div class="fg">
+          <label class="flabel">MIDI CH</label>
+          <input type="number" class="finput" id="peCh" min="1" max="16" placeholder="1–16" />
+        </div>
+        <div class="fg">
+          <label class="flabel">PC #</label>
+          <input type="number" class="finput" id="pePc" min="0" max="127" placeholder="0–127" />
+        </div>
+        <div class="fg">
+          <label class="flabel">CC #</label>
+          <input type="number" class="finput" id="peCc" min="0" max="127" placeholder="0–127" />
+        </div>
+        <div class="fg">
+          <label class="flabel">CC Val</label>
+          <input type="number" class="finput" id="peCcv" min="0" max="127" placeholder="0–127" />
+        </div>
+      </div>
+      <div class="fg">
+        <label class="ftoggle-wrap">
+          <input type="checkbox" class="ftoggle" id="peMFX">
+          <span class="ftoggle-text">Multi-FX unit (has sub-effects / patches)</span>
+        </label>
+      </div>
+      <div id="mfxSection" style="display:none;">
+        <div class="divider"></div>
+        <div class="sec-hdr">
+          <span class="sec-title">Sub-Effects / Patches</span>
+          <button class="btn btn-ghost btn-xs" id="addEffBtn">+ Add</button>
+        </div>
+        <div id="effList" style="display:flex;flex-direction:column;gap:8px;"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="pedalEdCancel">Cancel</button>
+      <button class="btn btn-primary" id="savePedalBtn">Save Pedal</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PRESET EDITOR
+════════════════════════════════════════════ -->
+<div class="overlay" id="presetEditorOverlay">
+  <div class="modal modal-wide">
+    <div class="modal-hdr">
+      <span class="modal-title" id="presetEditorTitle">Edit Preset</span>
+      <button class="modal-close" id="presetEditorClose">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="frow">
+        <div class="fg" style="flex:2;">
+          <label class="flabel">Preset Name</label>
+          <input type="text" class="finput" id="preName" placeholder="e.g. Clean Shoegaze" />
+        </div>
+      </div>
+      <div class="fg">
+        <label class="flabel">Notes / Settings</label>
+        <textarea class="ftextarea" id="preNotes" placeholder="Patch notes, performance tips, specific settings..."></textarea>
+      </div>
+      <div class="divider"></div>
+      <div class="sec-hdr">
+        <span class="sec-title">Pedal Assignments</span>
+        <button class="btn btn-primary btn-xs" id="addAssignBtn">+ Assign Pedal</button>
+      </div>
+      <div id="assignList" class="assign-list"></div>
+      <div class="pedal-picker-panel" id="pedalPicker">
+        <div class="fg" style="margin-bottom:10px;">
+          <label class="flabel">Select Pedal</label>
+          <select class="fselect" id="pickerSelect"></select>
+        </div>
+        <div style="display:flex;gap:7px;">
+          <button class="btn btn-primary btn-xs" id="pickerConfirm">Assign →</button>
+          <button class="btn btn-ghost btn-xs" id="pickerCancel">Cancel</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="presetCancelBtn">Cancel</button>
+      <button class="btn btn-primary" id="savePresetBtn">Save Preset</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     COLOR PICKER
+════════════════════════════════════════════ -->
+<div class="overlay" id="colorOverlay">
+  <div class="modal" style="max-width:320px;">
+    <div class="modal-hdr">
+      <span class="modal-title">Bank Color</span>
+      <button class="modal-close" data-close="colorOverlay">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="colorSwatches" class="color-swatches"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     CONFIRM MODAL
+════════════════════════════════════════════ -->
+<div class="overlay" id="confirmOverlay">
+  <div class="modal confirm-modal">
+    <div class="modal-hdr">
+      <span class="modal-title" id="confirmTitle">Confirm</span>
+    </div>
+    <div class="modal-body">
+      <p class="confirm-msg" id="confirmMsg"></p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="confirmNo">Cancel</button>
+      <button class="btn btn-danger" id="confirmYes">Delete</button>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="importInput" accept=".json" style="opacity:0;position:fixed;pointer-events:none;">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+'use strict';
+
+// ════════════════════════════════════════════
+// CONSTANTS
+// ════════════════════════════════════════════
+const LS_KEY = 'wf_patchmap_v3';
+
+const COLORS = {
+  pink:   '#ec4899', amber:  '#ff8c00', red:    '#ff3c6e',
+  green:  '#39d98a', cyan:   '#00e5ff', blue:   '#3b82f6',
+  purple: '#a855f7', orange: '#f97316', yellow: '#facc15', teal:'#14b8a6'
+};
+const CK = Object.keys(COLORS);
+
+// ════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════
+let S = {
+  mapName: 'My Rig',
+  banks: [],
+  pedals: [],
+  chainOrder: [],    // [pedalId, ...] for signal chain
+  rigDesc: '',
+  pedalNotes: {}     // {pedalId: noteString}
+};
+
+// Ephemeral UI context
+let ctx = {};        // general purpose modal context
+let tempEffects = [];
+let presetSnap  = null;
+let confirmCb   = null;
+let setupStep   = 0;
+let rigIsOpen   = false;  // persists rig panel state across renderRig() calls
+
+// Drag state
+let drag = { type:null, bankIdx:null, presetIdx:null, srcBankId:null, chainIdx:null };
+
+// ════════════════════════════════════════════
+// UTILS
+// ════════════════════════════════════════════
+const uid  = () => Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const ni   = v  => { if(v===''||v==null) return null; const n=parseInt(v,10); return isNaN(n)?null:n; };
+const esc  = s  => { if(!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); };
+const q    = id => document.getElementById(id);
+const pedal = id => S.pedals.find(p=>p.id===id);
+const bank  = id => S.banks.find(b=>b.id===id);
+const pres  = (bId,pId) => { const b=bank(bId); return b?.presets.find(p=>p.id===pId); };
+const fmtMidi = x => {
+  if(!x) return '—';
+  const parts = [];
+  if(x.midiCh!=null) parts.push(`CH:${x.midiCh}`);
+  if(x.pc!=null) parts.push(`PC:${x.pc}`);
+  if(x.cc!=null) { parts.push(`CC${x.cc}`+(x.ccVal!=null?`/${x.ccVal}`:'')); }
+  return parts.join(' ')||'—';
+};
+const fmtAssign = (a,pd) => {
+  const ch  = a.overrideCh  !=null ? a.overrideCh  : pd?.midiCh;
+  const pc  = a.overridePc  !=null ? a.overridePc  : pd?.pc;
+  const cc  = a.overrideCc  !=null ? a.overrideCc  : pd?.cc;
+  const ccv = a.overrideCcVal!=null? a.overrideCcVal: pd?.ccVal;
+  const parts=[];
+  if(ch!=null) parts.push(`CH:${ch}`);
+  if(pc!=null) parts.push(`PC:${pc}`);
+  if(cc!=null) parts.push(`CC${cc}`+(ccv!=null?`/${ccv}`:``));
+  return parts.join(' ')||'—';
+};
+function colsForCount(n){
+  if(n<=1) return 'col-1';
+  if(n<=2) return 'col-2';
+  if(n<=3) return 'col-3';
+  if(n<=4) return 'col-4';
+  if(n<=5) return 'col-5';
+  if(n<=6) return 'col-6';
+  if(n<=8) return 'col-8';
+  return 'col-many';
+}
+
+// ════════════════════════════════════════════
+// PERSIST
+// ════════════════════════════════════════════
+function save(){ try{ localStorage.setItem(LS_KEY,JSON.stringify(S)); }catch(e){} }
+function load(){ try{ const r=localStorage.getItem(LS_KEY); if(r){ const d=JSON.parse(r); if(d&&Array.isArray(d.banks)){ S=Object.assign({chainOrder:[],rigDesc:'',pedalNotes:{}},d); return true; } } }catch(e){} return false; }
+
+// ════════════════════════════════════════════
+// RENDER — MAIN MAP
+// ════════════════════════════════════════════
+function render(){
+  const app = q('app');
+  const totalPresets = S.banks.reduce((a,b)=>a+b.presets.length,0);
+  const hasPedals = S.pedals.length > 0;
+
+  app.innerHTML = `
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="page-eyebrow">▸ WAVEFORM · PATCH MAP</div>
+      <input type="text" class="map-name" id="mapNameInput" value="${esc(S.mapName)}" placeholder="Rig Name" />
+      <div class="map-stats">${S.banks.length} BANK${S.banks.length!==1?'S':''} &nbsp;·&nbsp; ${totalPresets} PRESET${totalPresets!==1?'S':''} &nbsp;·&nbsp; ${S.pedals.length} PEDAL${S.pedals.length!==1?'S':''}</div>
+    </div>
+    <div class="page-header-right">
+      <button class="btn ${hasPedals?'btn-ghost':'btn-pedals-alert'}" id="managePedalsBtn">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="3" width="12" height="8" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M4 6.5h6M7 5v3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        ${hasPedals?'Pedals':'Add Pedals'}
+      </button>
+      <button class="btn btn-primary" id="addBankBtn">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1.5v10M1.5 6.5h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        Bank
+      </button>
+      <div class="export-wrap" id="exportWrap">
+        <button class="btn btn-ghost" id="exportToggle">Export ▾</button>
+        <div class="export-dropdown">
+          <button class="export-opt" id="expJson">⊞ JSON Backup</button>
+          <button class="export-opt" id="expImport">⊟ JSON Restore</button>
+          <button class="export-opt" id="expPrint">⎙ Print View</button>
+          <button class="export-opt" id="expPng">⊡ PNG Export</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="banks-container" id="banksContainer">
+    ${S.banks.length
+      ? S.banks.map((b,bi)=>buildBank(b,bi)).join('')
+      : `<div class="banks-empty" id="emptyBanks">NO BANKS — CLICK "+ BANK" TO GET STARTED</div>`
+    }
+  </div>`;
+
+  wireApp();
+  renderRig();
+}
+
+function buildBank(b, bi){
+  const col = COLORS[b.color]||COLORS.pink;
+  return `
+  <div class="bank-card" id="bank_${b.id}" data-bi="${bi}"
+       ondragover="onBankOver(event,${bi})" ondrop="onBankDrop(event,${bi})" ondragleave="onBankLeave(event,this)">
+    <div class="bank-header">
+      <div class="drag-handle" draggable="true"
+           ondragstart="onBankDragStart(event,${bi})" ondragend="onBankDragEnd()">⠿</div>
+      <div class="bank-color-dot" style="background:${col}" onclick="openColorPicker('${b.id}')" title="Change color"></div>
+      <input type="text" class="bank-name-input" value="${esc(b.name)}"
+             onchange="updateBankName('${b.id}',this.value)" placeholder="Bank Name" />
+      <span class="bank-meta">${b.presets.length} PRESET${b.presets.length!==1?'S':''}</span>
+      <div class="bank-actions">
+        <button class="add-preset-btn" onclick="addPreset('${b.id}')">
+          <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M5.5 1v9M1 5.5h9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          Preset
+        </button>
+        <button class="btn btn-danger btn-xs btn-icon" onclick="confirmDel('Delete Bank','Delete &ldquo;<span class=confirm-target>${esc(b.name)}</span>&rdquo; and all its presets?',()=>doDelBank('${b.id}'))">✕</button>
+      </div>
+    </div>
+    <div class="presets-grid ${colsForCount(b.presets.length)}" id="grid_${b.id}">
+      ${b.presets.map((p,pi)=>buildPreset(p,pi,b,col)).join('')}
+    </div>
+  </div>`;
+}
+
+function buildPreset(p, pi, b, col){
+  // Pedal chips
+  const chips = p.assignments.map(a=>{
+    const pd=pedal(a.pedalId); if(!pd) return '';
+    const midi = fmtAssign(a,pd);
+    let sub='';
+    if(pd.isMFX && a.activeEffects?.length){
+      sub = `<div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:2px;">`+
+        a.activeEffects.map(eid=>{ const e=pd.effects.find(x=>x.id===eid); return e?`<div class="subchip">${esc(e.name)}</div>`:''; }).join('')+
+        `</div>`;
+    }
+    return `<div><div class="chip">
+      <div class="chip-dot" style="background:${col}"></div>
+      <span class="chip-text">${esc(pd.name)}</span>
+      <span class="chip-midi">${midi}</span>
+    </div>${sub}</div>`;
+  }).join('');
+
+  return `
+  <div class="preset-card" data-bid="${b.id}" data-pid="${p.id}"
+       ondragover="onPresetOver(event,'${b.id}',${pi})" ondrop="onPresetDrop(event,'${b.id}',${pi})" ondragleave="onPresetLeave(event,this)">
+    <div class="preset-top">
+      <div class="preset-drag-handle" draggable="true"
+           ondragstart="onPresDragStart(event,'${b.id}',${pi})" ondragend="onPresDragEnd()">⠿</div>
+      <div style="flex:1;min-width:0;">
+        <div class="preset-num">P${pi+1}</div>
+        <input type="text" class="preset-name-input" value="${esc(p.name)}" placeholder="Preset name"
+               onchange="updatePresetName('${b.id}','${p.id}',this.value)" />
+      </div>
+    </div>
+    ${chips?`<div class="preset-chips">${chips}</div>`:''}
+    ${p.notes?`<div class="preset-notes">${esc(p.notes)}</div>`:''}
+    <div class="preset-footer">
+      <button class="btn btn-ghost btn-xs" onclick="openPresetEditor('${b.id}','${p.id}')">✎ Edit</button>
+      <button class="btn btn-danger btn-xs btn-icon" onclick="confirmDel('Delete Preset','Delete this preset?',()=>doDelPreset('${b.id}','${p.id}'))">✕</button>
+    </div>
+  </div>`;
+}
+
+function wireApp(){
+  q('mapNameInput')?.addEventListener('change',e=>{ S.mapName=e.target.value; save(); });
+  q('addBankBtn')?.addEventListener('click',addBank);
+  q('managePedalsBtn')?.addEventListener('click',openPedalMgr);
+  q('emptyBanks')?.addEventListener('click',addBank);
+  q('exportToggle')?.addEventListener('click',e=>{ e.stopPropagation(); q('exportWrap').classList.toggle('open'); });
+  q('expJson')?.addEventListener('click',()=>{ closeExport(); doExportJson(); });
+  q('expImport')?.addEventListener('click',()=>{ closeExport(); q('importInput').click(); });
+  q('expPrint')?.addEventListener('click',()=>{ closeExport(); window.print(); });
+  q('expPng')?.addEventListener('click',()=>{ closeExport(); doExportPng(); });
+}
+
+// ════════════════════════════════════════════
+// RIG NOTES SECTION
+// ════════════════════════════════════════════
+function renderRig(){
+  const rs = q('rigSection');
+  rs.style.display = 'block';
+
+  // Sync chainOrder — add new pedals, remove deleted ones
+  const ids = S.pedals.map(p=>p.id);
+  S.chainOrder = S.chainOrder.filter(id=>ids.includes(id));
+  ids.forEach(id=>{ if(!S.chainOrder.includes(id)) S.chainOrder.push(id); });
+
+  rs.innerHTML = `
+  <div class="rig-panel">
+    <div class="rig-panel-hdr" onclick="toggleRig()">
+      <span class="rig-panel-title">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 4h10M2 7h10M2 10h6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Rig Notes &amp; Signal Chain
+        <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);font-weight:400;">— MIDI REF · CHAIN ORDER · NOTES</span>
+      </span>
+      <span class="rig-panel-toggle" id="rigToggleIcon">▶ EXPAND</span>
+    </div>
+    <div class="rig-panel-body" id="rigBody">
+      <div class="rig-grid">
+        <div class="fg">
+          <label class="flabel">Rig Description</label>
+          <textarea class="ftextarea" id="rigDesc" placeholder="Overall rig notes, intent, performance context...">${esc(S.rigDesc)}</textarea>
+        </div>
+        <div>
+          <div class="flabel" style="margin-bottom:8px;">Pedal Notes &amp; Role</div>
+          <div class="pedal-chain-notes" id="pedalChainNotes">
+            ${!S.pedals.length
+              ? `<div class="empty-state">NO PEDALS — ADD PEDALS TO YOUR RIG FIRST</div>`
+              : S.chainOrder.map(id=>{ const pd=pedal(id); if(!pd) return ''; return `
+                <div class="pcn-item">
+                  <div class="pcn-name">${esc(pd.name)}</div>
+                  <textarea class="pcn-textarea" rows="2" placeholder="Role, unusual use, quirks..."
+                            onchange="setPedalNote('${id}',this.value)">${esc(S.pedalNotes[id]||'')}</textarea>
+                </div>`; }).join('')
+            }
+          </div>
+        </div>
+      </div>
+
+      ${buildChainDiagram()}
+      ${buildMidiTable()}
+    </div>
+  </div>`;
+
+  q('rigDesc')?.addEventListener('change',e=>{ S.rigDesc=e.target.value; save(); });
+  // Restore open state after re-render
+  if(rigIsOpen){
+    q('rigBody')?.classList.add('open');
+    const icon=q('rigToggleIcon'); if(icon) icon.textContent='▼ COLLAPSE';
+  }
+}
+
+function toggleRig(){
+  const body = q('rigBody');
+  const icon = q('rigToggleIcon');
+  if(!body) return;
+  rigIsOpen = body.classList.toggle('open');
+  icon.textContent = rigIsOpen ? '▼ COLLAPSE' : '▶ EXPAND';
+}
+
+function setPedalNote(id,val){ S.pedalNotes[id]=val; save(); }
+
+function buildChainDiagram(){
+  if(!S.pedals.length) return '';
+  const nodes = S.chainOrder.map((id,i)=>{
+    const pd=pedal(id); if(!pd) return '';
+    return `<div class="chain-node">
+      <div class="chain-box" draggable="true"
+           ondragstart="onChainDragStart(event,${i})" ondragend="onChainDragEnd()"
+           ondragover="onChainOver(event,${i})" ondrop="onChainDrop(event,${i})" ondragleave="onChainLeave(event,this)"
+           title="Drag to reorder">
+        <div class="chain-name">${esc(pd.name)}</div>
+        <div class="chain-label">${pd.midiCh?`CH ${pd.midiCh}`:fmtMidi(pd)||'NO MIDI'}</div>
+      </div>
+      <div class="chain-arrow">→</div>
+    </div>`;
+  }).join('');
+  return `
+  <div class="chain-area">
+    <div class="chain-title">Signal Chain Order <span style="font-weight:300;font-size:10px;color:var(--text-dim);">— drag boxes to reorder</span></div>
+    <div class="chain-diagram">
+      <div class="chain-node">
+        <div class="chain-box chain-box-fixed">
+          <div class="chain-name">Guitar</div>
+          <div class="chain-label">INPUT</div>
+        </div>
+        <div class="chain-arrow">→</div>
+      </div>
+      ${nodes}
+      <div class="chain-node">
+        <div class="chain-box chain-box-fixed">
+          <div class="chain-name">Amp</div>
+          <div class="chain-label">OUTPUT</div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function buildMidiTable(){
+  if(!S.pedals.length) return '';
+  return `
+  <div class="midi-table-wrap">
+    <div class="chain-title">MIDI Reference</div>
+    <table class="midi-table">
+      <thead><tr>
+        <th>Pedal</th><th>MIDI CH</th><th>PC #</th><th>CC #</th><th>CC Val</th>
+      </tr></thead>
+      <tbody>
+        ${S.chainOrder.map(id=>{ const pd=pedal(id); if(!pd) return ''; return `
+          <tr>
+            <td>${esc(pd.name)}${pd.isMFX?` <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--accent);">MFX</span>`:''}
+              ${S.pedalNotes[id]?`<div style="font-size:11px;color:var(--text-dim);font-style:italic;margin-top:2px;">${esc(S.pedalNotes[id])}</div>`:''}
+            </td>
+            <td class="mono">${pd.midiCh??'—'}</td>
+            <td class="mono">${pd.pc??'—'}</td>
+            <td class="mono">${pd.cc??'—'}</td>
+            <td class="mono">${pd.ccVal??'—'}</td>
+          </tr>
+          ${pd.isMFX&&pd.effects.length?pd.effects.map(e=>`
+            <tr style="background:rgba(255,255,255,0.018);">
+              <td style="padding-left:22px;font-size:12px;color:var(--text-muted);">↳ ${esc(e.name)}</td>
+              <td class="mono" style="color:var(--text-dim);">—</td>
+              <td class="mono">${e.pc??'—'}</td>
+              <td class="mono">${e.cc??'—'}</td>
+              <td class="mono">${e.ccVal??'—'}</td>
+            </tr>`).join(''):''}
+        `; }).join('')}
+      </tbody>
+    </table>
+  </div>`;
+}
+
+// ════════════════════════════════════════════
+// BANK OPS
+// ════════════════════════════════════════════
+function addBank(){
+  const i = S.banks.length;
+  S.banks.push({ id:uid(), name:`Bank ${i+1}`, color:CK[i%CK.length], presets:[] });
+  save(); render();
+}
+function doDelBank(id){
+  S.banks = S.banks.filter(b=>b.id!==id); save(); render();
+}
+function updateBankName(id,v){ const b=bank(id); if(b){ b.name=v; save(); } }
+
+// ════════════════════════════════════════════
+// PRESET OPS
+// ════════════════════════════════════════════
+function addPreset(bId){
+  const b=bank(bId); if(!b) return;
+  b.presets.push({ id:uid(), name:'', notes:'', assignments:[] }); save(); render();
+}
+function doDelPreset(bId,pId){
+  const b=bank(bId); if(!b) return;
+  b.presets=b.presets.filter(p=>p.id!==pId); save(); render();
+}
+function updatePresetName(bId,pId,v){ const p=pres(bId,pId); if(p){ p.name=v; save(); } }
+
+// ════════════════════════════════════════════
+// CONFIRM MODAL
+// ════════════════════════════════════════════
+function confirmDel(title, msg, cb){
+  q('confirmTitle').textContent = title;
+  q('confirmMsg').innerHTML = msg;
+  confirmCb = cb;
+  openOverlay('confirmOverlay');
+}
+
+// ════════════════════════════════════════════
+// PRESET EDITOR
+// ════════════════════════════════════════════
+function openPresetEditor(bId,pId){
+  ctx.bId=bId; ctx.pId=pId;
+  const p=pres(bId,pId); if(!p) return;
+  presetSnap = JSON.stringify(p);
+  q('presetEditorTitle').textContent = `Edit Preset — ${bank(bId)?.name||''}`;
+  q('preName').value  = p.name;
+  q('preNotes').value = p.notes;
+  renderAssignList();
+  q('pedalPicker').classList.remove('open');
+  openOverlay('presetEditorOverlay');
+}
+function cancelPresetEdit(){
+  if(presetSnap&&ctx.bId&&ctx.pId){
+    const b=bank(ctx.bId);
+    if(b){ const i=b.presets.findIndex(p=>p.id===ctx.pId); if(i!==-1) b.presets[i]=JSON.parse(presetSnap); }
+    save();
+  }
+  closeOverlay('presetEditorOverlay'); render();
+}
+function savePreset(){
+  const p=pres(ctx.bId,ctx.pId); if(!p) return;
+  p.name  = q('preName').value.trim();
+  p.notes = q('preNotes').value.trim();
+  save(); closeOverlay('presetEditorOverlay'); render();
+}
+
+function renderAssignList(){
+  const p=pres(ctx.bId,ctx.pId);
+  const c=q('assignList');
+  if(!p||!p.assignments.length){ c.innerHTML='<div class="empty-state">NO PEDALS ASSIGNED TO THIS PRESET</div>'; return; }
+  c.innerHTML = p.assignments.map((a,ai)=>{
+    const pd=pedal(a.pedalId); if(!pd) return '';
+    const mfxSection = pd.isMFX&&pd.effects.length ? `
+      <div class="sub-effects-sec">
+        <div class="sub-eff-title">Active Sub-Effects (select which are ON for this preset)</div>
+        <div class="sub-eff-checks">
+          ${pd.effects.map(e=>{
+            const active=(a.activeEffects||[]).includes(e.id);
+            return `<label class="sub-eff-check">
+              <input type="checkbox" ${active?'checked':''} onchange="toggleSubEff(${ai},'${e.id}',this.checked)">
+              <span class="sub-eff-check-name">${esc(e.name)}</span>
+              <span class="sub-eff-check-meta">${e.pc!=null?'PC:'+e.pc:''} ${e.cc!=null?'CC'+e.cc+(e.ccVal!=null?'/'+e.ccVal:''):''}</span>
+            </label>`;
+          }).join('')}
+        </div>
+      </div>` : '';
+    return `
+    <div class="assign-item">
+      <div class="assign-item-hdr">
+        <span class="assign-item-name">${esc(pd.name)}</span>
+        ${pd.isMFX?`<span class="mfx-badge">MFX</span>`:''}
+        <button class="btn btn-danger btn-xs btn-icon" onclick="removeAssign(${ai})">✕</button>
+      </div>
+      <div class="assign-fields">
+        <div class="af">
+          <div class="af-label">MIDI CH</div>
+          <div class="af-note">Default: ${pd.midiCh??'—'}</div>
+          <input type="number" class="af-input" min="1" max="16" placeholder="${pd.midiCh??'inherit'}" value="${a.overrideCh??''}"
+                 oninput="setAssignField(${ai},'overrideCh',this.value)" />
+        </div>
+        <div class="af">
+          <div class="af-label">PC #</div>
+          <div class="af-note">Default: ${pd.pc??'—'}</div>
+          <input type="number" class="af-input" min="0" max="127" placeholder="${pd.pc??'inherit'}" value="${a.overridePc??''}"
+                 oninput="setAssignField(${ai},'overridePc',this.value)" />
+        </div>
+        <div class="af">
+          <div class="af-label">CC #</div>
+          <div class="af-note">Default: ${pd.cc??'—'}</div>
+          <input type="number" class="af-input" min="0" max="127" placeholder="${pd.cc??'inherit'}" value="${a.overrideCc??''}"
+                 oninput="setAssignField(${ai},'overrideCc',this.value)" />
+        </div>
+        <div class="af">
+          <div class="af-label">CC Val</div>
+          <div class="af-note">Default: ${pd.ccVal??'—'}</div>
+          <input type="number" class="af-input" min="0" max="127" placeholder="${pd.ccVal??'inherit'}" value="${a.overrideCcVal??''}"
+                 oninput="setAssignField(${ai},'overrideCcVal',this.value)" />
+        </div>
+      </div>
+      ${mfxSection}
+    </div>`;
+  }).join('');
+}
+
+function removeAssign(idx){
+  const p=pres(ctx.bId,ctx.pId); if(!p) return;
+  p.assignments.splice(idx,1); renderAssignList();
+}
+function setAssignField(idx,field,val){
+  const p=pres(ctx.bId,ctx.pId); if(!p||!p.assignments[idx]) return;
+  p.assignments[idx][field]=ni(val);
+}
+function toggleSubEff(ai,eid,checked){
+  const p=pres(ctx.bId,ctx.pId); if(!p||!p.assignments[ai]) return;
+  const a=p.assignments[ai];
+  if(!a.activeEffects) a.activeEffects=[];
+  if(checked){ if(!a.activeEffects.includes(eid)) a.activeEffects.push(eid); }
+  else { a.activeEffects=a.activeEffects.filter(x=>x!==eid); }
+}
+
+// ════════════════════════════════════════════
+// PEDAL MANAGER
+// ════════════════════════════════════════════
+function openPedalMgr(){ renderPedalList('pedalList'); openOverlay('pedalMgrOverlay'); }
+
+function renderPedalList(targetId){
+  const c=q(targetId);
+  if(!S.pedals.length){ c.innerHTML='<div class="empty-state">NO PEDALS — CLICK "+ ADD PEDAL" TO BUILD YOUR RIG</div>'; return; }
+  c.innerHTML = S.pedals.map(pd=>`
+    <div class="pedal-item">
+      <div class="pedal-item-hdr">
+        <span class="pedal-item-name">${esc(pd.name)}</span>
+        ${pd.isMFX?`<span class="mfx-badge">MFX</span>`:''}
+        <span class="pedal-item-meta">${fmtMidi(pd)}</span>
+        <button class="btn btn-ghost btn-xs" onclick="openPedalEditor('${pd.id}','${targetId}')">✎ Edit</button>
+        <button class="btn btn-danger btn-xs btn-icon" onclick="confirmDel('Delete Pedal','Delete &ldquo;<span class=confirm-target>${esc(pd.name)}</span>&rdquo; and remove from all presets?',()=>doDelPedal('${pd.id}','${targetId}'))">✕</button>
+      </div>
+      ${pd.isMFX&&pd.effects.length?`
+        <div class="effects-list">
+          ${pd.effects.map(e=>`<div class="effect-row">
+            <span class="effect-row-name">${esc(e.name)}</span>
+            <span class="effect-row-meta">${e.pc!=null?'PC:'+e.pc:''} ${e.cc!=null?'CC'+e.cc+(e.ccVal!=null?'/'+e.ccVal:''):''}</span>
+          </div>`).join('')}
+        </div>`:''
+      }
+    </div>`).join('');
+}
+
+function doDelPedal(id, listId){
+  S.pedals=S.pedals.filter(p=>p.id!==id);
+  S.chainOrder=S.chainOrder.filter(x=>x!==id);
+  S.banks.forEach(b=>b.presets.forEach(p=>{ p.assignments=p.assignments.filter(a=>a.pedalId!==id); }));
+  save(); closeOverlay('confirmOverlay'); renderPedalList(listId); render();
+}
+
+// ════════════════════════════════════════════
+// PEDAL EDITOR
+// ════════════════════════════════════════════
+let pedalEdReturn = 'pedalList';
+
+function openPedalEditor(id=null, returnListId='pedalList'){
+  ctx.pedalId=id; pedalEdReturn=returnListId;
+  const pd=id?pedal(id):null;
+  q('pedalEditorTitle').textContent=pd?'Edit Pedal':'Add Pedal';
+  q('peName').value   = pd?.name||'';
+  q('peCh').value     = pd?.midiCh??'';
+  q('pePc').value     = pd?.pc??'';
+  q('peCc').value     = pd?.cc??'';
+  q('peCcv').value    = pd?.ccVal??'';
+  q('peMFX').checked  = pd?.isMFX||false;
+  tempEffects         = pd?.effects ? JSON.parse(JSON.stringify(pd.effects)) : [];
+  updateMFXSection();
+  openOverlay('pedalEditorOverlay');
+}
+function updateMFXSection(){ q('mfxSection').style.display=q('peMFX').checked?'block':'none'; renderEffList(); }
+function renderEffList(){
+  const c=q('effList');
+  if(!tempEffects.length){ c.innerHTML='<div class="empty-state" style="padding:12px 0;">NO SUB-EFFECTS YET</div>'; return; }
+  c.innerHTML=tempEffects.map((e,i)=>`
+    <div class="mfx-eff-editor">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <input type="text" class="finput" style="font-size:13px;padding:6px 10px;flex:1;"
+               placeholder="Effect / Patch name" value="${esc(e.name)}"
+               oninput="tempEffects[${i}].name=this.value" />
+        <button class="btn btn-danger btn-xs btn-icon" onclick="removeEff(${i})">✕</button>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+        <div class="af">
+          <div class="af-label">PC #</div>
+          <input type="number" class="af-input" min="0" max="127" placeholder="0–127"
+                 value="${e.pc??''}" oninput="tempEffects[${i}].pc=ni(this.value)" />
+        </div>
+        <div class="af">
+          <div class="af-label">CC #</div>
+          <input type="number" class="af-input" min="0" max="127" placeholder="0–127"
+                 value="${e.cc??''}" oninput="tempEffects[${i}].cc=ni(this.value)" />
+        </div>
+        <div class="af">
+          <div class="af-label">CC Val</div>
+          <input type="number" class="af-input" min="0" max="127" placeholder="0–127"
+                 value="${e.ccVal??''}" oninput="tempEffects[${i}].ccVal=ni(this.value)" />
+        </div>
+      </div>
+    </div>`).join('');
+}
+function removeEff(i){ tempEffects.splice(i,1); renderEffList(); }
+function addEff(){ tempEffects.push({id:uid(),name:'',pc:null,cc:null,ccVal:null}); renderEffList(); }
+
+function savePedal(){
+  const name=q('peName').value.trim();
+  if(!name){ alert('Please enter a pedal name.'); return; }
+  const pd={
+    id:ctx.pedalId||uid(), name,
+    midiCh:ni(q('peCh').value), pc:ni(q('pePc').value),
+    cc:ni(q('peCc').value), ccVal:ni(q('peCcv').value),
+    isMFX:q('peMFX').checked,
+    effects:q('peMFX').checked?[...tempEffects]:[]
+  };
+  if(ctx.pedalId){ const i=S.pedals.findIndex(p=>p.id===ctx.pedalId); if(i!==-1) S.pedals[i]=pd; }
+  else S.pedals.push(pd);
+  save(); closeOverlay('pedalEditorOverlay');
+  renderPedalList(pedalEdReturn);
+  render();
+}
+
+// ════════════════════════════════════════════
+// COLOR PICKER
+// ════════════════════════════════════════════
+function openColorPicker(id){
+  ctx.colorBankId=id;
+  const b=bank(id);
+  q('colorSwatches').innerHTML=Object.entries(COLORS).map(([k,v])=>`
+    <div class="swatch${b?.color===k?' sel':''}" style="background:${v}" onclick="pickColor('${k}')" title="${k}"></div>`).join('');
+  openOverlay('colorOverlay');
+}
+function pickColor(k){
+  const b=bank(ctx.colorBankId); if(b){ b.color=k; save(); }
+  closeOverlay('colorOverlay'); render();
+}
+
+// ════════════════════════════════════════════
+// SETUP WIZARD
+// ════════════════════════════════════════════
+function gotoSetupStep(n){
+  setupStep=n;
+  [0,1,2].forEach(i=>{
+    q(`ss${i}`).classList.toggle('active',i===n);
+    const dot=q(`sd${i}`);
+    dot.classList.toggle('active',i===n);
+    dot.classList.toggle('done',i<n);
+  });
+  q('setupBack').style.display=n>0?'':'none';
+  q('setupNext').textContent=n===2?'Open Map →':'Next →';
+  if(n===1) renderPedalList('setupPedalList');
+  if(n===2){
+    q('setupSummary').innerHTML=`<strong>${esc(q('setupName').value.trim()||'My Rig')}</strong><br>${q('setupBanks').value} banks built &amp; ready.<br>${S.pedals.length} pedal${S.pedals.length!==1?'s':''} in your rig.`;
+  }
+}
+function runSetup(){
+  const name  = q('setupName').value.trim()||'My Rig';
+  const count = Math.max(1,Math.min(128,parseInt(q('setupBanks').value,10)||5));
+  const ppb   = Math.max(0,Math.min(64,parseInt(q('setupPPB').value,10)||4));
+  S.mapName = name;
+  S.banks   = [];
+  for(let i=0;i<count;i++){
+    const presets=[];
+    for(let j=0;j<ppb;j++) presets.push({id:uid(),name:'',notes:'',assignments:[]});
+    S.banks.push({id:uid(),name:`Bank ${i+1}`,color:CK[i%CK.length],presets});
+  }
+  save();
+}
+
+// ════════════════════════════════════════════
+// DRAG — BANKS
+// ════════════════════════════════════════════
+function onBankDragStart(e,bi){
+  drag.type='bank'; drag.bankIdx=bi; e.dataTransfer.effectAllowed='move';
+  requestAnimationFrame(()=>document.querySelectorAll('.bank-card')[bi]?.classList.add('is-dragging'));
+}
+function onBankDragEnd(){
+  drag.type=null; drag.bankIdx=null;
+  document.querySelectorAll('.bank-card').forEach(el=>el.classList.remove('is-dragging','drop-target'));
+}
+function onBankOver(e,bi){
+  if(drag.type!=='bank') return; e.preventDefault();
+  document.querySelectorAll('.bank-card').forEach((el,i)=>el.classList.toggle('drop-target',i===bi&&i!==drag.bankIdx));
+}
+function onBankLeave(e,el){ if(!el.contains(e.relatedTarget)) el.classList.remove('drop-target'); }
+function onBankDrop(e,tbi){
+  if(drag.type!=='bank') return; e.preventDefault();
+  if(drag.bankIdx===null||drag.bankIdx===tbi){ onBankDragEnd(); return; }
+  const b=S.banks.splice(drag.bankIdx,1)[0]; S.banks.splice(tbi,0,b);
+  save(); render();
+}
+
+// DRAG — PRESETS (across banks)
+function onPresDragStart(e,bId,pi){
+  drag.type='preset'; drag.srcBankId=bId; drag.presetIdx=pi; e.dataTransfer.effectAllowed='move'; e.stopPropagation();
+}
+function onPresDragEnd(){
+  drag.type=null; drag.presetIdx=null; drag.srcBankId=null;
+  document.querySelectorAll('.preset-card').forEach(el=>el.classList.remove('is-dragging','drop-target'));
+}
+function onPresetOver(e,bId,pi){
+  if(drag.type!=='preset') return; e.preventDefault(); e.stopPropagation();
+  document.querySelectorAll('.preset-card').forEach(el=>el.classList.remove('drop-target'));
+  e.currentTarget.classList.add('drop-target');
+}
+function onPresetLeave(e,el){ if(!el.contains(e.relatedTarget)) el.classList.remove('drop-target'); }
+function onPresetDrop(e,tBankId,tpi){
+  if(drag.type!=='preset') return; e.preventDefault(); e.stopPropagation();
+  const src=bank(drag.srcBankId); const tgt=bank(tBankId);
+  if(!src||!tgt||drag.presetIdx===null) return;
+  const [p]=src.presets.splice(drag.presetIdx,1);
+  if(drag.srcBankId===tBankId){ src.presets.splice(tpi,0,p); }
+  else { tgt.presets.splice(tpi,0,p); }
+  save(); render();
+}
+
+// DRAG — CHAIN
+function onChainDragStart(e,i){
+  drag.type='chain'; drag.chainIdx=i; e.dataTransfer.effectAllowed='move';
+  requestAnimationFrame(()=>{ const boxes=document.querySelectorAll('.chain-box:not(.chain-box-fixed)'); if(boxes[i]) boxes[i].classList.add('chain-is-dragging'); });
+}
+function onChainDragEnd(){
+  drag.type=null; drag.chainIdx=null;
+  document.querySelectorAll('.chain-box').forEach(el=>el.classList.remove('chain-is-dragging','drop-target-chain'));
+}
+function onChainOver(e,i){
+  if(drag.type!=='chain') return; e.preventDefault();
+  document.querySelectorAll('.chain-box:not(.chain-box-fixed)').forEach((el,j)=>el.classList.toggle('drop-target-chain',j===i&&j!==drag.chainIdx));
+}
+function onChainLeave(e,el){ if(!el.contains(e.relatedTarget)) el.classList.remove('drop-target-chain'); }
+function onChainDrop(e,ti){
+  if(drag.type!=='chain') return; e.preventDefault();
+  if(drag.chainIdx===null||drag.chainIdx===ti){ onChainDragEnd(); return; }
+  const [id]=S.chainOrder.splice(drag.chainIdx,1); S.chainOrder.splice(ti,0,id);
+  save(); renderRig();
+}
+
+// ════════════════════════════════════════════
+// EXPORT
+// ════════════════════════════════════════════
+function closeExport(){ q('exportWrap')?.classList.remove('open'); }
+function doExportJson(){
+  const blob=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  Object.assign(document.createElement('a'),{href:url,download:`${S.mapName.replace(/\s+/g,'_')}_patch_map.json`}).click();
+  URL.revokeObjectURL(url);
+}
+function doExportPng(){
+  if(!window.html2canvas){ alert('html2canvas loading, try again.'); return; }
+  // Scroll to top so header is captured, expand rig panel for full capture
+  window.scrollTo(0,0);
+  const rigBody = q('rigBody');
+  const wasOpen = rigBody?.classList.contains('open');
+  html2canvas(document.body,{
+    backgroundColor:'#0a0a0c',scale:2,useCORS:true,logging:false,
+    y:0,
+    windowWidth:document.body.scrollWidth,
+    windowHeight:document.body.scrollHeight,
+    height:document.body.scrollHeight,
+    ignoreElements:e=>
+      e.classList.contains('page-header-right')||
+      e.classList.contains('bank-actions')||
+      e.classList.contains('preset-footer')||
+      e.classList.contains('overlay')||
+      e.classList.contains('wf-nav')
+  }).then(canvas=>{
+    Object.assign(document.createElement('a'),{
+      href:canvas.toDataURL('image/png'),
+      download:`${S.mapName.replace(/\s+/g,'_')}_patch_map.png`
+    }).click();
+  });
+}
+
+// ════════════════════════════════════════════
+// OVERLAY HELPERS
+// ════════════════════════════════════════════
+function openOverlay(id){ q(id)?.classList.add('open'); }
+function closeOverlay(id){ q(id)?.classList.remove('open'); }
+
+// ════════════════════════════════════════════
+// STATIC BINDINGS
+// ════════════════════════════════════════════
+function bindStatic(){
+  // Backdrop close
+  document.querySelectorAll('.overlay').forEach(o=>{
+    o.addEventListener('click',e=>{
+      if(e.target!==o) return;
+      const id=o.id;
+      if(id==='presetEditorOverlay') cancelPresetEdit();
+      else if(id==='setupOverlay'){} // no dismiss on setup
+      else closeOverlay(id);
+    });
+  });
+
+  // data-close
+  document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>closeOverlay(b.dataset.close)));
+
+  // Preset editor
+  q('presetEditorClose').addEventListener('click',cancelPresetEdit);
+  q('presetCancelBtn').addEventListener('click',cancelPresetEdit);
+  q('savePresetBtn').addEventListener('click',savePreset);
+
+  // Add assign
+  q('addAssignBtn').addEventListener('click',()=>{
+    const p=pres(ctx.bId,ctx.pId); if(!p) return;
+    const used=new Set(p.assignments.map(a=>a.pedalId));
+    const avail=S.pedals.filter(pd=>!used.has(pd.id));
+    if(!avail.length){ alert('All pedals are already assigned to this preset.'); return; }
+    q('pickerSelect').innerHTML=avail.map(pd=>`<option value="${pd.id}">${esc(pd.name)}</option>`).join('');
+    q('pedalPicker').classList.add('open');
+  });
+  q('pickerConfirm').addEventListener('click',()=>{
+    const pId=q('pickerSelect').value; if(!pId) return;
+    const p=pres(ctx.bId,ctx.pId); if(!p) return;
+    p.assignments.push({pedalId:pId,overrideCh:null,overridePc:null,overrideCc:null,overrideCcVal:null,activeEffects:[]});
+    q('pedalPicker').classList.remove('open');
+    renderAssignList();
+  });
+  q('pickerCancel').addEventListener('click',()=>q('pedalPicker').classList.remove('open'));
+
+  // Pedal manager
+  q('newPedalBtn').addEventListener('click',()=>openPedalEditor(null,'pedalList'));
+  q('setupNewPedalBtn').addEventListener('click',()=>openPedalEditor(null,'setupPedalList'));
+
+  // Pedal editor
+  q('peMFX').addEventListener('change',updateMFXSection);
+  q('addEffBtn').addEventListener('click',addEff);
+  q('savePedalBtn').addEventListener('click',savePedal);
+  q('pedalEdClose').addEventListener('click',()=>closeOverlay('pedalEditorOverlay'));
+  q('pedalEdCancel').addEventListener('click',()=>closeOverlay('pedalEditorOverlay'));
+
+  // Confirm modal
+  q('confirmNo').addEventListener('click',()=>closeOverlay('confirmOverlay'));
+  q('confirmYes').addEventListener('click',()=>{ closeOverlay('confirmOverlay'); if(confirmCb) confirmCb(); confirmCb=null; });
+
+  // Setup wizard
+  q('setupNext').addEventListener('click',()=>{
+    if(setupStep===0){
+      runSetup();
+      gotoSetupStep(1);
+    } else if(setupStep===1){
+      gotoSetupStep(2);
+    } else {
+      closeOverlay('setupOverlay');
+      render();
+    }
+  });
+  q('setupBack').addEventListener('click',()=>{ if(setupStep>0) gotoSetupStep(setupStep-1); });
+
+  // Import JSON
+  q('importInput').addEventListener('change',e=>{
+    const file=e.target.files[0]; if(!file) return;
+    const r=new FileReader();
+    r.onload=ev=>{
+      try{
+        const d=JSON.parse(ev.target.result);
+        if(!Array.isArray(d.banks)) throw new Error('bad');
+        S=Object.assign({chainOrder:[],rigDesc:'',pedalNotes:{}},d);
+        save(); render();
+      }catch{ alert('Invalid file — use a Patch Map JSON backup.'); }
+    };
+    r.readAsText(file); e.target.value='';
+  });
+
+  // Close export on outside click
+  document.addEventListener('click',()=>closeExport());
+}
+
+// ════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════
+function init(){
+  const has=load();
+  bindStatic();
+  if(!has){ openOverlay('setupOverlay'); }
+  else { render(); }
+}
+init();
+</script>
+<script>
+/* WAVEFORM theme */
+(function(){
+  var t = localStorage.getItem('wf-theme');
+  if (t === 'light') document.documentElement.setAttribute('data-theme','light');
+  var btn = document.getElementById('wfThemeBtn');
+  if (!btn) return;
+  btn.addEventListener('click', function(){
+    var isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    if (isLight) {
+      document.documentElement.removeAttribute('data-theme');
+      localStorage.setItem('wf-theme','dark');
+    } else {
+      document.documentElement.setAttribute('data-theme','light');
+      localStorage.setItem('wf-theme','light');
+    }
+  });
+})();
+</script>
+</body>
+</html>

@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 <title>WAVEFORM — Suite</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Crect%20width%3D%2232%22%20height%3D%2232%22%20rx%3D%224%22%20fill%3D%22%230a0a0c%22/%3E%3Crect%20x%3D%223%22%20y%3D%223%22%20width%3D%2226%22%20height%3D%2226%22%20rx%3D%223%22%20fill%3D%22none%22%20stroke%3D%22%2300e5ff%22%20stroke-width%3D%221.5%22/%3E%3Cpolygon%20points%3D%2216%2C6%2026%2C16%2016%2C26%206%2C16%22%20fill%3D%22none%22%20stroke%3D%22%2300e5ff%22%20stroke-width%3D%221.8%22%20stroke-linejoin%3D%22round%22/%3E%3Ccircle%20cx%3D%2216%22%20cy%3D%2216%22%20r%3D%222.5%22%20fill%3D%22%2300e5ff%22/%3E%3C/svg%3E">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700;900&family=Barlow:wght@300;400;500&display=swap');
-
 :root {
   --bg:         #0a0a0c;
   --surface:    #111114;
@@ -16,12 +16,10 @@
   --border2:    #38384a;
   --accent:     #00e5ff;
   --text:       #e8e8f0;
-  --text-muted: #6b6b80;
-  --text-dim:   #3a3a4a;
+  --text-muted: #a0a0bc;
+  --text-dim:   #707090;
   --wf-nav-h:   48px;
 }
-
-* { margin:0; padding:0; box-sizing:border-box; }
 
 body {
   background: var(--bg);
@@ -46,50 +44,6 @@ body::after {
   pointer-events:none; z-index:999;
 }
 
-/* ── NAV ── */
-.wf-nav {
-  position: fixed; top:0; left:0; right:0; z-index:9999;
-  height: var(--wf-nav-h);
-  background: rgba(8,8,11,0.97);
-  border-bottom: 1px solid rgba(255,255,255,0.07);
-  display: flex; align-items: center;
-  padding: 0 20px;
-  backdrop-filter: blur(14px);
-}
-.wf-nav-logo {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 900; font-size: 14px;
-  letter-spacing: 0.22em; text-transform: uppercase;
-  color: #00e5ff; margin-right: 28px;
-  display: flex; align-items: center; gap: 7px;
-  text-decoration: none; white-space: nowrap; flex-shrink: 0;
-}
-.wf-nav-logo-icon {
-  width: 20px; height: 20px;
-  border: 2px solid #00e5ff; border-radius: 3px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 9px; line-height: 1;
-}
-.wf-nav-tools { display: flex; align-items: center; gap: 1px; overflow-x: auto; }
-.wf-nav-item {
-  display: flex; align-items: center; gap: 5px;
-  padding: 0 12px; height: var(--wf-nav-h);
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 600; font-size: 11px;
-  letter-spacing: 0.12em; text-transform: uppercase;
-  color: rgba(255,255,255,0.35); text-decoration: none;
-  border-bottom: 2px solid transparent;
-  transition: color 0.18s, border-color 0.18s, background 0.18s;
-  white-space: nowrap;
-}
-.wf-nav-item:hover { color: rgba(255,255,255,0.75); border-bottom-color: rgba(255,255,255,0.2); }
-.wf-nav-item.wf-active-cyan  { color: #00e5ff; border-bottom-color: #00e5ff; background: rgba(0,229,255,0.05); }
-.wf-nav-item.wf-active-green { color: #39d98a; border-bottom-color: #39d98a; background: rgba(57,217,138,0.05); }
-.wf-nav-item.wf-active-amber { color: #ff8c00; border-bottom-color: #ff8c00; background: rgba(255,140,0,0.05); }
-.wf-nav-item.wf-active-red   { color: #ff3c6e; border-bottom-color: #ff3c6e; background: rgba(255,60,110,0.05); }
-.wf-nav-item.wf-active-violet { color: #c084fc; border-bottom-color: #c084fc; background: rgba(200,109,215,0.05); }
-.wf-nav-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; opacity: 0.6; flex-shrink: 0; }
-.wf-nav-item:not([class*="wf-active"]) .wf-nav-dot { opacity: 0.3; }
 
 /* ── HERO ── */
 .hero {
@@ -160,7 +114,10 @@ body::after {
 .tool-card[data-color="red"]   { --card-accent:#ff3c6e; --card-glow:rgba(255,60,110,0.06); --card-rgb:255,60,110; }
 .tool-card[data-color="amber"] { --card-accent:#ff8c00; --card-glow:rgba(255,140,0,0.06);  --card-rgb:255,140,0; }
 .tool-card[data-color="green"] { --card-accent:#39d98a; --card-glow:rgba(57,217,138,0.06); --card-rgb:57,217,138; }
-.tool-card[data-color="violet"] { --card-accent:#c084fc; --card-glow:rgba(200,109,252,0.06);  --card-rgb:200,109,252; }
+.tool-card[data-color="violet"] { --card-accent:#c084fc; --card-glow:rgba(192,132,252,0.06); --card-rgb:192,132,252; }
+.tool-card[data-color="pink"]   { --card-accent:#ec4899; --card-glow:rgba(236,72,153,0.06);  --card-rgb:236,72,153; }
+.tool-card[data-color="orange"] { --card-accent:#f97316; --card-glow:rgba(249,115,22,0.06);  --card-rgb:249,115,22; }
+.tool-card[data-color="gold"]   { --card-accent:#f5c518; --card-glow:rgba(245,197,24,0.06);  --card-rgb:245,197,24; }
 
 /* top accent strip */
 .card-strip {
@@ -249,6 +206,180 @@ body::after {
   display:flex; align-items:center; justify-content:space-between;
 }
 .footer-label { font-family:'Share Tech Mono',monospace; font-size:9px; color:var(--text-dim); letter-spacing:0.1em; }
+
+/* ── WAVEFORM NAV (inline — works without style.css) ── */
+:root { --wf-nav-h: 48px; }
+.wf-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+  height: var(--wf-nav-h);
+  background: rgba(8,8,11,0.97);
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  display: flex; align-items: center;
+  padding: 0 16px;
+  backdrop-filter: blur(14px);
+}
+[data-theme="light"] .wf-nav {
+  background: rgba(242,242,245,0.97);
+  border-bottom-color: #d0d0dc;
+}
+.wf-nav-logo {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 14px;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: #00e5ff; margin-right: 20px;
+  display: flex; align-items: center; gap: 7px;
+  text-decoration: none; white-space: nowrap; flex-shrink: 0;
+}
+.wf-nav-logo-icon {
+  width: 20px; height: 20px;
+  border: 2px solid #00e5ff; border-radius: 3px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; line-height: 1;
+}
+.wf-nav-tools {
+  display: flex; align-items: center;
+  overflow-x: auto; flex: 1;
+  scrollbar-width: none;
+}
+.wf-nav-tools::-webkit-scrollbar { display: none; }
+.wf-nav-item {
+  display: flex; align-items: center; gap: 5px;
+  padding: 0 11px; height: var(--wf-nav-h);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600; font-size: 11px;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: rgba(255,255,255,0.32);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+  white-space: nowrap;
+}
+[data-theme="light"] .wf-nav-item { color: rgba(0,0,0,0.4); }
+.wf-nav-item:hover {
+  color: #ffffff;
+  border-bottom-color: rgba(255,255,255,0.25);
+  background: rgba(255,255,255,0.05);
+}
+[data-theme="light"] .wf-nav-item:hover {
+  color: #1a1a2e;
+  border-bottom-color: #b8b8c8;
+  background: rgba(0,0,0,0.04);
+}
+.wf-nav-item.wf-active-cyan   { color:#00e5ff; border-bottom-color:#00e5ff; background:rgba(0,229,255,0.07); }
+.wf-nav-item.wf-active-green  { color:#39d98a; border-bottom-color:#39d98a; background:rgba(57,217,138,0.07); }
+.wf-nav-item.wf-active-red    { color:#ff3c6e; border-bottom-color:#ff3c6e; background:rgba(255,60,110,0.07); }
+.wf-nav-item.wf-active-amber  { color:#ff8c00; border-bottom-color:#ff8c00; background:rgba(255,140,0,0.07); }
+.wf-nav-item.wf-active-violet { color:#c084fc; border-bottom-color:#c084fc; background:rgba(192,132,252,0.07); }
+.wf-nav-item.wf-active-pink   { color:#ec4899; border-bottom-color:#ec4899; background:rgba(236,72,153,0.07); }
+.wf-nav-item.wf-active-orange { color:#f97316; border-bottom-color:#f97316; background:rgba(249,115,22,0.07); }
+.wf-nav-item.wf-active-gold   { color:#f5c518; border-bottom-color:#f5c518; background:rgba(245,197,24,0.07); }
+.wf-nav-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: currentColor; opacity: 0.45; flex-shrink: 0;
+}
+.wf-nav-item:not([class*="wf-active"]) .wf-nav-dot { opacity: 0.22; }
+.wf-theme-btn {
+  flex-shrink: 0; margin-left: 8px;
+  width: 30px; height: 30px;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 3px; background: transparent;
+  color: rgba(255,255,255,0.32);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; line-height: 1; transition: all 0.18s;
+}
+[data-theme="light"] .wf-theme-btn {
+  border-color: #d0d0dc; color: #52526e;
+}
+.wf-theme-btn:hover { border-color: #00e5ff; color: #00e5ff; }
+/* ── END NAV ── */
+
+/* ── LIGHT THEME (inline — works without style.css) ─────────── */
+[data-theme="light"] {
+  --bg:       #f2f2f5;
+  --surface:  #ffffff;
+  --surface2: #eaeaef;
+  --surface3: #e2e2ea;
+  --border:   #d0d0dc;
+  --border2:  #b8b8c8;
+  --text:       #1a1a2e;
+  --text-muted: #44445a;
+  --text-dim:   #707090;
+  /* workstation variable aliases */
+  --tx:#1a1a2e; --txm:#44445a; --txd:#707090;
+  --sf:#ffffff; --sf2:#eaeaef; --sf3:#e2e2ea; --sf4:#d8d8e4;
+  --bd:rgba(0,0,0,0.1); --bd2:rgba(0,0,0,0.15);
+}
+[data-theme="light"] body {
+  background: var(--bg);
+  color: var(--text);
+}
+[data-theme="light"] body::before {
+  background-image:
+    linear-gradient(rgba(0,0,40,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,40,0.04) 1px, transparent 1px);
+}
+[data-theme="light"] body::after { opacity: 0; }
+
+/* Nav active — darker for light bg readability */
+[data-theme="light"] .wf-nav-item.wf-active-cyan   { color:#007a90; background:rgba(0,122,144,0.1); border-bottom-color:#007a90; }
+[data-theme="light"] .wf-nav-item.wf-active-green  { color:#1a7a4a; background:rgba(26,122,74,0.1); border-bottom-color:#1a7a4a; }
+[data-theme="light"] .wf-nav-item.wf-active-red    { color:#c0103a; background:rgba(192,16,58,0.1); border-bottom-color:#c0103a; }
+[data-theme="light"] .wf-nav-item.wf-active-amber  { color:#a05000; background:rgba(160,80,0,0.1); border-bottom-color:#a05000; }
+[data-theme="light"] .wf-nav-item.wf-active-violet { color:#7020c0; background:rgba(112,32,192,0.1); border-bottom-color:#7020c0; }
+[data-theme="light"] .wf-nav-item.wf-active-pink   { color:#b01860; background:rgba(176,24,96,0.1); border-bottom-color:#b01860; }
+[data-theme="light"] .wf-nav-item.wf-active-orange { color:#c04800; background:rgba(192,72,0,0.1); border-bottom-color:#c04800; }
+[data-theme="light"] .wf-nav-item.wf-active-gold   { color:#886200; background:rgba(136,98,0,0.1); border-bottom-color:#886200; }
+
+/* ── BEBAS NEUE for tool titles ─────────────────────── */
+.title, h1.title,
+.hero-title,
+.page-title,
+.card-name {
+  font-family: 'Bebas Neue', 'Barlow Condensed', sans-serif;
+}
+.wf-nav-logo {
+  font-family: 'Bebas Neue', 'Barlow Condensed', sans-serif !important;
+  letter-spacing: 0.18em !important;
+}
+
+
+/* ─── Stage 2: Legibility — hub ─── */
+.card-num                   { font-size: 10px; }
+.card-subtitle              { font-size: 10px; }
+.card-tag                   { font-size: 10px; }
+.card-desc                  { font-size: 13px; line-height: 1.7; }
+.card-meta                  { font-size: 10px; }
+.hero-sub                   { font-size: 17px; }
+
+/* ─── Stage 2: Shared legibility ─── */
+.logo-group .subtitle,
+.subtitle                   { font-size: 12px; line-height: 1.6; }
+.header-meta, .hdr-meta     { font-size: 11px; line-height: 2; }
+p, .card-desc               { line-height: 1.7; }
+
+
+/* ── Monospace legibility: faux-bold (Share Tech Mono has no bold weight) ── */
+.logo, .logo-group .logo,
+[class*="-lbl"], [class*="-label"],
+[class*="-meta"], [class*="-sub"]:not(p),
+.wf-label, .panel-label, .card-label,
+.sl, .sv, .bpm-lbl, .seq-sl, .seq-sv, .seq-bpm-lbl,
+.ctrl-label, .wf-eyebrow, .tool-eyebrow,
+.ch-pt-lbl, .ch-dur-lbl, .ch-param-lbl,
+.ch-filt-val, .ch-eq-val, .ch-eq-lbl,
+.card-num, .card-tag, .card-meta,
+.file-meta, .footer-label,
+.flabel, .pedal-item-meta, .effect-row-meta {
+  -webkit-font-smoothing: antialiased;
+  font-weight: 700;
+}
+
+
+/* ── Soften cyan for large text readability ── */
+.wf-nav-logo { color: #33d6eb !important; }
+.wf-nav-logo-icon { border-color: #33d6eb !important; }
+
 </style>
 </head>
 <body>
@@ -256,14 +387,17 @@ body::after {
 <nav class="wf-nav">
   <a href="hub.html" class="wf-nav-logo"><div class="wf-nav-logo-icon">◈</div>WAVEFORM</a>
   <div class="wf-nav-tools">
-    <a href="hub.html"               class="wf-nav-item wf-active-cyan"><span class="wf-nav-dot"></span>Hub</a>
-    <a href="converter.html"   class="wf-nav-item"><span class="wf-nav-dot"></span>Converter</a>
-    <a href="looper.html"      class="wf-nav-item"><span class="wf-nav-dot"></span>Looper</a>
-    <a href="drum-machine.html"      class="wf-nav-item"><span class="wf-nav-dot"></span>Drum Machine</a>
-    <a href="workstation.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Workstation</a>
-        <a href="chord-randomizer.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Chord Dice</a>
-
-  </div>
+    <a href="hub.html" class="wf-nav-item wf-active-cyan"><span class="wf-nav-dot"></span>Hub</a>
+    <a href="audio-converter.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Converter</a>
+    <a href="audio-looper.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Looper</a>
+    <a href="drum-machine.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Drum Machine</a>
+    <a href="audio-workstation.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Workstation</a>
+    <a href="chord-randomizer.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Chord Dice</a>
+    <a href="patch-map.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Patch Map</a>
+    <a href="guitar-book.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Guitar Book</a>
+    <a href="song-chart.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Song Chart</a>
+    </div>
+  <button class="wf-theme-btn" id="wfThemeBtn" title="Toggle theme" aria-label="Toggle theme">◑</button>
 </nav>
 
 <section class="hero">
@@ -276,7 +410,7 @@ body::after {
 <div class="tools-grid">
 
   <!-- 01 CONVERTER -->
-  <a href="converter.html" class="tool-card" data-color="green">
+  <a href="audio-converter.html" class="tool-card" data-color="green">
     <div class="card-strip"></div>
     <div class="card-body">
       <div class="card-head">
@@ -310,7 +444,7 @@ body::after {
   </a>
 
   <!-- 02 LOOPER -->
-  <a href="looper.html" class="tool-card" data-color="cyan">
+  <a href="audio-looper.html" class="tool-card" data-color="cyan">
     <div class="card-strip"></div>
     <div class="card-body">
       <div class="card-head">
@@ -384,24 +518,22 @@ body::after {
   </a>
 
   <!-- 04 WORKSTATION -->
-  <a href="workstation.html" class="tool-card" data-color="red">
+  <a href="audio-workstation.html" class="tool-card" data-color="red">
     <div class="card-strip"></div>
     <div class="card-body">
       <div class="card-head">
         <div class="card-head-text">
           <div class="card-num">04 · DAW</div>
           <div class="card-name">Workstation</div>
-          <div class="card-subtitle">Multi-Channel · Looper/Chooper</div>
+          <div class="card-subtitle">Multi-Channel · SP-404 Style</div>
         </div>
         <div class="card-icon">
           <svg viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <!-- fader tracks -->
             <line x1="5"  y1="3" x2="5"  y2="23" stroke="#ff3c6e" stroke-width="1.2" stroke-linecap="round" opacity="0.25"/>
             <line x1="13" y1="3" x2="13" y2="23" stroke="#ff3c6e" stroke-width="1.2" stroke-linecap="round" opacity="0.25"/>
             <line x1="21" y1="3" x2="21" y2="23" stroke="#ff3c6e" stroke-width="1.2" stroke-linecap="round" opacity="0.25"/>
-            <!-- fader thumbs -->
             <rect x="2.5" y="16" width="5" height="3.5" rx="1.5" fill="#ff3c6e"/>
-            <rect x="10.5" y="9" width="5" height="3.5" rx="1.5" fill="#ff3c6e"/>
+            <rect x="10.5" y="9"  width="5" height="3.5" rx="1.5" fill="#ff3c6e"/>
             <rect x="18.5" y="13" width="5" height="3.5" rx="1.5" fill="#ff3c6e"/>
           </svg>
         </div>
@@ -414,46 +546,168 @@ body::after {
         <span class="card-tag">LP/HP/BP</span>
         <span class="card-tag">Export Mix</span>
       </div>
-      <p class="card-desc">Looper/Chooper multi-channel looper with per-channel FX (Chorus, Delay, Distortion, Tremolo), integrated step sequencer, 5-band master EQ, and filter chain.</p>
+      <p class="card-desc">SP-404-style multi-channel looper with per-channel FX (Chorus, Delay, Distortion, Tremolo), integrated step sequencer, 5-band master EQ, and filter chain.</p>
     </div>
     <div class="card-foot">
       <div class="card-open">Open Tool <div class="card-open-arrow">→</div></div>
       <span class="card-meta">TONE.JS + WEB AUDIO</span>
     </div>
   </a>
-  <!-- 05 Chord Randomizer -->
+
+  <!-- 05 CHORD DICE -->
   <a href="chord-randomizer.html" class="tool-card" data-color="violet">
     <div class="card-strip"></div>
     <div class="card-body">
       <div class="card-head">
         <div class="card-head-text">
-          <div class="card-num">05 · UTILITY</div>
+          <div class="card-num">05 · COMPOSITION</div>
           <div class="card-name">Chord Dice</div>
-          <div class="card-subtitle">Random Chord Generator</div>
+          <div class="card-subtitle">Chord Randomizer · Guitar Diagrams</div>
         </div>
         <div class="card-icon">
           <svg viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="4" y="4" width="18" height="18" rx="2" stroke="#c084fc" stroke-width="1.6"/>
-            <circle cx="8.5" cy="8.5" r="1.5" fill="#c084fc"/>
-            <circle cx="17.5" cy="8.5" r="1.5" fill="#c084fc"/>
-            <circle cx="8.5" cy="17.5" r="1.5" fill="#c084fc"/>
-            <circle cx="17.5" cy="17.5" r="1.5" fill="#c084fc"/>
+            <!-- die face -->
+            <rect x="3" y="3" width="20" height="20" rx="4" stroke="#c084fc" stroke-width="1.5"/>
+            <circle cx="8"  cy="8"  r="1.8" fill="#c084fc"/>
+            <circle cx="18" cy="8"  r="1.8" fill="#c084fc"/>
+            <circle cx="13" cy="13" r="1.8" fill="#c084fc"/>
+            <circle cx="8"  cy="18" r="1.8" fill="#c084fc"/>
+            <circle cx="18" cy="18" r="1.8" fill="#c084fc"/>
           </svg>
         </div>
       </div>
       <div class="card-tags">
-        <span class="card-tag hi">Randomize</span>
-        <span class="card-tag hi">Save Presets</span>
-        <span class="card-tag">Major/Minor</span>
-        <span class="card-tag">7th/9th/11th</span>
-        <span class="card-tag">Inversions</span>
+        <span class="card-tag hi">Random Chords</span>
+        <span class="card-tag hi">Guitar Diagrams</span>
+        <span class="card-tag">Voicings</span>
+        <span class="card-tag">Key Filter</span>
+        <span class="card-tag">Piano View</span>
       </div>
-      <p class="card-desc">Generate random chords with adjustable parameters (key, scale, chord type, inversions). Save favorite chords as presets for quick recall during composition.</p>
+      <p class="card-desc">Roll random chord progressions and instantly see guitar fretboard diagrams and piano voicings. Filter by key and scale to stay in context.</p>
     </div>
     <div class="card-foot">
       <div class="card-open">Open Tool <div class="card-open-arrow">→</div></div>
-      <span class="card-meta">TONE.JS + WEB AUDIO</span>
+      <span class="card-meta">BROWSER NATIVE</span>
     </div>
+  </a>
+
+  <!-- 06 PATCH MAP -->
+  <a href="patch-map.html" class="tool-card" data-color="pink">
+    <div class="card-strip"></div>
+    <div class="card-body">
+      <div class="card-head">
+        <div class="card-head-text">
+          <div class="card-num">06 · GUITAR</div>
+          <div class="card-name">Patch Map</div>
+          <div class="card-subtitle">MIDI Pedalboard Mapper</div>
+        </div>
+        <div class="card-icon">
+          <svg viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- chain of pedals -->
+            <rect x="2"  y="9" width="7" height="9" rx="2" stroke="#ec4899" stroke-width="1.4"/>
+            <rect x="17" y="9" width="7" height="9" rx="2" stroke="#ec4899" stroke-width="1.4"/>
+            <circle cx="5.5"  cy="13.5" r="1.5" fill="#ec4899" opacity="0.7"/>
+            <circle cx="20.5" cy="13.5" r="1.5" fill="#ec4899" opacity="0.7"/>
+            <line x1="9" y1="13.5" x2="17" y2="13.5" stroke="#ec4899" stroke-width="1.3" stroke-linecap="round" stroke-dasharray="1.5 2"/>
+          </svg>
+        </div>
+      </div>
+      <div class="card-tags">
+        <span class="card-tag hi">MIDI Map</span>
+        <span class="card-tag hi">Presets</span>
+        <span class="card-tag">Signal Chain</span>
+        <span class="card-tag">Banks</span>
+        <span class="card-tag">JSON Export</span>
+        <span class="card-tag">Print</span>
+      </div>
+      <p class="card-desc">Map your MIDI pedalboard patches visually. Manage banks and presets, document your signal chain, and export or print your complete rig setup.</p>
+    </div>
+    <div class="card-foot">
+      <div class="card-open">Open Tool <div class="card-open-arrow">→</div></div>
+      <span class="card-meta">LOCALSTORAGE</span>
+    </div>
+  </a>
+
+  <!-- 07 GUITAR BOOK -->
+  <a href="guitar-book.html" class="tool-card" data-color="orange">
+    <div class="card-strip"></div>
+    <div class="card-body">
+      <div class="card-head">
+        <div class="card-head-text">
+          <div class="card-num">07 · REFERENCE</div>
+          <div class="card-name">Guitar Book</div>
+          <div class="card-subtitle">Chord & Scale Library</div>
+        </div>
+        <div class="card-icon">
+          <svg viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- guitar headstock silhouette -->
+            <line x1="7"  y1="4"  x2="7"  y2="22" stroke="#f97316" stroke-width="1.3" stroke-linecap="round" opacity="0.35"/>
+            <line x1="10" y1="4"  x2="10" y2="22" stroke="#f97316" stroke-width="1.3" stroke-linecap="round" opacity="0.35"/>
+            <line x1="13" y1="4"  x2="13" y2="22" stroke="#f97316" stroke-width="1.3" stroke-linecap="round" opacity="0.35"/>
+            <line x1="16" y1="4"  x2="16" y2="22" stroke="#f97316" stroke-width="1.3" stroke-linecap="round" opacity="0.35"/>
+            <line x1="19" y1="4"  x2="19" y2="22" stroke="#f97316" stroke-width="1.3" stroke-linecap="round" opacity="0.35"/>
+            <!-- frets -->
+            <line x1="5" y1="8"  x2="21" y2="8"  stroke="#f97316" stroke-width="1.4" stroke-linecap="round"/>
+            <line x1="5" y1="13" x2="21" y2="13" stroke="#f97316" stroke-width="1.4" stroke-linecap="round"/>
+            <line x1="5" y1="18" x2="21" y2="18" stroke="#f97316" stroke-width="1.4" stroke-linecap="round"/>
+            <!-- dots -->
+            <circle cx="13" cy="10.5" r="1.4" fill="#f97316"/>
+            <circle cx="13" cy="15.5" r="1.4" fill="#f97316"/>
+          </svg>
+        </div>
+      </div>
+      <div class="card-tags">
+        <span class="card-tag hi">Chord Library</span>
+        <span class="card-tag hi">Fretboard</span>
+        <span class="card-tag">Scales</span>
+        <span class="card-tag">Diagrams</span>
+        <span class="card-tag">All Keys</span>
+      </div>
+      <p class="card-desc">A complete visual reference for guitar chords and scales. Browse by key, see fretboard diagrams, and study chord shapes across the neck.</p>
+    </div>
+    <div class="card-foot">
+      <div class="card-open">Open Tool <div class="card-open-arrow">→</div></div>
+      <span class="card-meta">BROWSER NATIVE</span>
+    </div>
+  </a>
+
+  <!-- 08 SONG CHART -->
+  <a href="song-chart.html" class="tool-card" data-color="gold">
+    <div class="card-strip"></div>
+    <div class="card-body">
+      <div class="card-head">
+        <div class="card-head-text">
+          <div class="card-num">08 · WRITING</div>
+          <div class="card-name">Song Chart</div>
+          <div class="card-subtitle">Chord Chart Builder</div>
+        </div>
+        <div class="card-icon">
+          <svg viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- document lines -->
+            <rect x="4" y="3" width="18" height="20" rx="2" stroke="#f5c518" stroke-width="1.4"/>
+            <line x1="8" y1="9"  x2="18" y2="9"  stroke="#f5c518" stroke-width="1.3" stroke-linecap="round"/>
+            <line x1="8" y1="13" x2="18" y2="13" stroke="#f5c518" stroke-width="1.3" stroke-linecap="round"/>
+            <line x1="8" y1="17" x2="14" y2="17" stroke="#f5c518" stroke-width="1.3" stroke-linecap="round"/>
+            <!-- chord brackets -->
+            <path d="M7 7.5 V6 H9" stroke="#f5c518" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>
+          </svg>
+        </div>
+      </div>
+      <div class="card-tags">
+        <span class="card-tag hi">Chord Charts</span>
+        <span class="card-tag hi">Sections</span>
+        <span class="card-tag">Transpose</span>
+        <span class="card-tag">Key</span>
+        <span class="card-tag">Print</span>
+      </div>
+      <p class="card-desc">Build and format chord charts for songs. Organise by sections (Verse, Chorus, Bridge), transpose to any key, and print or share.</p>
+    </div>
+    <div class="card-foot">
+      <div class="card-open">Open Tool <div class="card-open-arrow">→</div></div>
+      <span class="card-meta">BROWSER NATIVE</span>
+    </div>
+  </a>
+
 </div>
 
 <footer class="page-footer">
@@ -461,5 +715,24 @@ body::after {
   <span class="footer-label">ALL PROCESSING IS LOCAL · NO DATA LEAVES YOUR DEVICE</span>
 </footer>
 
+<script>
+/* WAVEFORM theme */
+(function(){
+  var t = localStorage.getItem('wf-theme');
+  if (t === 'light') document.documentElement.setAttribute('data-theme','light');
+  var btn = document.getElementById('wfThemeBtn');
+  if (!btn) return;
+  btn.addEventListener('click', function(){
+    var isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    if (isLight) {
+      document.documentElement.removeAttribute('data-theme');
+      localStorage.setItem('wf-theme','dark');
+    } else {
+      document.documentElement.setAttribute('data-theme','light');
+      localStorage.setItem('wf-theme','light');
+    }
+  });
+})();
+</script>
 </body>
 </html>

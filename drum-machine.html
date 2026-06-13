@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Crect%20width%3D%2232%22%20height%3D%2232%22%20rx%3D%224%22%20fill%3D%22%230a0a0c%22/%3E%3Crect%20x%3D%223%22%20y%3D%223%22%20width%3D%2226%22%20height%3D%2226%22%20rx%3D%223%22%20fill%3D%22none%22%20stroke%3D%22%2300e5ff%22%20stroke-width%3D%221.5%22/%3E%3Cpolygon%20points%3D%2216%2C6%2026%2C16%2016%2C26%206%2C16%22%20fill%3D%22none%22%20stroke%3D%22%2300e5ff%22%20stroke-width%3D%221.8%22%20stroke-linejoin%3D%22round%22/%3E%3Ccircle%20cx%3D%2216%22%20cy%3D%2216%22%20r%3D%222.5%22%20fill%3D%22%2300e5ff%22/%3E%3C/svg%3E">
 <title>STEP GRID — Drum Machine</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700;900&family=Barlow:wght@300;400;500&display=swap');
-
 :root {
   --bg: #0a0a0c;
   --surface: #111114;
@@ -21,11 +21,10 @@
   --blue: #7dd3fc;
   --green: #34d399;
   --text: #e8e8f0;
-  --text-muted: #6b6b80;
-  --text-dim: #3a3a4a;
+  --text-muted: #a0a0bc;
+  --text-dim:   #707090;
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
 body {
   background: var(--bg); color: var(--text);
   font-family: 'Barlow', sans-serif;
@@ -312,7 +311,8 @@ header {
 }
 .picker-file:hover { border-color:var(--amber); color:var(--amber); }
 
-/* ═══════ WAVEFORM SUITE NAV ═══════ */
+
+/* ── WAVEFORM NAV (inline — works without style.css) ── */
 :root { --wf-nav-h: 48px; }
 .wf-nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
@@ -320,14 +320,18 @@ header {
   background: rgba(8,8,11,0.97);
   border-bottom: 1px solid rgba(255,255,255,0.07);
   display: flex; align-items: center;
-  padding: 0 20px;
+  padding: 0 16px;
   backdrop-filter: blur(14px);
 }
+[data-theme="light"] .wf-nav {
+  background: rgba(242,242,245,0.97);
+  border-bottom-color: #d0d0dc;
+}
 .wf-nav-logo {
-  font-family: "Barlow Condensed", sans-serif;
+  font-family: 'Barlow Condensed', sans-serif;
   font-weight: 900; font-size: 14px;
   letter-spacing: 0.22em; text-transform: uppercase;
-  color: #00e5ff; margin-right: 28px;
+  color: #00e5ff; margin-right: 20px;
   display: flex; align-items: center; gap: 7px;
   text-decoration: none; white-space: nowrap; flex-shrink: 0;
 }
@@ -337,26 +341,172 @@ header {
   display: flex; align-items: center; justify-content: center;
   font-size: 9px; line-height: 1;
 }
-.wf-nav-tools { display: flex; align-items: center; gap: 1px; overflow-x: auto; }
+.wf-nav-tools {
+  display: flex; align-items: center;
+  overflow-x: auto; flex: 1;
+  scrollbar-width: none;
+}
+.wf-nav-tools::-webkit-scrollbar { display: none; }
 .wf-nav-item {
   display: flex; align-items: center; gap: 5px;
-  padding: 0 12px; height: var(--wf-nav-h);
-  font-family: "Barlow Condensed", sans-serif;
+  padding: 0 11px; height: var(--wf-nav-h);
+  font-family: 'Barlow Condensed', sans-serif;
   font-weight: 600; font-size: 11px;
-  letter-spacing: 0.12em; text-transform: uppercase;
-  color: rgba(255,255,255,0.35); text-decoration: none;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: rgba(255,255,255,0.32);
+  text-decoration: none;
   border-bottom: 2px solid transparent;
-  transition: color 0.18s, border-color 0.18s, background 0.18s;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
   white-space: nowrap;
 }
-.wf-nav-item:hover { color: rgba(255,255,255,0.75); border-bottom-color: rgba(255,255,255,0.2); }
-.wf-nav-item.wf-active-cyan   { color: #00e5ff; border-bottom-color: #00e5ff; background: rgba(0,229,255,0.05); }
-.wf-nav-item.wf-active-red    { color: #ff3c6e; border-bottom-color: #ff3c6e; background: rgba(255,60,110,0.05); }
-.wf-nav-item.wf-active-amber  { color: #ff8c00; border-bottom-color: #ff8c00; background: rgba(255,140,0,0.05); }
-.wf-nav-item.wf-active-green  { color: #39d98a; border-bottom-color: #39d98a; background: rgba(57,217,138,0.05); }
-.wf-nav-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; opacity: 0.6; flex-shrink: 0; }
-.wf-nav-item:not([class*="wf-active"]) .wf-nav-dot { opacity: 0.3; }
-/* ═══════════════════════════════════ */
+[data-theme="light"] .wf-nav-item { color: rgba(0,0,0,0.4); }
+.wf-nav-item:hover {
+  color: #ffffff;
+  border-bottom-color: rgba(255,255,255,0.25);
+  background: rgba(255,255,255,0.05);
+}
+[data-theme="light"] .wf-nav-item:hover {
+  color: #1a1a2e;
+  border-bottom-color: #b8b8c8;
+  background: rgba(0,0,0,0.04);
+}
+.wf-nav-item.wf-active-cyan   { color:#00e5ff; border-bottom-color:#00e5ff; background:rgba(0,229,255,0.07); }
+.wf-nav-item.wf-active-green  { color:#39d98a; border-bottom-color:#39d98a; background:rgba(57,217,138,0.07); }
+.wf-nav-item.wf-active-red    { color:#ff3c6e; border-bottom-color:#ff3c6e; background:rgba(255,60,110,0.07); }
+.wf-nav-item.wf-active-amber  { color:#ff8c00; border-bottom-color:#ff8c00; background:rgba(255,140,0,0.07); }
+.wf-nav-item.wf-active-violet { color:#c084fc; border-bottom-color:#c084fc; background:rgba(192,132,252,0.07); }
+.wf-nav-item.wf-active-pink   { color:#ec4899; border-bottom-color:#ec4899; background:rgba(236,72,153,0.07); }
+.wf-nav-item.wf-active-orange { color:#f97316; border-bottom-color:#f97316; background:rgba(249,115,22,0.07); }
+.wf-nav-item.wf-active-gold   { color:#f5c518; border-bottom-color:#f5c518; background:rgba(245,197,24,0.07); }
+.wf-nav-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: currentColor; opacity: 0.45; flex-shrink: 0;
+}
+.wf-nav-item:not([class*="wf-active"]) .wf-nav-dot { opacity: 0.22; }
+.wf-theme-btn {
+  flex-shrink: 0; margin-left: 8px;
+  width: 30px; height: 30px;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 3px; background: transparent;
+  color: rgba(255,255,255,0.32);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; line-height: 1; transition: all 0.18s;
+}
+[data-theme="light"] .wf-theme-btn {
+  border-color: #d0d0dc; color: #52526e;
+}
+.wf-theme-btn:hover { border-color: #00e5ff; color: #00e5ff; }
+/* ── END NAV ── */
+
+/* ── HEADER EYEBROW UPDATE ── */
+.logo::before { display: none !important; }
+.logo {
+  font-family: 'Share Tech Mono', monospace !important;
+  font-size: 10px !important;
+  letter-spacing: 0.2em !important;
+  opacity: 0.75;
+}
+
+/* ── LIGHT THEME (inline — works without style.css) ─────────── */
+[data-theme="light"] {
+  --bg:       #f2f2f5;
+  --surface:  #ffffff;
+  --surface2: #eaeaef;
+  --surface3: #e2e2ea;
+  --border:   #d0d0dc;
+  --border2:  #b8b8c8;
+  --text:       #1a1a2e;
+  --text-muted: #44445a;
+  --text-dim:   #707090;
+  /* workstation variable aliases */
+  --tx:#1a1a2e; --txm:#44445a; --txd:#707090;
+  --sf:#ffffff; --sf2:#eaeaef; --sf3:#e2e2ea; --sf4:#d8d8e4;
+  --bd:rgba(0,0,0,0.1); --bd2:rgba(0,0,0,0.15);
+}
+[data-theme="light"] body {
+  background: var(--bg);
+  color: var(--text);
+}
+[data-theme="light"] body::before {
+  background-image:
+    linear-gradient(rgba(0,0,40,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,40,0.04) 1px, transparent 1px);
+}
+[data-theme="light"] body::after { opacity: 0; }
+
+/* Nav active — darker for light bg readability */
+[data-theme="light"] .wf-nav-item.wf-active-cyan   { color:#007a90; background:rgba(0,122,144,0.1); border-bottom-color:#007a90; }
+[data-theme="light"] .wf-nav-item.wf-active-green  { color:#1a7a4a; background:rgba(26,122,74,0.1); border-bottom-color:#1a7a4a; }
+[data-theme="light"] .wf-nav-item.wf-active-red    { color:#c0103a; background:rgba(192,16,58,0.1); border-bottom-color:#c0103a; }
+[data-theme="light"] .wf-nav-item.wf-active-amber  { color:#a05000; background:rgba(160,80,0,0.1); border-bottom-color:#a05000; }
+[data-theme="light"] .wf-nav-item.wf-active-violet { color:#7020c0; background:rgba(112,32,192,0.1); border-bottom-color:#7020c0; }
+[data-theme="light"] .wf-nav-item.wf-active-pink   { color:#b01860; background:rgba(176,24,96,0.1); border-bottom-color:#b01860; }
+[data-theme="light"] .wf-nav-item.wf-active-orange { color:#c04800; background:rgba(192,72,0,0.1); border-bottom-color:#c04800; }
+[data-theme="light"] .wf-nav-item.wf-active-gold   { color:#886200; background:rgba(136,98,0,0.1); border-bottom-color:#886200; }
+
+/* ── BEBAS NEUE for tool titles ─────────────────────── */
+.title, h1.title,
+.hero-title,
+.page-title,
+.card-name {
+  font-family: 'Bebas Neue', 'Barlow Condensed', sans-serif;
+}
+.wf-nav-logo {
+  font-family: 'Bebas Neue', 'Barlow Condensed', sans-serif !important;
+  letter-spacing: 0.18em !important;
+}
+
+
+/* ─── Stage 2: Legibility — drum machine ─── */
+.sl                         { font-size: 11px; letter-spacing: 0.12em; }
+.sv                         { font-size: 12px; }
+.bpm-lbl                    { font-size: 11px; letter-spacing: 0.18em; }
+.seg-btn                    { font-size: 11px; }
+.t-name                     { font-size: 11px; }
+.mini-r                     { height: 4px; }
+
+/* ─── Stage 2: Shared legibility ─── */
+.logo-group .subtitle,
+.subtitle                   { font-size: 12px; line-height: 1.6; }
+.header-meta, .hdr-meta     { font-size: 11px; line-height: 2; }
+p, .card-desc               { line-height: 1.7; }
+
+
+/* ── Monospace legibility: faux-bold (Share Tech Mono has no bold weight) ── */
+.logo, .logo-group .logo,
+[class*="-lbl"], [class*="-label"],
+[class*="-meta"], [class*="-sub"]:not(p),
+.wf-label, .panel-label, .card-label,
+.sl, .sv, .bpm-lbl, .seq-sl, .seq-sv, .seq-bpm-lbl,
+.ctrl-label, .wf-eyebrow, .tool-eyebrow,
+.ch-pt-lbl, .ch-dur-lbl, .ch-param-lbl,
+.ch-filt-val, .ch-eq-val, .ch-eq-lbl,
+.card-num, .card-tag, .card-meta,
+.file-meta, .footer-label,
+.flabel, .pedal-item-meta, .effect-row-meta {
+  -webkit-font-smoothing: antialiased;
+  font-weight: 700;
+}
+
+
+/* ── Chord-randomizer button pattern applied to drum machine ── */
+.seg-btn {
+  background: var(--surface3) !important; border: 1px solid var(--border2) !important;
+  color: var(--text-muted) !important; transition: all .12s !important;
+}
+.seg-btn:hover:not(.on) { border-color: var(--amber-hi) !important; color: var(--amber-hi) !important; }
+.seg-btn.on {
+  background: rgba(255,140,0,0.12) !important; border-color: var(--amber) !important;
+  color: var(--amber) !important; box-shadow: 0 0 8px rgba(255,140,0,0.15) !important;
+}
+.btn-tap:hover { border-color: var(--amber) !important; color: var(--amber) !important; }
+
+
+/* ── Soften cyan for large text readability ── */
+.wf-nav-logo { color: #33d6eb !important; }
+.wf-nav-logo-icon { border-color: #33d6eb !important; }
+
 </style>
 </head>
 <body>
@@ -364,13 +514,16 @@ header {
   <a href="hub.html" class="wf-nav-logo"><div class="wf-nav-logo-icon">◈</div>WAVEFORM</a>
   <div class="wf-nav-tools">
     <a href="hub.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Hub</a>
-    <a href="converter.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Converter</a>
-    <a href="looper.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Looper</a>
+    <a href="audio-converter.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Converter</a>
+    <a href="audio-looper.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Looper</a>
     <a href="drum-machine.html" class="wf-nav-item wf-active-amber"><span class="wf-nav-dot"></span>Drum Machine</a>
-    <a href="workstation.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Workstation</a>
-        <a href="chord-randomizer.html" class="wf-nav-item wf-active-violet"><span class="wf-nav-dot"></span>Chord Dice</a>
-
-  </div>
+    <a href="audio-workstation.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Workstation</a>
+    <a href="chord-randomizer.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Chord Dice</a>
+    <a href="patch-map.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Patch Map</a>
+    <a href="guitar-book.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Guitar Book</a>
+    <a href="song-chart.html" class="wf-nav-item"><span class="wf-nav-dot"></span>Song Chart</a>
+    </div>
+  <button class="wf-theme-btn" id="wfThemeBtn" title="Toggle theme" aria-label="Toggle theme">◑</button>
 </nav>
 
 <!-- Floating sound picker -->
@@ -389,8 +542,8 @@ header {
 <div class="app">
   <header>
     <div class="logo-group">
-      <div class="logo">WAVEFORM</div>
-      <h1 class="title">STEP <span>GRID</span></h1>
+      <div class="logo">03 · SEQUENCER</div>
+      <h1 class="title">Drum <span>Machine</span></h1>
     </div>
 
     <div class="bpm-block">
@@ -431,7 +584,6 @@ header {
           <button class="seg-btn" data-v="8">8</button>
           <button class="seg-btn on" data-v="16">16</button>
           <button class="seg-btn" data-v="32">32</button>
-          <button class="seg-btn" data-v="64">64</button>
         </div>
       </div>
     </div>
@@ -848,7 +1000,7 @@ function mkTrack(name, colorIdx) {
     id:          trackIdCtr++,
     name:        name || `TRK ${trackIdCtr}`,
     buf:         null,
-    steps:       new Array(64).fill(false),
+    steps:       new Array(32).fill(false),
     vol:         0.8,
     muted:       false,
     soloed:      false,
@@ -1084,7 +1236,7 @@ function makeTrackEl(tr) {
 
   // ── STEP GRID
   const grid = document.createElement('div'); grid.className = 't-grid';
-  for (let g = 0; g < 16; g++) {
+  for (let g = 0; g < 8; g++) {
     const grp = document.createElement('div');
     grp.className = 't-grp' + (g * 4 >= numSteps ? ' hide' : '');
     grp.dataset.g = g;
@@ -1336,6 +1488,25 @@ function setStatus(msg, active = false) {
 //  INIT
 // ══════════════════════════════════════════════
 renderTracks();
+</script>
+<script>
+/* WAVEFORM theme */
+(function(){
+  var t = localStorage.getItem('wf-theme');
+  if (t === 'light') document.documentElement.setAttribute('data-theme','light');
+  var btn = document.getElementById('wfThemeBtn');
+  if (!btn) return;
+  btn.addEventListener('click', function(){
+    var isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    if (isLight) {
+      document.documentElement.removeAttribute('data-theme');
+      localStorage.setItem('wf-theme','dark');
+    } else {
+      document.documentElement.setAttribute('data-theme','light');
+      localStorage.setItem('wf-theme','light');
+    }
+  });
+})();
 </script>
 </body>
 </html>
